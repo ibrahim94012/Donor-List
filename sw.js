@@ -6,7 +6,7 @@
    separately by Firebase + localStorage inside index.html.
    ============================================================ */
 
-const CACHE_NAME = "blood-donor-app-v2";
+const CACHE_NAME = "blood-donor-app-v3";
 
 const ASSETS_TO_CACHE = [
   "./",

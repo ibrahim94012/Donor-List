@@ -298,9 +298,8 @@ Filter by:
 
 <p id="emptyMsg" style="display:none;">No donors found.</p>
 
-<!-- ================= FIREBASE SDK ================= -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<!-- Firebase SDK is loaded dynamically in the background (see bottom of script)
+     so the page can render cached data instantly instead of waiting on the network. -->
 
 <script>
 /* ============================================================
@@ -317,22 +316,8 @@ const firebaseConfig = {
   measurementId: "G-SL16TBJ2FQ"
 };
 
-let firebaseAvailable = typeof firebase !== "undefined";
+let firebaseAvailable = false;
 let db, donorsRef, settingsRef;
-
-if (firebaseAvailable) {
-  try {
-    firebase.initializeApp(firebaseConfig);
-    db = firebase.database();
-    donorsRef = db.ref("donors");
-    settingsRef = db.ref("settings");
-  } catch (err) {
-    console.log("Firebase failed to initialize, running in offline mode with cached data:", err);
-    firebaseAvailable = false;
-  }
-} else {
-  console.log("Firebase SDK not loaded (likely offline). Running in offline mode with cached data.");
-}
 
 /* ============================================================
    LOCAL CACHE + OFFLINE QUEUE
@@ -473,50 +458,32 @@ const syncStatusEl = document.getElementById("syncStatus");
 
 function updateSyncStatus() {
   const pendingCount = getQueue().length;
-  if (!isConnected) {
+  if (!navigator.onLine) {
     syncStatusEl.className = "sync-offline";
-    syncStatusEl.textContent = "Offline" + (pendingCount > 0 ? " — " + pendingCount : " — showing from local cache");
+    syncStatusEl.textContent = "Offline" + (pendingCount > 0 ? " — " + pendingCount + " pending" : " — showing from local cache");
+  } else if (!firebaseAvailable || !isConnected) {
+    syncStatusEl.className = "sync-pending";
+    syncStatusEl.textContent = "Connecting..." + (pendingCount > 0 ? " (" + pendingCount + " pending)" : "");
   } else if (pendingCount > 0) {
     syncStatusEl.className = "sync-pending";
-    syncStatusEl.textContent = "Online" + pendingCount;
+    syncStatusEl.textContent = "Online — syncing " + pendingCount;
   } else {
     syncStatusEl.className = "sync-online";
     syncStatusEl.textContent = "Online";
   }
 }
 
-if (firebaseAvailable) {
-  db.ref(".info/connected").on("value", snap => {
-    isConnected = snap.val() === true;
-    updateSyncStatus();
-    if (isConnected) trySyncQueue();
-  });
-} else {
+window.addEventListener("online", () => {
+  updateSyncStatus();
+  trySyncQueue();
+});
+window.addEventListener("offline", () => {
   isConnected = false;
   updateSyncStatus();
-}
+});
 
-/* ============================================================
-   FIREBASE REALTIME LISTENERS
-   ============================================================ */
-if (firebaseAvailable) {
-  donorsRef.on("value", snapshot => {
-    const val = snapshot.val() || {};
-    firebaseDonors = Object.keys(val).map(key => ({ ...val[key], id: key }));
-    setCachedDonors(firebaseDonors);
-    renderDonors();
-  });
-
-  settingsRef.on("value", snapshot => {
-    const val = snapshot.val();
-    if (val) {
-      settingsData = val;
-      setCachedSettings(settingsData);
-      cooldownDaysInput.value = settingsData.cooldownDays;
-      renderDonors();
-    }
-  });
-}
+/* Connection listener + realtime data listeners are attached later,
+   inside setupFirebase(), once the SDK has finished loading. */
 
 /* ============================================================
    TOGGLE SECTIONS (Settings / Donor Form)
@@ -799,11 +766,74 @@ bloodGroupFilter.addEventListener("change", function () {
 });
 
 /* ============================================================
-   INIT
+   INIT — render instantly from cache first, don't wait on network
    ============================================================ */
 initSettings();
 renderDonors();
 updateSyncStatus();
+
+/* ============================================================
+   LOAD FIREBASE SDK IN THE BACKGROUND (non-blocking)
+   The page above is already fully usable with cached data.
+   Once the SDK loads, we connect and switch to live data.
+   ============================================================ */
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const s = document.createElement("script");
+    s.src = src;
+    s.onload = resolve;
+    s.onerror = () => reject(new Error("Failed to load " + src));
+    document.head.appendChild(s);
+  });
+}
+
+function setupFirebase() {
+  try {
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.database();
+    donorsRef = db.ref("donors");
+    settingsRef = db.ref("settings");
+    firebaseAvailable = true;
+
+    donorsRef.on("value", snapshot => {
+      const val = snapshot.val() || {};
+      firebaseDonors = Object.keys(val).map(key => ({ ...val[key], id: key }));
+      setCachedDonors(firebaseDonors);
+      renderDonors();
+    });
+
+    settingsRef.on("value", snapshot => {
+      const val = snapshot.val();
+      if (val) {
+        settingsData = val;
+        setCachedSettings(settingsData);
+        cooldownDaysInput.value = settingsData.cooldownDays;
+        renderDonors();
+      }
+    });
+
+    db.ref(".info/connected").on("value", snap => {
+      isConnected = snap.val() === true;
+      updateSyncStatus();
+      if (isConnected) trySyncQueue();
+    });
+
+    updateSyncStatus();
+  } catch (err) {
+    console.log("Firebase failed to initialize, staying in offline mode with cached data:", err);
+    firebaseAvailable = false;
+    updateSyncStatus();
+  }
+}
+
+loadScript("https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js")
+  .then(() => loadScript("https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"))
+  .then(setupFirebase)
+  .catch(err => {
+    console.log("Could not load Firebase SDK (likely offline):", err);
+    firebaseAvailable = false;
+    updateSyncStatus();
+  });
 </script>
 
 <!-- ================= SERVICE WORKER (OFFLINE SUPPORT) ================= -->

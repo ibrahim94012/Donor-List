@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<title>ব্লাড ডোনার লিস্ট</title>
+    <link rel="icon" type="image/x-icon" href="fav.jpeg">
+<style>
+      body {
+    background-image: url('bg.jpeg');
+  background-repeat: no-repeat;
+  background-position: right top;
+  background-attachment: fixed;
+  }
+  #settingsForm input,
+  #settingsForm select,
+  #donorForm input,
+  #donorForm select {
+    width: 220px;
+    height: 32px;
+    box-sizing: border-box;
+    padding: 4px 6px;
+    font-size: 14px;
+  }
+  .fieldError {
+    color: red;
+    font-weight: bold;
+    display: block;
+    margin-top: 4px;
+  }
+  #syncStatus {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    margin: 8px 0;
+  }
+  .sync-online {
+    background: #d4f8d4;
+    color: #157a15;
+    border: 1px solid #157a15;
+  }
+  .sync-offline {
+    background: #ffe0e0;
+    color: #a30000;
+    border: 1px solid #a30000;
+  }
+  .sync-pending {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #856404;
+  }
+  .pendingBadge {
+    display: inline-block;
+    margin-left: 6px;
+    font-size: 11px;
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #856404;
+    border-radius: 4px;
+    padding: 1px 5px;
+  }
+</style>
+</head>
+<body>
+
+<img src="fav.jpeg" alt="Girl in a jacket" width="70" height="70">
+<p style="font-size:13px; color:#555; margin:0 0 10px 0;">Development by <u> IBRAHIM KHALIL </u> | 01908111251</p>
+
+<div id="syncStatus" class="sync-offline">সংযোগ পরীক্ষা করা হচ্ছে...</div>
+
+<!-- ================= SETTINGS ================= -->
+<button type="button" id="toggleSettingsBtn">Settings</button>
+
+<div id="settingsSection" style="display:none;">
+<h2>Settings</h2>
+<form id="settingsForm" >
+  <table border="1" cellpadding="6" style="border-collapse: collapse;">
+    <tr>
+      <td>কুলডাউন টাইম (দিনে):</td>
+      <td><input type="number" id="cooldownDays" min="1" value="90" required></td>
+    </tr>
+  </table>
+  <br>
+  <button type="submit">save</button>
+  <span id="settingsMsg"></span>
+</form>
+</div>
+
+<hr>
+
+<!-- ================= DONOR FORM ================= -->
+<button type="button" id="toggleDonorFormBtn">Add Donor</button>
+
+<div id="donorFormSection" style="display:none;">
+<h2>Add Donor</h2>
+<form id="donorForm">
+  <table border="1" cellpadding="6" style="border-collapse: collapse;">
+    <tr>
+      <td>নাম (Name):</td>
+      <td><input type="text" id="name" required></td>
+    </tr>
+    <tr>
+      <td>মোবাইল (Mobile):</td>
+      <td><input type="tel" id="mobile" required></td>
+    </tr>
+    <tr>
+      <td>ব্লাড গ্রুপ (Blood Group):</td>
+      <td>
+        <select id="bloodGroup" required>
+          <option value="">-- নির্বাচন করুন --</option>
+          <option value="A+">A+</option>
+          <option value="A-">A-</option>
+          <option value="B+">B+</option>
+          <option value="B-">B-</option>
+          <option value="AB+">AB+</option>
+          <option value="AB-">AB-</option>
+          <option value="O+">O+</option>
+          <option value="O-">O-</option>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td>বয়স (Age):</td>
+      <td>
+        <input type="number" id="age" min="1" max="120" required>
+        <span id="ageError" class="fieldError" style="display:none;">বয়স ১৮ এর নিচে হলে ডোনেট করা যাবে না!</span>
+      </td>
+    </tr>
+    <tr>
+      <td>জেন্ডার (Gender):</td>
+      <td>
+        <select id="gender" required>
+          <option value="">-- নির্বাচন করুন --</option>
+          <option value="Male">পুরুষ (Male)</option>
+          <option value="Female">মহিলা (Female)</option>
+          <option value="Other">অন্যান্য (Other)</option>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td>লাস্ট ব্লাড ডোনেট ডেট (Last Donation Date):</td>
+      <td><input type="date" id="lastDonateDate"></td>
+    </tr>
+  </table>
+  <br>
+  <input type="hidden" id="editId">
+  <button type="submit" id="submitBtn">যোগ করুন (Add)</button>
+  <button type="button" id="cancelEditBtn" style="display:none;">বাতিল (Cancel)</button>
+</form>
+</div>
+
+<hr>
+
+<!-- ================= DONOR LIST ================= -->
+<h2>ডোনার লিস্ট মোট: <span id="totalDonorCount">0</span> জন</h2>
+
+<input type="checkbox" id="eligibleOnlyCheckbox">
+<label for="eligibleOnlyCheckbox">এলিজিবল ডোনার</label>
+
+<br><br>
+
+ফিল্টার করুন:
+<select id="bloodGroupFilter">
+  <option value="">সব ব্লাড গ্রুপ</option>
+  <option value="A+">A+</option>
+  <option value="A-">A-</option>
+  <option value="B+">B+</option>
+  <option value="B-">B-</option>
+  <option value="AB+">AB+</option>
+  <option value="AB-">AB-</option>
+  <option value="O+">O+</option>
+  <option value="O-">O-</option>
+</select>
+<button type="button" id="filterBtn">ফিল্টার করুন</button>
+
+<br><br>
+
+<table border="1" cellpadding="6" style="border-collapse: collapse;" id="donorTable">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>নাম</th>
+      <th>মোবাইল</th>
+      <th>ব্লাড গ্রুপ</th>
+      <th>বয়স</th>
+      <th>জেন্ডার</th>
+      <th>লাস্ট ডোনেট ডেট</th>
+      <th>পরবর্তী এলিজিবল ডেট</th>
+      <th>স্ট্যাটাস</th>
+      <th>একশন</th>
+    </tr>
+  </thead>
+  <tbody id="donorTableBody">
+    <!-- rows inserted by JS -->
+  </tbody>
+</table>
+
+<p id="emptyMsg" style="display:none;">কোনো ডোনার পাওয়া যায়নি।</p>
+
+<!-- ================= FIREBASE SDK ================= -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+<script>
+/* ============================================================
+   FIREBASE INIT
+   ============================================================ */
+const firebaseConfig = {
+  apiKey: "AIzaSyCH5oHFzuC6qbAjV7cgHWQopHtGA180jiU",
+  authDomain: "blood-network-a851b.firebaseapp.com",
+  databaseURL: "https://blood-network-a851b-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "blood-network-a851b",
+  storageBucket: "blood-network-a851b.firebasestorage.app",
+  messagingSenderId: "713058868424",
+  appId: "1:713058868424:web:599441c954490ca5cb19fd",
+  measurementId: "G-SL16TBJ2FQ"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const donorsRef = db.ref("donors");
+const settingsRef = db.ref("settings");
+
+/* ============================================================
+   LOCAL CACHE + OFFLINE QUEUE
+   Firebase থেকে সর্বশেষ পাওয়া ডেটা লোকালি ক্যাশ করা হয়, এবং
+   অফলাইনে করা add/edit/delete একটি "queue"-তে জমা থাকে।
+   ইন্টারনেট ফিরে এলে queue টি অটোমেটিক Firebase-এ সিঙ্ক হয়ে যায়।
+   ============================================================ */
+const CACHE_DONORS_KEY = "blood_donor_cache";
+const CACHE_SETTINGS_KEY = "blood_donor_settings_cache";
+const QUEUE_KEY = "blood_donor_pending_queue";
+
+function getCachedDonors() {
+  const data = localStorage.getItem(CACHE_DONORS_KEY);
+  return data ? JSON.parse(data) : [];
+}
+function setCachedDonors(list) {
+  localStorage.setItem(CACHE_DONORS_KEY, JSON.stringify(list));
+}
+function getCachedSettings() {
+  const data = localStorage.getItem(CACHE_SETTINGS_KEY);
+  return data ? JSON.parse(data) : { cooldownDays: 90 };
+}
+function setCachedSettings(settings) {
+  localStorage.setItem(CACHE_SETTINGS_KEY, JSON.stringify(settings));
+}
+function getQueue() {
+  const data = localStorage.getItem(QUEUE_KEY);
+  return data ? JSON.parse(data) : [];
+}
+function setQueue(queue) {
+  localStorage.setItem(QUEUE_KEY, JSON.stringify(queue));
+  updateSyncStatus();
+}
+
+let firebaseDonors = getCachedDonors();      // Firebase থেকে সর্বশেষ কনফার্মড লিস্ট
+let settingsData = getCachedSettings();
+let isConnected = false;
+let syncing = false;
+
+// queue-এর pending action গুলো cached list-এর উপর বসিয়ে merged view বানায়
+function getMergedDonors() {
+  const queue = getQueue();
+  let result = firebaseDonors.map(d => ({ ...d }));
+  queue.forEach(action => {
+    if (action.type === "add" || action.type === "update") {
+      const idx = result.findIndex(d => d.id === action.donor.id);
+      const donorWithFlag = { ...action.donor, _pending: true };
+      if (idx !== -1) result[idx] = donorWithFlag;
+      else result.push(donorWithFlag);
+    } else if (action.type === "delete") {
+      result = result.filter(d => d.id !== action.donorId);
+    }
+  });
+  return result;
+}
+
+function queueDonorAction(type, donor) {
+  const queue = getQueue().filter(a => !(a.donor && a.donor.id === donor.id));
+  queue.push({ type, donor, timestamp: Date.now() });
+  setQueue(queue);
+  renderDonors();
+  trySyncQueue();
+}
+
+function queueDeleteAction(id) {
+  const queue = getQueue();
+  const hadPendingAdd = queue.some(a => a.type === "add" && a.donor && a.donor.id === id);
+  let filtered = queue.filter(a => !(a.donor && a.donor.id === id));
+  if (!hadPendingAdd) {
+    filtered.push({ type: "delete", donorId: id, timestamp: Date.now() });
+  }
+  setQueue(filtered);
+  renderDonors();
+  trySyncQueue();
+}
+
+function trySyncQueue() {
+  updateSyncStatus();
+  if (!isConnected || syncing) return;
+  const queue = getQueue();
+  if (queue.length === 0) return;
+
+  syncing = true;
+  const action = queue[0];
+  let opPromise;
+
+  if (action.type === "delete") {
+    opPromise = donorsRef.child(action.donorId).remove();
+  } else {
+    const donorToSave = { ...action.donor };
+    delete donorToSave._pending;
+    opPromise = donorsRef.child(action.donor.id).set(donorToSave);
+  }
+
+  opPromise.then(() => {
+    setQueue(getQueue().slice(1));
+    syncing = false;
+    trySyncQueue();
+  }).catch(err => {
+    console.log("সিঙ্ক ব্যর্থ হয়েছে, পরে আবার চেষ্টা করা হবে:", err);
+    syncing = false;
+    updateSyncStatus();
+    setTimeout(trySyncQueue, 5000);
+  });
+}
+
+/* ============================================================
+   CONNECTION STATUS
+   ============================================================ */
+const syncStatusEl = document.getElementById("syncStatus");
+
+function updateSyncStatus() {
+  const pendingCount = getQueue().length;
+  if (!isConnected) {
+    syncStatusEl.className = "sync-offline";
+    syncStatusEl.textContent = "Offline" + (pendingCount > 0 ? " — " + pendingCount : " — লোকাল ক্যাশ থেকে দেখানো হচ্ছে");
+  } else if (pendingCount > 0) {
+    syncStatusEl.className = "sync-pending";
+    syncStatusEl.textContent = "Online" + pendingCount;
+  } else {
+    syncStatusEl.className = "sync-online";
+    syncStatusEl.textContent = "Online";
+  }
+}
+
+db.ref(".info/connected").on("value", snap => {
+  isConnected = snap.val() === true;
+  updateSyncStatus();
+  if (isConnected) trySyncQueue();
+});
+
+/* ============================================================
+   FIREBASE REALTIME LISTENERS
+   ============================================================ */
+donorsRef.on("value", snapshot => {
+  const val = snapshot.val() || {};
+  firebaseDonors = Object.keys(val).map(key => ({ ...val[key], id: key }));
+  setCachedDonors(firebaseDonors);
+  renderDonors();
+});
+
+settingsRef.on("value", snapshot => {
+  const val = snapshot.val();
+  if (val) {
+    settingsData = val;
+    setCachedSettings(settingsData);
+    cooldownDaysInput.value = settingsData.cooldownDays;
+    renderDonors();
+  }
+});
+
+/* ============================================================
+   TOGGLE SECTIONS (Settings / Donor Form)
+   ============================================================ */
+const toggleSettingsBtn = document.getElementById("toggleSettingsBtn");
+const settingsSection = document.getElementById("settingsSection");
+const toggleDonorFormBtn = document.getElementById("toggleDonorFormBtn");
+const donorFormSection = document.getElementById("donorFormSection");
+
+toggleSettingsBtn.addEventListener("click", function () {
+  if (settingsSection.style.display === "none") {
+    settingsSection.style.display = "block";
+    donorFormSection.style.display = "none";
+  } else {
+    settingsSection.style.display = "none";
+  }
+});
+
+toggleDonorFormBtn.addEventListener("click", function () {
+  if (donorFormSection.style.display === "none") {
+    donorFormSection.style.display = "block";
+    settingsSection.style.display = "none";
+  } else {
+    donorFormSection.style.display = "none";
+  }
+});
+
+/* ============================================================
+   SETTINGS FORM
+   ============================================================ */
+const settingsForm = document.getElementById("settingsForm");
+const cooldownDaysInput = document.getElementById("cooldownDays");
+const settingsMsg = document.getElementById("settingsMsg");
+
+function initSettings() {
+  cooldownDaysInput.value = settingsData.cooldownDays;
+}
+
+settingsForm.addEventListener("submit", function (e) {
+  e.preventDefault();
+  const settings = { cooldownDays: parseInt(cooldownDaysInput.value, 10) };
+  settingsData = settings;
+  setCachedSettings(settings);
+  settingsRef.set(settings).catch(err => {
+    console.log("সেটিংস অফলাইনে সেভ হয়েছে, অনলাইনে এলে সিঙ্ক হবে:", err);
+  });
+  settingsMsg.textContent = "সেভ হয়েছে!";
+  setTimeout(() => { settingsMsg.textContent = ""; }, 2000);
+  renderDonors();
+});
+
+/* ============================================================
+   DONOR FORM (Add / Edit)
+   ============================================================ */
+const donorForm = document.getElementById("donorForm");
+const nameInput = document.getElementById("name");
+const mobileInput = document.getElementById("mobile");
+const bloodGroupInput = document.getElementById("bloodGroup");
+const ageInput = document.getElementById("age");
+const genderInput = document.getElementById("gender");
+const lastDonateDateInput = document.getElementById("lastDonateDate");
+const editIdInput = document.getElementById("editId");
+const submitBtn = document.getElementById("submitBtn");
+const cancelEditBtn = document.getElementById("cancelEditBtn");
+const ageError = document.getElementById("ageError");
+
+function checkAgeValidity() {
+  const age = parseInt(ageInput.value, 10);
+  if (!isNaN(age) && age < 18) {
+    ageError.style.display = "inline";
+    return false;
+  } else {
+    ageError.style.display = "none";
+    return true;
+  }
+}
+
+ageInput.addEventListener("input", checkAgeValidity);
+
+donorForm.addEventListener("submit", function (e) {
+  e.preventDefault();
+
+  if (!checkAgeValidity()) {
+    ageInput.focus();
+    return;
+  }
+
+  const donor = {
+    name: nameInput.value.trim(),
+    mobile: mobileInput.value.trim(),
+    bloodGroup: bloodGroupInput.value,
+    age: ageInput.value,
+    gender: genderInput.value,
+    lastDonateDate: lastDonateDateInput.value
+  };
+
+  const isEdit = !!editIdInput.value;
+  donor.id = isEdit ? editIdInput.value : "d_" + Date.now().toString();
+
+  queueDonorAction(isEdit ? "update" : "add", donor);
+
+  resetForm();
+});
+
+cancelEditBtn.addEventListener("click", function () {
+  resetForm();
+});
+
+function resetForm() {
+  donorForm.reset();
+  editIdInput.value = "";
+  submitBtn.textContent = "যোগ করুন (Add)";
+  cancelEditBtn.style.display = "none";
+  ageError.style.display = "none";
+}
+
+function editDonor(id) {
+  const donor = getMergedDonors().find(d => d.id === id);
+  if (!donor) return;
+
+  nameInput.value = donor.name;
+  mobileInput.value = donor.mobile;
+  bloodGroupInput.value = donor.bloodGroup;
+  ageInput.value = donor.age;
+  genderInput.value = donor.gender;
+  lastDonateDateInput.value = donor.lastDonateDate;
+  editIdInput.value = donor.id;
+
+  submitBtn.textContent = "Update";
+  cancelEditBtn.style.display = "inline";
+
+  donorFormSection.style.display = "block";
+  settingsSection.style.display = "none";
+  window.scrollTo(0, 0);
+}
+
+function deleteDonor(id) {
+  if (!confirm("আপনি কি নিশ্চিত এই ডোনার ডিলিট করতে চান?")) return;
+  queueDeleteAction(id);
+}
+
+/* ============================================================
+   COOLDOWN / ELIGIBILITY CALCULATION
+   ============================================================ */
+function getNextEligibleDate(lastDonateDate, cooldownDays) {
+  if (!lastDonateDate) return null;
+  const last = new Date(lastDonateDate);
+  const next = new Date(last);
+  next.setDate(next.getDate() + cooldownDays);
+  return next;
+}
+
+const MONTH_NAMES = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
+
+function formatDate(date) {
+  if (!date) return "-";
+  const d = date.getDate().toString().padStart(2, "0");
+  const m = MONTH_NAMES[date.getMonth()];
+  const y = date.getFullYear();
+  return d + "-" + m + "-" + y;
+}
+
+function getStatus(lastDonateDate, cooldownDays) {
+  if (!lastDonateDate) return "Available";
+  const nextDate = getNextEligibleDate(lastDonateDate, cooldownDays);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  nextDate.setHours(0, 0, 0, 0);
+
+  if (today >= nextDate) {
+    return "Available";
+  } else {
+    const diffTime = nextDate - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return "কুলডাউন " + diffDays + " দিন বাকি";
+  }
+}
+
+// স্ট্যাটাস অনুযায়ী সেল এর কালার
+function getStatusColor(statusText) {
+  if (statusText === "Available") {
+    return "lightgreen"; // Available = সবুজ
+  } else {
+    return "salmon"; // কুলডাউনে = লাল
+  }
+}
+
+/* ============================================================
+   RENDER TABLE
+   ============================================================ */
+const donorTableBody = document.getElementById("donorTableBody");
+const emptyMsg = document.getElementById("emptyMsg");
+const eligibleOnlyCheckbox = document.getElementById("eligibleOnlyCheckbox");
+const bloodGroupFilter = document.getElementById("bloodGroupFilter");
+const filterBtn = document.getElementById("filterBtn");
+const totalDonorCount = document.getElementById("totalDonorCount");
+
+let selectedBloodGroup = "";
+
+function renderDonors() {
+  const cooldownDays = settingsData.cooldownDays || 90;
+  let donors = getMergedDonors();
+
+  // মোট ডোনার সংখ্যা (ফিল্টার করার আগে)
+  totalDonorCount.textContent = donors.length;
+
+  if (eligibleOnlyCheckbox.checked) {
+    donors = donors.filter(d => {
+      const status = getStatus(d.lastDonateDate, cooldownDays);
+      return status === "Available";
+    });
+  }
+
+  if (selectedBloodGroup) {
+    donors = donors.filter(d => d.bloodGroup === selectedBloodGroup);
+  }
+
+  donorTableBody.innerHTML = "";
+
+  if (donors.length === 0) {
+    emptyMsg.style.display = "block";
+    return;
+  } else {
+    emptyMsg.style.display = "none";
+  }
+
+  donors.forEach((donor, index) => {
+    const nextEligible = getNextEligibleDate(donor.lastDonateDate, cooldownDays);
+    const status = getStatus(donor.lastDonateDate, cooldownDays);
+    const statusColor = getStatusColor(status);
+    const pendingBadge = donor._pending ? '<span class="pendingBadge">🔄 সিঙ্ক বাকি</span>' : "";
+
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${index + 1}</td>
+      <td>${donor.name}</td>
+      <td>${donor.mobile}</td>
+      <td>${donor.bloodGroup}</td>
+      <td>${donor.age}</td>
+      <td>${donor.gender}</td>
+      <td>${donor.lastDonateDate ? formatDate(new Date(donor.lastDonateDate)) : "-"}</td>
+      <td>${nextEligible ? formatDate(nextEligible) : "-"}</td>
+      <td bgcolor="${statusColor}">${status}${pendingBadge}</td>
+      <td>
+        <button onclick="editDonor('${donor.id}')">এডিট</button>
+        <button onclick="deleteDonor('${donor.id}')">ডিলিট</button>
+      </td>
+    `;
+    donorTableBody.appendChild(row);
+  });
+}
+
+eligibleOnlyCheckbox.addEventListener("change", renderDonors);
+
+filterBtn.addEventListener("click", function () {
+  selectedBloodGroup = bloodGroupFilter.value;
+  renderDonors();
+});
+
+/* ============================================================
+   INIT
+   ============================================================ */
+initSettings();
+renderDonors();
+updateSyncStatus();
+</script>
+
+</body>
+</html>

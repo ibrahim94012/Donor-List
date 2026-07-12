@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-<title>ব্লাড ডোনার লিস্ট</title>
+<title>Blood Donor List</title>
     <link rel="icon" type="image/x-icon" href="fav.jpeg">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#a30000">
 <style>
   * {
     box-sizing: border-box;
@@ -163,7 +165,7 @@
 <img src="fav.jpeg" alt="Girl in a jacket" width="70" height="70">
 <p style="font-size:13px; color:#555; margin:0 0 10px 0;">Development by <u> IBRAHIM KHALIL </u> | 01908111251</p>
 
-<div id="syncStatus" class="sync-offline">সংযোগ পরীক্ষা করা হচ্ছে...</div>
+<div id="syncStatus" class="sync-offline">Checking connection...</div>
 
 <!-- ================= SETTINGS ================= -->
 <button type="button" id="toggleSettingsBtn">Settings</button>
@@ -173,7 +175,7 @@
 <form id="settingsForm" >
   <table border="1" cellpadding="6" style="border-collapse: collapse;">
     <tr>
-      <td>কুলডাউন টাইম (দিনে):</td>
+      <td>Cooldown Time (days):</td>
       <td><input type="number" id="cooldownDays" min="1" value="90" required></td>
     </tr>
   </table>
@@ -193,18 +195,18 @@
 <form id="donorForm">
   <table border="0" cellpadding="6" style="border-collapse: collapse;">
     <tr>
-      <td>নাম (Name):</td>
+      <td>Name:</td>
       <td><input type="text" id="name" required></td>
     </tr>
     <tr>
-      <td>মোবাইল (Mobile):</td>
+      <td>Mobile:</td>
       <td><input type="tel" id="mobile" required></td>
     </tr>
     <tr>
-      <td>ব্লাড গ্রুপ (Blood Group):</td>
+      <td>Blood Group:</td>
       <td>
         <select id="bloodGroup" required>
-          <option value="">-- নির্বাচন করুন --</option>
+          <option value="">-- Select --</option>
           <option value="A+">A+</option>
           <option value="A-">A-</option>
           <option value="B+">B+</option>
@@ -217,48 +219,48 @@
       </td>
     </tr>
     <tr>
-      <td>বয়স (Age):</td>
+      <td>Age:</td>
       <td>
         <input type="number" id="age" min="1" max="120" required>
-        <span id="ageError" class="fieldError" style="display:none;">বয়স ১৮ এর নিচে হলে ডোনেট করা যাবে না!</span>
+        <span id="ageError" class="fieldError" style="display:none;">Donors under 18 years old cannot donate!</span>
       </td>
     </tr>
     <tr>
-      <td>জেন্ডার (Gender):</td>
+      <td>Gender:</td>
       <td>
         <select id="gender" required>
-          <option value="">-- নির্বাচন করুন --</option>
-          <option value="Male">পুরুষ (Male)</option>
-          <option value="Female">মহিলা (Female)</option>
-          <option value="Other">অন্যান্য (Other)</option>
+          <option value="">-- Select --</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
         </select>
       </td>
     </tr>
     <tr>
-      <td>লাস্ট ব্লাড ডোনেট ডেট (Last Donation Date):</td>
+      <td>Last Donation Date:</td>
       <td><input type="date" id="lastDonateDate"></td>
     </tr>
   </table>
   <br>
   <input type="hidden" id="editId">
-  <button type="submit" id="submitBtn">যোগ করুন (Add)</button>
-  <button type="button" id="cancelEditBtn" style="display:none;">বাতিল (Cancel)</button>
+  <button type="submit" id="submitBtn">Add</button>
+  <button type="button" id="cancelEditBtn" style="display:none;">Cancel</button>
 </form>
 </div>
 
 <hr>
 
 <!-- ================= DONOR LIST ================= -->
-<h2>ডোনার লিস্ট মোট: <span id="totalDonorCount">0</span> জন</h2>
+<h2>Total Donors: <span id="totalDonorCount">0</span></h2>
 
 <input type="checkbox" id="eligibleOnlyCheckbox">
-<label for="eligibleOnlyCheckbox">এলিজিবল ডোনার</label>
+<label for="eligibleOnlyCheckbox">Eligible Donors Only</label>
 
 <br><br>
 
-ফিল্টার করুন:
+Filter by:
 <select id="bloodGroupFilter">
-  <option value="">সব ব্লাড গ্রুপ</option>
+  <option value="">All Blood Groups</option>
   <option value="A+">A+</option>
   <option value="A-">A-</option>
   <option value="B+">B+</option>
@@ -276,15 +278,15 @@
   <thead>
     <tr>
       <th>#</th>
-      <th>নাম</th>
-      <th>মোবাইল</th>
-      <th>ব্লাড গ্রুপ</th>
-      <th>বয়স</th>
-      <th>জেন্ডার</th>
-      <th>লাস্ট ডোনেট ডেট</th>
-      <th>পরবর্তী এলিজিবল ডেট</th>
-      <th>স্ট্যাটাস</th>
-      <th>একশন</th>
+      <th>Name</th>
+      <th>Mobile</th>
+      <th>Blood Group</th>
+      <th>Age</th>
+      <th>Gender</th>
+      <th>Last Donation Date</th>
+      <th>Next Eligible Date</th>
+      <th>Status</th>
+      <th>Action</th>
     </tr>
   </thead>
   <tbody id="donorTableBody">
@@ -293,7 +295,7 @@
 </table>
 </div>
 
-<p id="emptyMsg" style="display:none;">কোনো ডোনার পাওয়া যায়নি।</p>
+<p id="emptyMsg" style="display:none;">No donors found.</p>
 
 <!-- ================= FIREBASE SDK ================= -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -314,16 +316,28 @@ const firebaseConfig = {
   measurementId: "G-SL16TBJ2FQ"
 };
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-const donorsRef = db.ref("donors");
-const settingsRef = db.ref("settings");
+let firebaseAvailable = typeof firebase !== "undefined";
+let db, donorsRef, settingsRef;
+
+if (firebaseAvailable) {
+  try {
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.database();
+    donorsRef = db.ref("donors");
+    settingsRef = db.ref("settings");
+  } catch (err) {
+    console.log("Firebase failed to initialize, running in offline mode with cached data:", err);
+    firebaseAvailable = false;
+  }
+} else {
+  console.log("Firebase SDK not loaded (likely offline). Running in offline mode with cached data.");
+}
 
 /* ============================================================
    LOCAL CACHE + OFFLINE QUEUE
-   Firebase থেকে সর্বশেষ পাওয়া ডেটা লোকালি ক্যাশ করা হয়, এবং
-   অফলাইনে করা add/edit/delete একটি "queue"-তে জমা থাকে।
-   ইন্টারনেট ফিরে এলে queue টি অটোমেটিক Firebase-এ সিঙ্ক হয়ে যায়।
+   The latest data received from Firebase is cached locally, and any
+   add/edit/delete actions performed offline are stored in a "queue".
+   The queue automatically syncs to Firebase once internet returns.
    ============================================================ */
 const CACHE_DONORS_KEY = "blood_donor_cache";
 const CACHE_SETTINGS_KEY = "blood_donor_settings_cache";
@@ -352,12 +366,12 @@ function setQueue(queue) {
   updateSyncStatus();
 }
 
-let firebaseDonors = getCachedDonors();      // Firebase থেকে সর্বশেষ কনফার্মড লিস্ট
+let firebaseDonors = getCachedDonors();      // Latest confirmed list from Firebase
 let settingsData = getCachedSettings();
 let isConnected = false;
 let syncing = false;
 
-// queue-এর pending action গুলো cached list-এর উপর বসিয়ে merged view বানায়
+// Applies queued pending actions on top of the cached list to build a merged view
 function getMergedDonors() {
   const queue = getQueue();
   let result = firebaseDonors.map(d => ({ ...d }));
@@ -396,7 +410,7 @@ function queueDeleteAction(id) {
 
 function trySyncQueue() {
   updateSyncStatus();
-  if (!isConnected || syncing) return;
+  if (!firebaseAvailable || !isConnected || syncing) return;
   const queue = getQueue();
   if (queue.length === 0) return;
 
@@ -417,7 +431,7 @@ function trySyncQueue() {
     syncing = false;
     trySyncQueue();
   }).catch(err => {
-    console.log("সিঙ্ক ব্যর্থ হয়েছে, পরে আবার চেষ্টা করা হবে:", err);
+    console.log("Sync failed, will retry later:", err);
     syncing = false;
     updateSyncStatus();
     setTimeout(trySyncQueue, 5000);
@@ -433,7 +447,7 @@ function updateSyncStatus() {
   const pendingCount = getQueue().length;
   if (!isConnected) {
     syncStatusEl.className = "sync-offline";
-    syncStatusEl.textContent = "Offline" + (pendingCount > 0 ? " — " + pendingCount : " — লোকাল ক্যাশ থেকে দেখানো হচ্ছে");
+    syncStatusEl.textContent = "Offline" + (pendingCount > 0 ? " — " + pendingCount : " — showing from local cache");
   } else if (pendingCount > 0) {
     syncStatusEl.className = "sync-pending";
     syncStatusEl.textContent = "Online" + pendingCount;
@@ -443,31 +457,38 @@ function updateSyncStatus() {
   }
 }
 
-db.ref(".info/connected").on("value", snap => {
-  isConnected = snap.val() === true;
+if (firebaseAvailable) {
+  db.ref(".info/connected").on("value", snap => {
+    isConnected = snap.val() === true;
+    updateSyncStatus();
+    if (isConnected) trySyncQueue();
+  });
+} else {
+  isConnected = false;
   updateSyncStatus();
-  if (isConnected) trySyncQueue();
-});
+}
 
 /* ============================================================
    FIREBASE REALTIME LISTENERS
    ============================================================ */
-donorsRef.on("value", snapshot => {
-  const val = snapshot.val() || {};
-  firebaseDonors = Object.keys(val).map(key => ({ ...val[key], id: key }));
-  setCachedDonors(firebaseDonors);
-  renderDonors();
-});
-
-settingsRef.on("value", snapshot => {
-  const val = snapshot.val();
-  if (val) {
-    settingsData = val;
-    setCachedSettings(settingsData);
-    cooldownDaysInput.value = settingsData.cooldownDays;
+if (firebaseAvailable) {
+  donorsRef.on("value", snapshot => {
+    const val = snapshot.val() || {};
+    firebaseDonors = Object.keys(val).map(key => ({ ...val[key], id: key }));
+    setCachedDonors(firebaseDonors);
     renderDonors();
-  }
-});
+  });
+
+  settingsRef.on("value", snapshot => {
+    const val = snapshot.val();
+    if (val) {
+      settingsData = val;
+      setCachedSettings(settingsData);
+      cooldownDaysInput.value = settingsData.cooldownDays;
+      renderDonors();
+    }
+  });
+}
 
 /* ============================================================
    TOGGLE SECTIONS (Settings / Donor Form)
@@ -512,9 +533,9 @@ settingsForm.addEventListener("submit", function (e) {
   settingsData = settings;
   setCachedSettings(settings);
   settingsRef.set(settings).catch(err => {
-    console.log("সেটিংস অফলাইনে সেভ হয়েছে, অনলাইনে এলে সিঙ্ক হবে:", err);
+    console.log("Settings saved offline, will sync when online:", err);
   });
-  settingsMsg.textContent = "সেভ হয়েছে!";
+  settingsMsg.textContent = "Saved!";
   setTimeout(() => { settingsMsg.textContent = ""; }, 2000);
   renderDonors();
 });
@@ -579,7 +600,7 @@ cancelEditBtn.addEventListener("click", function () {
 function resetForm() {
   donorForm.reset();
   editIdInput.value = "";
-  submitBtn.textContent = "যোগ করুন (Add)";
+  submitBtn.textContent = "Add";
   cancelEditBtn.style.display = "none";
   ageError.style.display = "none";
 }
@@ -605,7 +626,7 @@ function editDonor(id) {
 }
 
 function deleteDonor(id) {
-  if (!confirm("আপনি কি নিশ্চিত এই ডোনার ডিলিট করতে চান?")) return;
+  if (!confirm("Are you sure you want to delete this donor?")) return;
   queueDeleteAction(id);
 }
 
@@ -645,16 +666,16 @@ function getStatus(lastDonateDate, cooldownDays) {
   } else {
     const diffTime = nextDate - today;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return "কুলডাউন " + diffDays + " দিন বাকি";
+    return diffDays + " days left in cooldown";
   }
 }
 
-// স্ট্যাটাস অনুযায়ী সেল এর কালার
+// Cell color based on status
 function getStatusColor(statusText) {
   if (statusText === "Available") {
-    return "lightgreen"; // Available = সবুজ
+    return "lightgreen"; // Available = green
   } else {
-    return "salmon"; // কুলডাউনে = লাল
+    return "salmon"; // On cooldown = red
   }
 }
 
@@ -673,7 +694,7 @@ function renderDonors() {
   const cooldownDays = settingsData.cooldownDays || 90;
   let donors = getMergedDonors();
 
-  // মোট ডোনার সংখ্যা (ফিল্টার করার আগে)
+  // Total donor count (before filtering)
   totalDonorCount.textContent = donors.length;
 
   if (eligibleOnlyCheckbox.checked) {
@@ -700,7 +721,7 @@ function renderDonors() {
     const nextEligible = getNextEligibleDate(donor.lastDonateDate, cooldownDays);
     const status = getStatus(donor.lastDonateDate, cooldownDays);
     const statusColor = getStatusColor(status);
-    const pendingBadge = donor._pending ? '<span class="pendingBadge">🔄 সিঙ্ক বাকি</span>' : "";
+    const pendingBadge = donor._pending ? '<span class="pendingBadge">🔄 Sync Pending</span>' : "";
 
     const row = document.createElement("tr");
     row.innerHTML = `
@@ -714,8 +735,8 @@ function renderDonors() {
       <td>${nextEligible ? formatDate(nextEligible) : "-"}</td>
       <td bgcolor="${statusColor}">${status}${pendingBadge}</td>
       <td>
-        <button onclick="editDonor('${donor.id}')">এডিট</button>
-        <button onclick="deleteDonor('${donor.id}')">ডিলিট</button>
+        <button onclick="editDonor('${donor.id}')">Edit</button>
+        <button onclick="deleteDonor('${donor.id}')">Delete</button>
       </td>
     `;
     donorTableBody.appendChild(row);
@@ -735,6 +756,17 @@ bloodGroupFilter.addEventListener("change", function () {
 initSettings();
 renderDonors();
 updateSyncStatus();
+</script>
+
+<!-- ================= SERVICE WORKER (OFFLINE SUPPORT) ================= -->
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch(err => {
+      console.log("Service worker registration failed:", err);
+    });
+  });
+}
 </script>
 
 </body>

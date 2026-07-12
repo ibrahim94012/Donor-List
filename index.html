@@ -245,6 +245,7 @@
   <input type="hidden" id="editId">
   <button type="submit" id="submitBtn">Add</button>
   <button type="button" id="cancelEditBtn" style="display:none;">Cancel</button>
+  <span id="donorMsg"></span>
 </form>
 </div>
 
@@ -344,25 +345,52 @@ const CACHE_SETTINGS_KEY = "blood_donor_settings_cache";
 const QUEUE_KEY = "blood_donor_pending_queue";
 
 function getCachedDonors() {
-  const data = localStorage.getItem(CACHE_DONORS_KEY);
-  return data ? JSON.parse(data) : [];
+  try {
+    const data = localStorage.getItem(CACHE_DONORS_KEY);
+    return data ? JSON.parse(data) : [];
+  } catch (err) {
+    console.log("Could not read cached donors:", err);
+    return [];
+  }
 }
 function setCachedDonors(list) {
-  localStorage.setItem(CACHE_DONORS_KEY, JSON.stringify(list));
+  try {
+    localStorage.setItem(CACHE_DONORS_KEY, JSON.stringify(list));
+  } catch (err) {
+    console.log("Could not save cached donors:", err);
+  }
 }
 function getCachedSettings() {
-  const data = localStorage.getItem(CACHE_SETTINGS_KEY);
-  return data ? JSON.parse(data) : { cooldownDays: 90 };
+  try {
+    const data = localStorage.getItem(CACHE_SETTINGS_KEY);
+    return data ? JSON.parse(data) : { cooldownDays: 90 };
+  } catch (err) {
+    console.log("Could not read cached settings:", err);
+    return { cooldownDays: 90 };
+  }
 }
 function setCachedSettings(settings) {
-  localStorage.setItem(CACHE_SETTINGS_KEY, JSON.stringify(settings));
+  try {
+    localStorage.setItem(CACHE_SETTINGS_KEY, JSON.stringify(settings));
+  } catch (err) {
+    console.log("Could not save cached settings:", err);
+  }
 }
 function getQueue() {
-  const data = localStorage.getItem(QUEUE_KEY);
-  return data ? JSON.parse(data) : [];
+  try {
+    const data = localStorage.getItem(QUEUE_KEY);
+    return data ? JSON.parse(data) : [];
+  } catch (err) {
+    console.log("Could not read pending queue:", err);
+    return [];
+  }
 }
 function setQueue(queue) {
-  localStorage.setItem(QUEUE_KEY, JSON.stringify(queue));
+  try {
+    localStorage.setItem(QUEUE_KEY, JSON.stringify(queue));
+  } catch (err) {
+    console.log("Could not save pending queue:", err);
+  }
   updateSyncStatus();
 }
 
@@ -529,15 +557,24 @@ function initSettings() {
 
 settingsForm.addEventListener("submit", function (e) {
   e.preventDefault();
-  const settings = { cooldownDays: parseInt(cooldownDaysInput.value, 10) };
-  settingsData = settings;
-  setCachedSettings(settings);
-  settingsRef.set(settings).catch(err => {
-    console.log("Settings saved offline, will sync when online:", err);
-  });
-  settingsMsg.textContent = "Saved!";
-  setTimeout(() => { settingsMsg.textContent = ""; }, 2000);
-  renderDonors();
+  try {
+    const settings = { cooldownDays: parseInt(cooldownDaysInput.value, 10) };
+    settingsData = settings;
+    setCachedSettings(settings);
+    if (firebaseAvailable && settingsRef) {
+      settingsRef.set(settings).catch(err => {
+        console.log("Settings saved offline, will sync when online:", err);
+      });
+    }
+    settingsMsg.style.color = "green";
+    settingsMsg.textContent = isConnected ? "Saved!" : "Saved offline — will sync when internet returns";
+    setTimeout(() => { settingsMsg.textContent = ""; }, 2500);
+    renderDonors();
+  } catch (err) {
+    console.log("Failed to save settings:", err);
+    settingsMsg.style.color = "red";
+    settingsMsg.textContent = "Something went wrong while saving.";
+  }
 });
 
 /* ============================================================
@@ -554,6 +591,7 @@ const editIdInput = document.getElementById("editId");
 const submitBtn = document.getElementById("submitBtn");
 const cancelEditBtn = document.getElementById("cancelEditBtn");
 const ageError = document.getElementById("ageError");
+const donorMsg = document.getElementById("donorMsg");
 
 function checkAgeValidity() {
   const age = parseInt(ageInput.value, 10);
@@ -576,21 +614,31 @@ donorForm.addEventListener("submit", function (e) {
     return;
   }
 
-  const donor = {
-    name: nameInput.value.trim(),
-    mobile: mobileInput.value.trim(),
-    bloodGroup: bloodGroupInput.value,
-    age: ageInput.value,
-    gender: genderInput.value,
-    lastDonateDate: lastDonateDateInput.value
-  };
+  try {
+    const donor = {
+      name: nameInput.value.trim(),
+      mobile: mobileInput.value.trim(),
+      bloodGroup: bloodGroupInput.value,
+      age: ageInput.value,
+      gender: genderInput.value,
+      lastDonateDate: lastDonateDateInput.value
+    };
 
-  const isEdit = !!editIdInput.value;
-  donor.id = isEdit ? editIdInput.value : "d_" + Date.now().toString();
+    const isEdit = !!editIdInput.value;
+    donor.id = isEdit ? editIdInput.value : "d_" + Date.now().toString();
 
-  queueDonorAction(isEdit ? "update" : "add", donor);
+    queueDonorAction(isEdit ? "update" : "add", donor);
 
-  resetForm();
+    donorMsg.style.color = "green";
+    donorMsg.textContent = isConnected ? "Saved!" : "Saved offline — will sync when internet returns";
+    setTimeout(() => { donorMsg.textContent = ""; }, 3000);
+
+    resetForm();
+  } catch (err) {
+    console.log("Failed to save donor:", err);
+    donorMsg.style.color = "red";
+    donorMsg.textContent = "Something went wrong while saving. Please try again.";
+  }
 });
 
 cancelEditBtn.addEventListener("click", function () {
@@ -762,8 +810,19 @@ updateSyncStatus();
 <script>
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
+    const hadController = !!navigator.serviceWorker.controller;
+
     navigator.serviceWorker.register("sw.js").catch(err => {
       console.log("Service worker registration failed:", err);
+    });
+
+    // Reload once when a new service worker takes over an already-open app,
+    // so the fixed code is used right away instead of a stale cached copy.
+    let refreshed = false;
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      if (refreshed || !hadController) { refreshed = true; return; }
+      refreshed = true;
+      window.location.reload();
     });
   });
 }

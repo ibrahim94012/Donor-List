@@ -219,38 +219,124 @@
   .ghostBtn:hover { border-color: var(--crimson); color: var(--crimson); }
   .ghostBtn svg { width: 14px; height: 14px; }
 
+  /* ---------- Table zoom bar (Excel-style zoom) ---------- */
+  .zoomBar {
+    display: flex; align-items: center; flex-wrap: wrap; gap: 10px;
+    background: var(--paper); border: 1px solid var(--line);
+    border-bottom: none; padding: 8px 14px;
+  }
+  .zoomLabel {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 12.5px; font-weight: 600; color: var(--muted); flex-shrink: 0;
+  }
+  .zoomLabel svg { width: 14px; height: 14px; }
+  .zoomControls { display: flex; align-items: center; gap: 8px; flex: 1 1 160px; min-width: 150px; }
+  .zoomBtn {
+    width: 26px; height: 26px; flex-shrink: 0; border-radius: 50%;
+    border: 1px solid var(--line); background: var(--cream); color: var(--ink);
+    font-size: 16px; font-weight: 700; line-height: 1; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .zoomBtn:hover { border-color: var(--crimson); color: var(--crimson); }
+  .zoomBtn:disabled { opacity: 0.4; cursor: not-allowed; border-color: var(--line); color: var(--ink); }
+  .zoomSlider {
+    flex: 1 1 auto; min-width: 60px; max-width: 160px;
+    accent-color: var(--crimson); height: 4px; cursor: pointer;
+  }
+  .zoomValue {
+    width: 42px; flex-shrink: 0; text-align: right;
+    font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: var(--ink);
+  }
+  .zoomShortcuts { display: flex; gap: 6px; flex-shrink: 0; margin-left: auto; }
+  .zoomChip {
+    height: 28px; padding: 0 10px; border-radius: var(--radius-sm);
+    border: 1px solid var(--line); background: var(--cream); color: var(--ink);
+    font-family: var(--font-body); font-size: 11.5px; font-weight: 600; cursor: pointer;
+  }
+  .zoomChip:hover { border-color: var(--crimson); color: var(--crimson); }
+
   /* ---------- Donor table ---------- */
   .tableWrapper {
     width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch;
-    border: 1px solid var(--line); border-radius: var(--radius-md);
+    border: 1px solid var(--line); border-radius: 0;
     box-shadow: var(--shadow); background: var(--paper);
   }
-  #donorTable { width: 100%; min-width: 820px; border-collapse: collapse; font-size: 12.5px; }
+  #donorTable {
+    width: 100%; min-width: 900px; border-collapse: collapse; font-size: 12.5px;
+    transform-origin: top left;
+  }
   #donorTable th {
     text-align: left; white-space: nowrap; background: var(--crimson); color: #fff;
     font-family: var(--font-body); font-weight: 600; font-size: 11px; letter-spacing: 0.05em;
     text-transform: uppercase; padding: 12px 14px; border-right: 1px solid rgba(255,255,255,0.18);
   }
   #donorTable th:last-child { border-right: none; }
-  #donorTable th:first-child { border-top-left-radius: var(--radius-md); }
-  #donorTable th:last-child { border-top-right-radius: var(--radius-md); }
+  #donorTable th:first-child { border-top-left-radius: 0; }
+  #donorTable th:last-child { border-top-right-radius: 0; }
   #donorTable td { padding: 11px 14px; border-bottom: 1px solid var(--line); border-right: 1px solid var(--line); vertical-align: middle; white-space: nowrap; }
   #donorTable td:last-child { border-right: none; }
   #donorTable tbody tr:last-child td { border-bottom: none; }
   #donorTable tbody tr:hover { background: var(--crimson-tint); }
-  span.nameAvailable {
-    display: inline-block; padding: 4px 11px; border-radius: 999px;
-    background: var(--sage-tint); color: var(--sage); font-weight: 600;
-  }
-  #donorTable td.nameCell { font-weight: 600; font-size: 12.5px; white-space: nowrap; }
+  #donorTable td.noCell { font-family: var(--font-mono); font-size: 12px; color: var(--muted); text-align: center; }
+  #donorTable td.nameCell { font-weight: 600; font-size: 12.5px; white-space: nowrap; color: var(--ink); }
+  #donorTable td.addressCell { font-family: var(--font-body); font-size: 12.5px; color: var(--muted); white-space: normal; max-width: 180px; }
   #donorTable td.metaCell,
   #donorTable td.dateCell { font-family: var(--font-mono); font-size: 12.5px; color: var(--muted); }
 
+  #donorTable td.groupCell { text-align: center; }
+
   .bloodBadge {
-    flex-shrink: 0; width: 34px; height: 34px; border-radius: 50%;
-    background: var(--crimson); color: #fff; font-family: var(--font-mono); font-weight: 600; font-size: 12px;
+    position: relative;
+    flex-shrink: 0; width: 36px; height: 36px;
     display: flex; align-items: center; justify-content: center;
+    margin: 0 auto;
   }
+  .bloodDropShape {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, var(--crimson) 0%, var(--crimson-dark) 100%);
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(45deg);
+    box-shadow: 0 3px 7px rgba(158,27,50,0.4), inset 0 -2px 3px rgba(0,0,0,0.15);
+  }
+  .bloodDropShape::after {
+    content: ""; position: absolute; top: 5px; left: 6px;
+    width: 6px; height: 6px; border-radius: 50%;
+    background: rgba(255,255,255,0.35);
+  }
+  .bloodBadgeText {
+    position: relative; z-index: 1;
+    color: #fff; font-family: var(--font-mono); font-weight: 700; font-size: 11px;
+    letter-spacing: -0.02em;
+  }
+  .availTag {
+    position: absolute; top: -3px; right: 2px; z-index: 2;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--sage); border: 2px solid var(--paper);
+    box-shadow: 0 0 0 1px var(--sage);
+  }
+  .donationBadge {
+    display: inline-flex; align-items: center; gap: 3px;
+    margin-left: 7px; padding: 1px 7px 1px 5px;
+    border-radius: 5px;
+    background: var(--amber-tint); color: var(--amber);
+    font-family: var(--font-mono); font-size: 10.5px; font-weight: 700;
+    border-left: 2px solid var(--amber);
+    vertical-align: middle;
+  }
+  .donationBadge svg { width: 10px; height: 10px; }
+  .vipTag {
+    display: inline-flex; align-items: center; gap: 3px;
+    margin-left: 6px; padding: 2px 8px 2px 6px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #2A2016 0%, #171009 100%);
+    color: #F0C766;
+    border: 1px solid #C79A3E;
+    font-family: var(--font-mono); font-size: 9.5px; font-weight: 700;
+    letter-spacing: 0.06em;
+    vertical-align: middle;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+  }
+  .vipTag svg { width: 9px; height: 9px; flex-shrink: 0; }
   .statusPill {
     display: inline-block; padding: 4px 11px; border-radius: 999px;
     font-size: 11.5px; font-weight: 600; white-space: nowrap;
@@ -382,6 +468,44 @@
     .appTagline { display: none; }
     .statValue { font-size: 20px; }
     .ghostBtn { margin-left: 0; }
+    main { padding: 14px 10px 10px; }
+    .statsRow { gap: 7px; }
+    .statCard { padding: 10px 8px; }
+    #donorTable { min-width: 760px; font-size: 11.5px; }
+    #donorTable th { padding: 10px 10px; font-size: 10px; }
+    #donorTable td { padding: 9px 10px; }
+    #donorTable td.addressCell { max-width: 110px; overflow: hidden; text-overflow: ellipsis; }
+    .modal { padding: 16px 16px 20px; }
+    .zoomBar { padding: 7px 10px; gap: 7px; }
+    .zoomShortcuts { margin-left: 0; }
+    .zoomSlider { max-width: 100px; }
+  }
+
+  @media (max-width: 360px) {
+    .statsRow { grid-template-columns: repeat(3, 1fr); }
+    .statValue { font-size: 17px; }
+    .statLabel { font-size: 10px; }
+    .toolbarControls select, .chip { font-size: 12.5px; height: 36px; }
+  }
+
+  /* ---------- Larger screens (tablet / desktop) ---------- */
+  @media (min-width: 700px) {
+    main { max-width: 960px; padding: 22px 20px 14px; }
+    .pulseDivider { max-width: 960px; }
+    .toolbar { flex-direction: row; align-items: center; flex-wrap: wrap; }
+    .searchBox { flex: 1 1 260px; min-width: 220px; }
+  }
+
+  @media (min-width: 1024px) {
+    body { padding-bottom: 40px; }
+    main { max-width: 1100px; padding: 26px 24px 16px; }
+    .pulseDivider { max-width: 1100px; }
+    .statsRow { gap: 14px; }
+    .statCard { padding: 18px 14px; }
+    .statValue { font-size: 27px; }
+    #donorTable { font-size: 13.5px; }
+    .fab { right: 32px; bottom: 32px; }
+    .tableWrapper:hover { box-shadow: 0 10px 28px rgba(33,22,19,0.12); }
   }
 </style>
 </head>
@@ -406,7 +530,7 @@
   </div>
 </div>
 
-<p class="credit">Development by <u>IBRAHIM KHALIL</u> | 01908111251</p>
+<p class="credit">Development by <u>IBRAHIM KHALIL</u> 01908111251 | <u>SAMIN KHAN</u> </p>
 
 <svg class="pulseDivider" viewBox="0 0 600 26" preserveAspectRatio="none" aria-hidden="true">
   <path d="M0,13 L200,13 L215,2 L230,23 L245,7 L258,18 L270,13 L600,13"/>
@@ -459,10 +583,6 @@
         <input type="checkbox" id="eligibleOnlyCheckbox">
         Eligible Only
       </label>
-      <button type="button" class="ghostBtn" id="shareListBtn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-        Share List
-      </button>
       <button type="button" class="ghostBtn" id="exportCsvBtn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Export CSV
@@ -470,12 +590,31 @@
     </div>
   </div>
 
+  <div class="zoomBar">
+    <span class="zoomLabel">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+      Zoom
+    </span>
+    <div class="zoomControls">
+      <button type="button" class="zoomBtn" id="zoomOutBtn" aria-label="Zoom out">−</button>
+      <input type="range" id="zoomSlider" class="zoomSlider" min="40" max="150" step="5" value="100" aria-label="Table zoom level">
+      <button type="button" class="zoomBtn" id="zoomInBtn" aria-label="Zoom in">+</button>
+      <span class="zoomValue" id="zoomValue">100%</span>
+    </div>
+    <div class="zoomShortcuts">
+      <button type="button" class="zoomChip" id="zoomFitBtn">Fit to Screen</button>
+      <button type="button" class="zoomChip" id="zoomResetBtn">Reset</button>
+    </div>
+  </div>
+
   <div class="tableWrapper">
     <table id="donorTable">
       <thead>
         <tr>
+          <th>No.</th>
           <th>Group</th>
           <th>Name</th>
+          <th>Address</th>
           <th>Mobile</th>
           <th>Age</th>
           <th>Gender</th>
@@ -530,8 +669,25 @@
           <td><input type="text" id="name" required></td>
         </tr>
         <tr>
+          <td>Address:</td>
+          <td><input type="text" id="address" placeholder="e.g. Mirpur, Dhaka"></td>
+        </tr>
+        <tr>
           <td>Mobile:</td>
           <td><input type="tel" id="mobile" required></td>
+        </tr>
+        <tr>
+          <td>Experience (Times Donated):</td>
+          <td><input type="number" id="donationCount" min="0" placeholder="e.g. 3" value="0"></td>
+        </tr>
+        <tr>
+          <td>Donor Type:</td>
+          <td>
+            <select id="donorType">
+              <option value="Regular" selected>Regular</option>
+              <option value="VIP">VIP (Priority Donor)</option>
+            </select>
+          </td>
         </tr>
         <tr>
           <td>Blood Group:</td>
@@ -589,17 +745,15 @@
 <script>
 /* ============================================================
    FIREBASE INIT
+   Config values are not stored as plain text so a casual visitor
+   viewing the page source doesn't see them directly. This is
+   light obfuscation, not real security — real protection comes
+   from Firebase Realtime Database Security Rules (set in the
+   Firebase Console), which control who can actually read/write
+   data regardless of what's visible in the source code.
    ============================================================ */
-const firebaseConfig = {
-  apiKey: "AIzaSyCH5oHFzuC6qbAjV7cgHWQopHtGA180jiU",
-  authDomain: "blood-network-a851b.firebaseapp.com",
-  databaseURL: "https://blood-network-a851b-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "blood-network-a851b",
-  storageBucket: "blood-network-a851b.firebasestorage.app",
-  messagingSenderId: "713058868424",
-  appId: "1:713058868424:web:599441c954490ca5cb19fd",
-  measurementId: "G-SL16TBJ2FQ"
-};
+const _cfgB64 = "eyJhcGlLZXkiOiJBSXphU3lDSDVvSEZ6dUM2cWJBalY3Y2dIV1FvcEh0R0ExODBqaVUiLCJhdXRoRG9tYWluIjoiYmxvb2QtbmV0d29yay1hODUxYi5maXJlYmFzZWFwcC5jb20iLCJkYXRhYmFzZVVSTCI6Imh0dHBzOi8vYmxvb2QtbmV0d29yay1hODUxYi1kZWZhdWx0LXJ0ZGIuYXNpYS1zb3V0aGVhc3QxLmZpcmViYXNlZGF0YWJhc2UuYXBwIiwicHJvamVjdElkIjoiYmxvb2QtbmV0d29yay1hODUxYiIsInN0b3JhZ2VCdWNrZXQiOiJibG9vZC1uZXR3b3JrLWE4NTFiLmZpcmViYXNlc3RvcmFnZS5hcHAiLCJtZXNzYWdpbmdTZW5kZXJJZCI6IjcxMzA1ODg2ODQyNCIsImFwcElkIjoiMTo3MTMwNTg4Njg0MjQ6d2ViOjU5OTQ0MWM5NTQ0OTBjYTVjYjE5ZmQiLCJtZWFzdXJlbWVudElkIjoiRy1TTDE2VEJKMkZRIn0=";
+const firebaseConfig = JSON.parse(atob(_cfgB64));
 
 let firebaseAvailable = false;
 let db, donorsRef, settingsRef;
@@ -869,7 +1023,10 @@ settingsForm.addEventListener("submit", function (e) {
    ============================================================ */
 const donorForm = document.getElementById("donorForm");
 const nameInput = document.getElementById("name");
+const addressInput = document.getElementById("address");
 const mobileInput = document.getElementById("mobile");
+const donationCountInput = document.getElementById("donationCount");
+const donorTypeInput = document.getElementById("donorType");
 const bloodGroupInput = document.getElementById("bloodGroup");
 const ageInput = document.getElementById("age");
 const genderInput = document.getElementById("gender");
@@ -906,7 +1063,10 @@ donorForm.addEventListener("submit", function (e) {
 
     const donor = {
       name: nameInput.value.trim(),
+      address: addressInput.value.trim(),
       mobile: mobileInput.value.trim(),
+      donationCount: donationCountInput.value ? parseInt(donationCountInput.value, 10) : 0,
+      donorType: donorTypeInput.value || "Regular",
       bloodGroup: bloodGroupInput.value,
       age: ageInput.value,
       gender: genderInput.value,
@@ -945,7 +1105,10 @@ function editDonor(id) {
   if (!donor) return;
 
   nameInput.value = donor.name;
+  addressInput.value = donor.address || "";
   mobileInput.value = donor.mobile;
+  donationCountInput.value = donor.donationCount || 0;
+  donorTypeInput.value = donor.donorType || "Regular";
   bloodGroupInput.value = donor.bloodGroup;
   ageInput.value = donor.age;
   genderInput.value = donor.gender;
@@ -1117,18 +1280,24 @@ function renderDonors() {
     emptyMsg.style.display = "none";
   }
 
-  donors.forEach(donor => {
+  donors.forEach((donor, index) => {
     const nextEligible = getNextEligibleDate(donor.lastDonateDate, cooldownDays);
     const status = getStatus(donor.lastDonateDate, cooldownDays);
     const statusClass = getStatusColor(status);
     const pendingBadge = donor._pending ? '<span class="pendingBadge">🔄 Syncing</span>' : "";
     const isNew = donor.createdAt && (Date.now() - donor.createdAt) < 3 * 24 * 60 * 60 * 1000;
     const newBadge = isNew ? '<span class="newBadge">NEW</span>' : "";
+    const availTag = statusClass === 'status-ok' ? '<span class="availTag" title="Available"></span>' : "";
+    const donationCount = donor.donationCount || 0;
+    const donationBadge = `<span class="donationBadge" title="Times donated"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c-3 4.5-6 7.5-6 11a6 6 0 0 0 12 0c0-3.5-3-6.5-6-11z"/></svg>${donationCount}</span>`;
+    const vipTag = donor.donorType === 'VIP' ? '<span class="vipTag" title="VIP Donor"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 16L3 6l5.5 4L12 3l3.5 7L21 6l-2 10H5zm0 2h14v2H5v-2z"/></svg>VIP</span>' : "";
 
     const row = document.createElement("tr");
     row.innerHTML = `
-      <td><div class="bloodBadge">${escapeHtml(donor.bloodGroup)}</div></td>
-      <td class="nameCell">${statusClass === 'status-ok' ? '<span class="nameAvailable">' + escapeHtml(donor.name) + '</span>' : escapeHtml(donor.name)}${newBadge}${pendingBadge}</td>
+      <td class="noCell">${index + 1}</td>
+      <td class="groupCell"><div class="bloodBadge"><span class="bloodDropShape"></span><span class="bloodBadgeText">${escapeHtml(donor.bloodGroup)}</span>${availTag}</div></td>
+      <td class="nameCell">${escapeHtml(donor.name)}${vipTag}${donationBadge}${newBadge}${pendingBadge}</td>
+      <td class="addressCell">${escapeHtml(donor.address || "-")}</td>
       <td>
         <div class="contactCell">
           <a class="contactLink" href="tel:${escapeHtml(donor.mobile)}" title="Call ${escapeHtml(donor.name)}">
@@ -1195,11 +1364,11 @@ document.getElementById("exportCsvBtn").addEventListener("click", function () {
     showToast("No donors to export");
     return;
   }
-  const header = ["Name", "Mobile", "Blood Group", "Age", "Gender", "Last Donation Date", "Next Eligible Date", "Status"];
+  const header = ["Name", "Donor Type", "Address", "Mobile", "Times Donated", "Blood Group", "Age", "Gender", "Last Donation Date", "Next Eligible Date", "Status"];
   const rows = donors.map(d => {
     const next = getNextEligibleDate(d.lastDonateDate, cooldownDays);
     return [
-      d.name, d.mobile, d.bloodGroup, d.age, d.gender,
+      d.name, d.donorType || "Regular", d.address || "-", d.mobile, d.donationCount || 0, d.bloodGroup, d.age, d.gender,
       d.lastDonateDate ? formatDate(new Date(d.lastDonateDate)) : "-",
       next ? formatDate(next) : "-",
       getStatus(d.lastDonateDate, cooldownDays)
@@ -1221,36 +1390,6 @@ document.getElementById("exportCsvBtn").addEventListener("click", function () {
 });
 
 /* ============================================================
-   SHARE LIST (Web Share API, falls back to WhatsApp)
-   ============================================================ */
-document.getElementById("shareListBtn").addEventListener("click", async function () {
-  const cooldownDays = settingsData.cooldownDays || 90;
-  const allDonors = getMergedDonors();
-  const availableDonors = allDonors.filter(d => getStatus(d.lastDonateDate, cooldownDays) === "Available");
-
-  if (availableDonors.length === 0) {
-    showToast("No available donors to share right now");
-    return;
-  }
-
-  const lines = availableDonors
-    .sort((a, b) => a.name.localeCompare(b.name))
-    .map(d => `${d.name} (${d.bloodGroup}) — ${d.mobile}`);
-  const message = "🩸 Available Blood Donors\n\n" + lines.join("\n");
-
-  if (navigator.share) {
-    try {
-      await navigator.share({ title: "Available Blood Donors", text: message });
-      return;
-    } catch (err) {
-      // user cancelled or share failed — fall through to WhatsApp link
-    }
-  }
-  const waUrl = "https://wa.me/?text=" + encodeURIComponent(message);
-  window.open(waUrl, "_blank");
-});
-
-/* ============================================================
    KEYBOARD SHORTCUT — press "/" to jump to search
    ============================================================ */
 document.addEventListener("keydown", e => {
@@ -1262,11 +1401,83 @@ document.addEventListener("keydown", e => {
 });
 
 /* ============================================================
+   TABLE ZOOM (Excel-style zoom in/out/fit)
+   ============================================================ */
+const donorTableEl = document.getElementById("donorTable");
+const tableWrapperEl = document.querySelector(".tableWrapper");
+const zoomSlider = document.getElementById("zoomSlider");
+const zoomValueEl = document.getElementById("zoomValue");
+const zoomInBtn = document.getElementById("zoomInBtn");
+const zoomOutBtn = document.getElementById("zoomOutBtn");
+const zoomFitBtn = document.getElementById("zoomFitBtn");
+const zoomResetBtn = document.getElementById("zoomResetBtn");
+const ZOOM_KEY = "blood_donor_table_zoom";
+const ZOOM_MIN = 40, ZOOM_MAX = 150, ZOOM_STEP = 10;
+const supportsZoomProp = CSS && CSS.supports && CSS.supports("zoom", "1");
+
+function getSavedZoom() {
+  try {
+    const v = parseInt(localStorage.getItem(ZOOM_KEY), 10);
+    return !isNaN(v) && v >= ZOOM_MIN && v <= ZOOM_MAX ? v : 100;
+  } catch (err) {
+    return 100;
+  }
+}
+
+let tableZoomPct = getSavedZoom();
+
+function applyTableZoom(pct, save) {
+  tableZoomPct = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, Math.round(pct)));
+  const factor = tableZoomPct / 100;
+  if (supportsZoomProp) {
+    donorTableEl.style.zoom = factor;
+    donorTableEl.style.transform = "";
+  } else {
+    // Fallback for browsers without CSS zoom support (e.g. older Firefox)
+    donorTableEl.style.transform = "scale(" + factor + ")";
+    donorTableEl.style.width = (100 / factor) + "%";
+  }
+  zoomValueEl.textContent = tableZoomPct + "%";
+  zoomSlider.value = tableZoomPct;
+  zoomOutBtn.disabled = tableZoomPct <= ZOOM_MIN;
+  zoomInBtn.disabled = tableZoomPct >= ZOOM_MAX;
+  if (save !== false) {
+    try { localStorage.setItem(ZOOM_KEY, String(tableZoomPct)); } catch (err) { /* ignore */ }
+  }
+}
+
+zoomInBtn.addEventListener("click", () => applyTableZoom(tableZoomPct + ZOOM_STEP));
+zoomOutBtn.addEventListener("click", () => applyTableZoom(tableZoomPct - ZOOM_STEP));
+zoomSlider.addEventListener("input", () => applyTableZoom(parseInt(zoomSlider.value, 10)));
+zoomResetBtn.addEventListener("click", () => applyTableZoom(100));
+
+zoomFitBtn.addEventListener("click", () => {
+  // Measure the table's natural width at 100% zoom, then fit it to the wrapper's visible width
+  const prevZoom = donorTableEl.style.zoom;
+  const prevTransform = donorTableEl.style.transform;
+  const prevWidth = donorTableEl.style.width;
+  donorTableEl.style.zoom = 1;
+  donorTableEl.style.transform = "";
+  donorTableEl.style.width = "";
+  const naturalWidth = donorTableEl.scrollWidth;
+  const availableWidth = tableWrapperEl.clientWidth;
+  donorTableEl.style.zoom = prevZoom;
+  donorTableEl.style.transform = prevTransform;
+  donorTableEl.style.width = prevWidth;
+
+  if (naturalWidth > 0 && availableWidth > 0) {
+    const fitPct = (availableWidth / naturalWidth) * 100;
+    applyTableZoom(fitPct);
+  }
+});
+
+/* ============================================================
    INIT — render instantly from cache first, don't wait on network
    ============================================================ */
 initSettings();
 renderDonors();
 updateSyncStatus();
+applyTableZoom(tableZoomPct, false);
 
 /* ============================================================
    LOAD FIREBASE SDK IN THE BACKGROUND (non-blocking)

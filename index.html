@@ -98,6 +98,13 @@
     text-overflow: ellipsis;
   }
   .appTagline { font-family: var(--font-bn); font-size: 11px; color: var(--muted); }
+  .appVersionBadge {
+    display: inline-flex; align-items: center;
+    font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+    color: var(--crimson); background: var(--crimson-tint);
+    padding: 1px 7px; border-radius: 999px; margin-left: 7px;
+    vertical-align: middle;
+  }
   .appBarRight { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 
   .iconBtn {
@@ -147,17 +154,6 @@
   }
   @keyframes drawPulse { to { stroke-dashoffset: 0; } }
 
-  /* ---------- Stats dashboard ---------- */
-  .statsRow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
-  .statCard {
-    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-md);
-    padding: 14px 12px; text-align: center;
-  }
-  .statValue { font-family: var(--font-display); font-size: 24px; font-weight: 600; font-variant-numeric: tabular-nums; }
-  .statLabel { font-size: 11.5px; color: var(--muted); margin-top: 2px; font-weight: 600; letter-spacing: 0.01em; }
-  .statCard.statAvailable .statValue { color: var(--sage); }
-  .statCard.statCooldown .statValue { color: var(--amber); }
-
   h2 { font-family: var(--font-display); font-weight: 600; font-size: 19px; margin: 0; color: var(--ink); }
 
   /* ---------- Blood group distribution ---------- */
@@ -178,6 +174,136 @@
   .groupBarFill { height: 100%; border-radius: 999px; background: var(--crimson); transition: width 0.3s ease; }
   .groupCount {
     width: 22px; flex-shrink: 0; text-align: right; font-family: var(--font-mono); font-size: 12px; color: var(--muted);
+  }
+
+  /* ---------- Availability gauge (donor readiness) — premium "vitals monitor" card ---------- */
+  .pieChartCard {
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 85% 0%, var(--crimson-tint) 0%, transparent 55%),
+      linear-gradient(160deg, var(--paper) 60%, var(--sage-tint) 260%);
+    box-shadow: var(--shadow);
+    animation: pieCardIn 0.5s ease-out both;
+  }
+  .pieChartCard::before {
+    content: "";
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--crimson), var(--amber), var(--sage));
+  }
+  @keyframes pieCardIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pieChartCard { animation: none; }
+  }
+
+  .pieChartHeader { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+  .pieChartBadge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--font-mono); font-size: 11.5px; font-weight: 600;
+    color: var(--crimson); background: var(--paper);
+    padding: 4px 10px 4px 8px; border-radius: 999px;
+    border: 1px solid var(--line);
+    box-shadow: 0 1px 3px rgba(33,22,19,0.06);
+  }
+  .liveDot {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--crimson); flex-shrink: 0;
+    animation: liveDotPulse 1.8s ease-in-out infinite;
+  }
+  @keyframes liveDotPulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(158,27,50,0.35); }
+    50% { opacity: 0.65; box-shadow: 0 0 0 4px rgba(158,27,50,0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .liveDot { animation: none; }
+  }
+
+  .gaugeWrap { position: relative; width: 100%; max-width: 240px; height: 148px; margin: 0 auto; }
+  .gaugeSvg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 4px 10px rgba(33,22,19,0.10)); }
+  .gaugeTrack { stroke: var(--amber-tint); }
+  .gaugeProgress {
+    stroke: url(#gradAvailable);
+    transition: stroke-dasharray 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .gaugeTick { stroke: var(--line); stroke-width: 2; stroke-linecap: round; }
+  .gaugeTip {
+    fill: var(--paper); stroke: url(#gradAvailable); stroke-width: 4;
+    transition: cx 0.9s cubic-bezier(0.22, 1, 0.36, 1), cy 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+    filter: drop-shadow(0 0 4px rgba(63,122,93,0.55));
+  }
+
+  .gaugeReadout {
+    position: absolute; left: 0; right: 0; bottom: 4px; text-align: center;
+    display: flex; flex-direction: column; align-items: center; gap: 1px;
+  }
+  .gaugeReadoutValue {
+    font-family: var(--font-display); font-weight: 700; font-size: 34px; line-height: 1;
+    color: var(--ink); font-variant-numeric: tabular-nums;
+  }
+  .gaugeReadoutValue sup { font-size: 16px; font-weight: 600; color: var(--muted); margin-left: 1px; }
+  .gaugeReadoutLabel {
+    font-family: var(--font-body); font-size: 10.5px; font-weight: 600;
+    color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em;
+    margin-top: 2px;
+  }
+
+  .gaugeStats {
+    display: flex; align-items: center; justify-content: center;
+    gap: 18px; margin-top: 12px; padding-top: 12px;
+    border-top: 1px dashed var(--line);
+  }
+  .gaugeStatItem { display: flex; align-items: center; gap: 7px; }
+  .gaugeStatLabel { font-size: 12.5px; color: var(--muted); font-weight: 500; }
+  .gaugeStatValue { font-family: var(--font-mono); font-weight: 700; font-size: 15px; color: var(--ink); }
+  .gaugeDivider { width: 1px; height: 22px; background: var(--line); }
+  .gaugeDot {
+    width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+    box-shadow: 0 0 0 3px var(--cream);
+  }
+  .gaugeDotAvailable { background: linear-gradient(135deg, #5CAE81, #2E6B4C); }
+  .gaugeDotCooldown { background: var(--amber-tint); border: 2px solid var(--amber); box-shadow: none; }
+
+  @media (max-width: 480px) {
+    .gaugeWrap { height: 130px; }
+    .gaugeReadoutValue { font-size: 28px; }
+    .gaugeStats { gap: 12px; }
+  }
+
+  /* ---------- Smart address autocomplete ---------- */
+  .addressAutocomplete { position: relative; }
+  .addressSuggestions {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0; right: 0;
+    max-height: 190px;
+    overflow-y: auto;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow);
+    z-index: 70;
+  }
+  .addressSuggestions.show { display: block; }
+  .addressSuggestionItem {
+    padding: 9px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    color: var(--ink);
+    border-bottom: 1px solid var(--line);
+  }
+  .addressSuggestionItem:last-child { border-bottom: none; }
+  .addressSuggestionItem:hover,
+  .addressSuggestionItem.active {
+    background: var(--crimson-tint);
+    color: var(--crimson);
+  }
+  .addressSuggestionItem mark {
+    background: transparent;
+    color: var(--crimson);
+    font-weight: 700;
   }
 
   /* ---------- Toolbar ---------- */
@@ -466,11 +592,8 @@
 
   @media (max-width: 480px) {
     .appTagline { display: none; }
-    .statValue { font-size: 20px; }
     .ghostBtn { margin-left: 0; }
     main { padding: 14px 10px 10px; }
-    .statsRow { gap: 7px; }
-    .statCard { padding: 10px 8px; }
     #donorTable { min-width: 760px; font-size: 11.5px; }
     #donorTable th { padding: 10px 10px; font-size: 10px; }
     #donorTable td { padding: 9px 10px; }
@@ -482,9 +605,6 @@
   }
 
   @media (max-width: 360px) {
-    .statsRow { grid-template-columns: repeat(3, 1fr); }
-    .statValue { font-size: 17px; }
-    .statLabel { font-size: 10px; }
     .toolbarControls select, .chip { font-size: 12.5px; height: 36px; }
   }
 
@@ -500,9 +620,6 @@
     body { padding-bottom: 40px; }
     main { max-width: 1100px; padding: 26px 24px 16px; }
     .pulseDivider { max-width: 1100px; }
-    .statsRow { gap: 14px; }
-    .statCard { padding: 18px 14px; }
-    .statValue { font-size: 27px; }
     #donorTable { font-size: 13.5px; }
     .fab { right: 32px; bottom: 32px; }
     .tableWrapper:hover { box-shadow: 0 10px 28px rgba(33,22,19,0.12); }
@@ -515,7 +632,7 @@
   <div class="appBarLeft">
     <img class="appLogo" src="fav.jpeg" alt="Blood Donor Network logo">
     <div class="appTitleBlock">
-      <div class="appTitle">Blood Donor Network</div>
+      <div class="appTitle">Blood Donor Network <span class="appVersionBadge" id="appVersionBadge">v2.3.0</span></div>
       <div class="appTagline">রক্তদাতা নেটওয়ার্ক</div>
     </div>
   </div>
@@ -530,25 +647,58 @@
   </div>
 </div>
 
-<p class="credit">Development by <u>IBRAHIM KHALIL</u> | <u>SAMIN KHAN</u> </p>
+<p class="credit">Development by <u>IBRAHIM KHALIL</u> | <u>SAMIN KHAN</u> &nbsp;•&nbsp; Blood Donor Network <u>v2.3.0</u></p>
 
 <svg class="pulseDivider" viewBox="0 0 600 26" preserveAspectRatio="none" aria-hidden="true">
   <path d="M0,13 L200,13 L215,2 L230,23 L245,7 L258,18 L270,13 L600,13"/>
 </svg>
 
 <main>
-  <div class="statsRow">
-    <div class="statCard">
-      <div class="statValue" id="statTotal">0</div>
-      <div class="statLabel">Total Donors</div>
+  <div class="groupChartCard pieChartCard">
+    <div class="pieChartHeader">
+      <div class="groupChartTitle">Donor Availability Overview</div>
+      <span class="pieChartBadge" id="pieTotalBadge"><span class="liveDot"></span><span id="pieTotalBadgeText">0 Total Donors</span></span>
     </div>
-    <div class="statCard statAvailable">
-      <div class="statValue" id="statAvailable">0</div>
-      <div class="statLabel">Available Now</div>
+
+    <div class="gaugeWrap">
+      <svg class="gaugeSvg" viewBox="0 0 220 150" role="img" aria-label="Percentage of donors currently available">
+        <defs>
+          <linearGradient id="gradAvailable" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#6FC094"/>
+            <stop offset="100%" stop-color="#2E6B4C"/>
+          </linearGradient>
+        </defs>
+
+        <!-- tick marks: 0 / 25 / 50 / 75 / 100 -->
+        <line class="gaugeTick" x1="22" y1="100" x2="12" y2="100"/>
+        <line class="gaugeTick" x1="47.77" y1="37.77" x2="40.70" y2="30.70"/>
+        <line class="gaugeTick" x1="110" y1="12" x2="110" y2="2"/>
+        <line class="gaugeTick" x1="172.23" y1="37.77" x2="179.30" y2="30.70"/>
+        <line class="gaugeTick" x1="198" y1="100" x2="208" y2="100"/>
+
+        <path class="gaugeTrack" d="M 32 100 A 78 78 0 0 1 188 100" fill="none" stroke-width="16" stroke-linecap="round"/>
+        <path id="gaugeProgressPath" class="gaugeProgress" d="M 32 100 A 78 78 0 0 1 188 100" fill="none" stroke-width="16" stroke-linecap="round" stroke-dasharray="0 245.04"/>
+        <circle id="gaugeTip" class="gaugeTip" cx="32" cy="100" r="7"/>
+      </svg>
+
+      <div class="gaugeReadout">
+        <div class="gaugeReadoutValue"><span id="gaugeReadoutValue">0</span><sup>%</sup></div>
+        <div class="gaugeReadoutLabel">Ready to Donate</div>
+      </div>
     </div>
-    <div class="statCard statCooldown">
-      <div class="statValue" id="statCooldown">0</div>
-      <div class="statLabel">In Cooldown</div>
+
+    <div class="gaugeStats">
+      <div class="gaugeStatItem">
+        <span class="gaugeDot gaugeDotAvailable"></span>
+        <span class="gaugeStatLabel">Available</span>
+        <span class="gaugeStatValue" id="pieAvailableCount">0</span>
+      </div>
+      <div class="gaugeDivider"></div>
+      <div class="gaugeStatItem">
+        <span class="gaugeDot gaugeDotCooldown"></span>
+        <span class="gaugeStatLabel">Cooldown</span>
+        <span class="gaugeStatValue" id="pieCooldownCount">0</span>
+      </div>
     </div>
   </div>
 
@@ -574,19 +724,10 @@
         <option value="O+">O+</option>
         <option value="O-">O-</option>
       </select>
-      <select id="sortBy">
-        <option value="name">Sort: Name (A–Z)</option>
-        <option value="eligible">Sort: Next Eligible</option>
-        <option value="group">Sort: Blood Group</option>
-      </select>
       <label class="chip" for="eligibleOnlyCheckbox">
         <input type="checkbox" id="eligibleOnlyCheckbox">
         Eligible Only
       </label>
-      <button type="button" class="ghostBtn" id="exportCsvBtn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Export CSV
-      </button>
     </div>
   </div>
 
@@ -670,11 +811,16 @@
         </tr>
         <tr>
           <td>Address:</td>
-          <td><input type="text" id="address" placeholder="e.g. Mirpur, Dhaka"></td>
+          <td>
+            <div class="addressAutocomplete">
+              <input type="text" id="address" placeholder="e.g. Mirpur, Dhaka" autocomplete="off">
+              <div id="addressSuggestions" class="addressSuggestions"></div>
+            </div>
+          </td>
         </tr>
         <tr>
           <td>Mobile:</td>
-          <td><input type="tel" id="mobile" required></td>
+          <td><input type="tel" id="mobile"></td>
         </tr>
         <tr>
           <td>Experience (Times Donated):</td>
@@ -708,14 +854,14 @@
         <tr>
           <td>Age:</td>
           <td>
-            <input type="number" id="age" min="1" max="120" required>
+            <input type="number" id="age" min="1" max="120">
             <span id="ageError" class="fieldError" style="display:none;">Donors under 18 years old cannot donate!</span>
           </td>
         </tr>
         <tr>
           <td>Gender:</td>
           <td>
-            <select id="gender" required>
+            <select id="gender">
               <option value="">-- Select --</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
@@ -1024,6 +1170,112 @@ settingsForm.addEventListener("submit", function (e) {
 const donorForm = document.getElementById("donorForm");
 const nameInput = document.getElementById("name");
 const addressInput = document.getElementById("address");
+const addressSuggestionsEl = document.getElementById("addressSuggestions");
+
+/* ============================================================
+   SMART ADDRESS AUTOCOMPLETE
+   Suggests once 2+ characters are typed, from a base list of
+   common Bangladesh areas plus addresses already saved.
+   ============================================================ */
+const COMMON_ADDRESSES = [
+  "Mirpur, Dhaka", "Dhanmondi, Dhaka", "Gulshan, Dhaka", "Banani, Dhaka",
+  "Uttara, Dhaka", "Mohammadpur, Dhaka", "Badda, Dhaka", "Rampura, Dhaka",
+  "Motijheel, Dhaka", "Jatrabari, Dhaka", "Old Dhaka", "Tejgaon, Dhaka",
+  "Shyamoli, Dhaka", "Mohakhali, Dhaka", "Khilgaon, Dhaka", "Farmgate, Dhaka",
+  "Bashundhara, Dhaka", "Wari, Dhaka", "Malibagh, Dhaka", "Khilkhet, Dhaka",
+  "Chittagong", "Agrabad, Chittagong", "GEC Circle, Chittagong", "Panchlaish, Chittagong",
+  "Khulna", "Rajshahi", "Sylhet", "Barisal", "Rangpur", "Comilla", "Mymensingh",
+  "Narayanganj", "Gazipur", "Savar, Dhaka", "Tongi, Gazipur", "Cox's Bazar",
+  "Bogura", "Jessore", "Dinajpur", "Feni", "Noakhali", "Pabna"
+];
+
+let addressActiveIndex = -1;
+
+function highlightMatch(text, query) {
+  const idx = text.toLowerCase().indexOf(query.toLowerCase());
+  if (idx === -1) return escapeHtml(text);
+  return escapeHtml(text.slice(0, idx)) + "<mark>" + escapeHtml(text.slice(idx, idx + query.length)) + "</mark>" + escapeHtml(text.slice(idx + query.length));
+}
+
+function getAddressPool() {
+  const saved = getMergedDonors()
+    .map(d => (d.address || "").trim())
+    .filter(a => a.length > 0);
+  return Array.from(new Set([...saved, ...COMMON_ADDRESSES]));
+}
+
+function renderAddressSuggestions(query) {
+  addressActiveIndex = -1;
+  if (query.trim().length < 2) {
+    addressSuggestionsEl.classList.remove("show");
+    addressSuggestionsEl.innerHTML = "";
+    return;
+  }
+  const q = query.trim().toLowerCase();
+  const matches = getAddressPool()
+    .filter(a => a.toLowerCase().includes(q))
+    .sort((a, b) => a.toLowerCase().indexOf(q) - b.toLowerCase().indexOf(q))
+    .slice(0, 8);
+
+  if (matches.length === 0) {
+    addressSuggestionsEl.classList.remove("show");
+    addressSuggestionsEl.innerHTML = "";
+    return;
+  }
+
+  addressSuggestionsEl.innerHTML = matches
+    .map(a => `<div class="addressSuggestionItem" data-value="${escapeHtml(a)}">${highlightMatch(a, query.trim())}</div>`)
+    .join("");
+  addressSuggestionsEl.classList.add("show");
+}
+
+addressInput.addEventListener("input", function () {
+  renderAddressSuggestions(addressInput.value);
+});
+
+addressInput.addEventListener("focus", function () {
+  if (addressInput.value.trim().length >= 2) renderAddressSuggestions(addressInput.value);
+});
+
+addressSuggestionsEl.addEventListener("mousedown", function (e) {
+  const item = e.target.closest(".addressSuggestionItem");
+  if (!item) return;
+  addressInput.value = item.getAttribute("data-value");
+  addressSuggestionsEl.classList.remove("show");
+  addressSuggestionsEl.innerHTML = "";
+});
+
+addressInput.addEventListener("keydown", function (e) {
+  const items = Array.from(addressSuggestionsEl.querySelectorAll(".addressSuggestionItem"));
+  if (!items.length || !addressSuggestionsEl.classList.contains("show")) return;
+
+  if (e.key === "ArrowDown") {
+    e.preventDefault();
+    addressActiveIndex = Math.min(addressActiveIndex + 1, items.length - 1);
+  } else if (e.key === "ArrowUp") {
+    e.preventDefault();
+    addressActiveIndex = Math.max(addressActiveIndex - 1, 0);
+  } else if (e.key === "Enter" && addressActiveIndex >= 0) {
+    e.preventDefault();
+    addressInput.value = items[addressActiveIndex].getAttribute("data-value");
+    addressSuggestionsEl.classList.remove("show");
+    addressSuggestionsEl.innerHTML = "";
+    return;
+  } else if (e.key === "Escape") {
+    addressSuggestionsEl.classList.remove("show");
+    return;
+  } else {
+    return;
+  }
+
+  items.forEach((it, i) => it.classList.toggle("active", i === addressActiveIndex));
+});
+
+document.addEventListener("click", function (e) {
+  if (!e.target.closest(".addressAutocomplete")) {
+    addressSuggestionsEl.classList.remove("show");
+  }
+});
 const mobileInput = document.getElementById("mobile");
 const donationCountInput = document.getElementById("donationCount");
 const donorTypeInput = document.getElementById("donorType");
@@ -1189,11 +1441,37 @@ const emptyMsg = document.getElementById("emptyMsg");
 const eligibleOnlyCheckbox = document.getElementById("eligibleOnlyCheckbox");
 const bloodGroupFilter = document.getElementById("bloodGroupFilter");
 const donorSearchInput = document.getElementById("donorSearch");
-const sortBySelect = document.getElementById("sortBy");
-const statTotal = document.getElementById("statTotal");
-const statAvailable = document.getElementById("statAvailable");
-const statCooldown = document.getElementById("statCooldown");
 const groupChartEl = document.getElementById("groupChart");
+const gaugeProgressPath = document.getElementById("gaugeProgressPath");
+const gaugeTip = document.getElementById("gaugeTip");
+const gaugeReadoutValue = document.getElementById("gaugeReadoutValue");
+const pieAvailableCount = document.getElementById("pieAvailableCount");
+const pieCooldownCount = document.getElementById("pieCooldownCount");
+const pieTotalBadgeText = document.getElementById("pieTotalBadgeText");
+
+const GAUGE_CX = 110, GAUGE_CY = 100, GAUGE_R = 78;
+const GAUGE_ARC_LEN = Math.PI * GAUGE_R; // half the circumference (180° arc)
+
+function updatePieChart(total, availableCount) {
+  const cooldownCount = total - availableCount;
+  const availablePct = total > 0 ? Math.round((availableCount / total) * 100) : 0;
+
+  gaugeReadoutValue.textContent = availablePct;
+  pieAvailableCount.textContent = availableCount;
+  pieCooldownCount.textContent = cooldownCount;
+  pieTotalBadgeText.textContent = `${total} Total Donor${total === 1 ? "" : "s"}`;
+
+  const filledLen = (availablePct / 100) * GAUGE_ARC_LEN;
+  gaugeProgressPath.setAttribute("stroke-dasharray", `${filledLen} ${GAUGE_ARC_LEN - filledLen}`);
+
+  // Move the glowing tip marker to the end of the filled arc (180° sweep, left to right)
+  const angleDeg = 180 * (1 - availablePct / 100);
+  const angleRad = (angleDeg * Math.PI) / 180;
+  const tipX = GAUGE_CX + GAUGE_R * Math.cos(angleRad);
+  const tipY = GAUGE_CY - GAUGE_R * Math.sin(angleRad);
+  gaugeTip.setAttribute("cx", tipX.toFixed(2));
+  gaugeTip.setAttribute("cy", tipY.toFixed(2));
+}
 
 const BLOOD_GROUPS = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
@@ -1248,10 +1526,8 @@ function renderDonors() {
   allDonors.forEach(d => {
     if (getStatus(d.lastDonateDate, cooldownDays) === "Available") availableCount++;
   });
-  statTotal.textContent = allDonors.length;
-  statAvailable.textContent = availableCount;
-  statCooldown.textContent = allDonors.length - availableCount;
   updateGroupChart(allDonors);
+  updatePieChart(allDonors.length, availableCount);
 
   let donors = allDonors;
 
@@ -1300,6 +1576,7 @@ function renderDonors() {
       <td class="addressCell">${escapeHtml(donor.address || "-")}</td>
       <td>
         <div class="contactCell">
+          ${donor.mobile ? `
           <a class="contactLink" href="tel:${escapeHtml(donor.mobile)}" title="Call ${escapeHtml(donor.name)}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
             ${escapeHtml(donor.mobile)}
@@ -1307,10 +1584,11 @@ function renderDonors() {
           <button type="button" class="iconBtnSmall copyBtn" data-mobile="${escapeHtml(donor.mobile)}" title="Copy number">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          ` : "-"}
         </div>
       </td>
-      <td class="metaCell">${escapeHtml(donor.age)}</td>
-      <td class="metaCell">${escapeHtml(donor.gender)}</td>
+      <td class="metaCell">${donor.age ? escapeHtml(donor.age) : "-"}</td>
+      <td class="metaCell">${donor.gender ? escapeHtml(donor.gender) : "-"}</td>
       <td class="dateCell">${donor.lastDonateDate ? formatDate(new Date(donor.lastDonateDate)) : "-"}</td>
       <td class="dateCell">${nextEligible ? formatDate(nextEligible) : "-"}</td>
       <td><span class="statusPill ${statusClass}">${escapeHtml(status)}</span></td>
@@ -1349,46 +1627,6 @@ donorSearchInput.addEventListener("input", function () {
   searchQuery = donorSearchInput.value.trim();
   renderDonors();
 });
-sortBySelect.addEventListener("change", function () {
-  sortMode = sortBySelect.value;
-  renderDonors();
-});
-
-/* ============================================================
-   CSV EXPORT
-   ============================================================ */
-document.getElementById("exportCsvBtn").addEventListener("click", function () {
-  const cooldownDays = settingsData.cooldownDays || 90;
-  const donors = getMergedDonors();
-  if (donors.length === 0) {
-    showToast("No donors to export");
-    return;
-  }
-  const header = ["Name", "Donor Type", "Address", "Mobile", "Times Donated", "Blood Group", "Age", "Gender", "Last Donation Date", "Next Eligible Date", "Status"];
-  const rows = donors.map(d => {
-    const next = getNextEligibleDate(d.lastDonateDate, cooldownDays);
-    return [
-      d.name, d.donorType || "Regular", d.address || "-", d.mobile, d.donationCount || 0, d.bloodGroup, d.age, d.gender,
-      d.lastDonateDate ? formatDate(new Date(d.lastDonateDate)) : "-",
-      next ? formatDate(next) : "-",
-      getStatus(d.lastDonateDate, cooldownDays)
-    ];
-  });
-  const csvContent = [header, ...rows]
-    .map(r => r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(","))
-    .join("\n");
-  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "blood_donors.csv";
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
-  showToast("CSV exported");
-});
-
 /* ============================================================
    KEYBOARD SHORTCUT — press "/" to jump to search
    ============================================================ */

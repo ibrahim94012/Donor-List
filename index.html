@@ -2,7 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Blood Donor">
+<link rel="apple-touch-icon" href="fav.jpeg">
 <title>Blood Donor Network</title>
 <link rel="icon" type="image/x-icon" href="fav.jpeg">
 <link rel="manifest" href="manifest.json">
@@ -52,11 +57,14 @@
   body {
     margin: 0;
     padding: 0 0 90px;
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
     font-family: var(--font-body);
     color: var(--ink);
     background: var(--cream);
     -webkit-font-smoothing: antialiased;
     transition: background 0.2s ease, color 0.2s ease;
+    overscroll-behavior-y: contain;
   }
   img { max-width: 100%; height: auto; }
   a { color: var(--crimson); }
@@ -74,15 +82,17 @@
     position: sticky;
     top: 0;
     z-index: 20;
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    padding: 10px 16px;
+    gap: 8px;
+    padding: calc(10px + env(safe-area-inset-top)) 16px 10px;
     background: var(--paper);
     border-bottom: 1px solid var(--line);
   }
-  .appBarLeft { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .appBarLeft { display: flex; align-items: center; gap: 10px; min-width: 0; justify-self: start; }
+  .appBarCenter { display: flex; align-items: center; justify-content: center; min-width: 0; }
+  .appBarRight { display: flex; align-items: center; justify-content: flex-end; flex-shrink: 0; justify-self: end; }
   .appLogo {
     width: 38px; height: 38px; border-radius: 50%;
     border: 2px solid var(--crimson); object-fit: cover; flex-shrink: 0;
@@ -105,7 +115,20 @@
     padding: 1px 7px; border-radius: 999px; margin-left: 7px;
     vertical-align: middle;
   }
-  .appBarRight { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+  @media (max-width: 480px) {
+    .appBar { padding: 9px 12px; gap: 6px; }
+    .appTitle { font-size: 15.5px; }
+    .appTagline { display: none; }
+    .appVersionBadge { display: none; }
+    .appLogo { width: 32px; height: 32px; }
+    .iconBtn { width: 34px; height: 34px; }
+    #syncStatus { font-size: 11px; padding: 4px 10px 4px 8px; }
+  }
+
+  @media (max-width: 360px) {
+    #syncStatus { max-width: 110px; overflow: hidden; text-overflow: ellipsis; }
+  }
 
   .iconBtn {
     width: 38px; height: 38px;
@@ -141,6 +164,65 @@
   .credit { font-size: 11px; color: var(--muted); text-align: center; padding: 10px 16px 0; }
   .credit u { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--line); }
 
+  /* ---------- Side drawer (main navigation: Dashboard / List / Settings) ---------- */
+  .drawerOverlay {
+    position: fixed; inset: 0; background: rgba(20,12,10,0.45); z-index: 40;
+    opacity: 0; visibility: hidden; transition: opacity 0.25s ease, visibility 0.25s ease;
+  }
+  .drawerOverlay.open { opacity: 1; visibility: visible; }
+
+  .sideDrawer {
+    position: fixed; top: 0; left: 0; bottom: 0; z-index: 41;
+    width: 80%; max-width: 300px;
+    background: var(--paper); box-shadow: var(--shadow);
+    display: flex; flex-direction: column; overflow-y: auto;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    transform: translateX(-100%);
+    transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .sideDrawer.open { transform: translateX(0); }
+
+  .drawerHeader {
+    display: flex; align-items: center; gap: 12px;
+    padding: 20px 18px; border-bottom: 1px solid var(--line); flex-shrink: 0;
+  }
+  .drawerLogo { width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--crimson); object-fit: cover; flex-shrink: 0; }
+  .drawerTitle { font-family: var(--font-display); font-weight: 600; font-size: 15.5px; color: var(--ink); line-height: 1.25; }
+  .drawerTagline { font-family: var(--font-bn); font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  .drawerNav { display: flex; flex-direction: column; padding: 10px; gap: 3px; }
+  .drawerNavItem {
+    display: flex; align-items: center; gap: 13px;
+    padding: 12px 14px; border: none; background: transparent;
+    border-radius: var(--radius-md); cursor: pointer; text-align: left;
+    font-family: var(--font-body); font-size: 14.5px; font-weight: 600; color: var(--ink);
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .drawerNavItem svg { width: 19px; height: 19px; flex-shrink: 0; color: var(--muted); transition: color 0.15s ease; }
+  .drawerNavItem:hover { background: var(--cream); }
+  .drawerNavItem.active { background: var(--crimson-tint); color: var(--crimson); }
+  .drawerNavItem.active svg { color: var(--crimson); }
+
+  /* ---------- Page views (Dashboard / List / Settings) ---------- */
+  .pageView { display: none; }
+  .pageView.activeView { display: block; animation: pageFadeIn 0.25s ease; }
+  @keyframes pageFadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pageView.activeView { animation: none; }
+  }
+  .settingsPageCard { max-width: 480px; }
+  .settingsFieldHint { font-size: 11.5px; color: var(--muted); margin-top: -6px; margin-bottom: 10px; }
+  .settingsDivider { border: none; border-top: 1px dashed var(--line); margin: 16px 0; }
+  .settingsSectionLabel {
+    font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px;
+  }
+  .exportBtn svg { width: 15px; height: 15px; }
+
   /* ---------- Heartbeat divider (signature element) ---------- */
   .pulseDivider { width: 100%; max-width: 900px; margin: 6px auto 0; padding: 0 16px; display: block; height: 26px; }
   .pulseDivider path {
@@ -175,6 +257,63 @@
   .groupCount {
     width: 22px; flex-shrink: 0; text-align: right; font-family: var(--font-mono); font-size: 12px; color: var(--muted);
   }
+
+  /* ---------- Overview row: availability pie chart + experience bar chart side by side ---------- */
+  .overviewGrid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: stretch; margin-bottom: 16px;
+  }
+  .overviewGrid > .groupChartCard { margin-bottom: 0; }
+  @media (max-width: 700px) {
+    .overviewGrid { grid-template-columns: 1fr; }
+  }
+
+  /* ---------- Donor experience (times donated by tenure) — vertical bar / "pole" chart ---------- */
+  .expChartCard { display: flex; flex-direction: column; }
+  .expChartHeader { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; gap: 8px; flex-wrap: wrap; }
+  .expRangeTabs {
+    display: inline-flex; background: var(--cream); border: 1px solid var(--line);
+    border-radius: 999px; padding: 2px; gap: 2px; margin-bottom: 10px;
+  }
+  .expRangeTab {
+    border: none; background: transparent; cursor: pointer;
+    font-family: var(--font-mono); font-size: 11px; font-weight: 600; color: var(--muted);
+    padding: 5px 11px; border-radius: 999px; white-space: nowrap;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .expRangeTab:hover { color: var(--crimson); }
+  .expRangeTab.active { background: var(--crimson); color: #fff; }
+  .expChartSub { font-size: 11.5px; color: var(--muted); margin-bottom: 12px; }
+  .expBarsWrap { overflow-x: auto; overflow-y: hidden; padding-bottom: 2px; }
+  .expBars {
+    display: flex; align-items: flex-end; justify-content: space-around;
+    gap: var(--exp-gap, 8px); min-height: 150px; padding-top: 6px; min-width: 100%;
+  }
+  .expBars[data-range="1m"] { justify-content: flex-start; }
+  .expBarCol {
+    display: flex; flex-direction: column; align-items: center; gap: 5px;
+    flex: 1 1 0; min-width: var(--exp-min-w, 14px); max-width: var(--exp-max-w, 44px);
+  }
+  .expBarValue {
+    font-family: var(--font-mono); font-weight: 700; font-size: 12px; color: var(--ink);
+    white-space: nowrap;
+  }
+  .expBarTrack {
+    width: 100%; height: 112px;
+    border-radius: 6px 6px 3px 3px; background: var(--cream);
+    display: flex; align-items: flex-end; overflow: hidden;
+    border: 1px solid var(--line);
+  }
+  .expBarFill {
+    width: 100%; border-radius: 5px 5px 0 0;
+    background: linear-gradient(180deg, var(--crimson), var(--crimson-dark));
+    transition: height 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    min-height: 2px;
+  }
+  .expBarLabel {
+    font-family: var(--font-body); font-size: 10.5px; font-weight: 600;
+    color: var(--muted); text-align: center; white-space: nowrap;
+  }
+  .expBarLabel.expBarLabelHidden { visibility: hidden; }
 
   /* ---------- Availability gauge (donor readiness) — premium "vitals monitor" card ---------- */
   .pieChartCard {
@@ -220,23 +359,18 @@
     .liveDot { animation: none; }
   }
 
-  .gaugeWrap { position: relative; width: 100%; max-width: 240px; height: 148px; margin: 0 auto; }
+  .gaugeWrap { position: relative; width: 100%; max-width: 210px; height: 210px; margin: 0 auto; }
   .gaugeSvg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 4px 10px rgba(33,22,19,0.10)); }
   .gaugeTrack { stroke: var(--amber-tint); }
   .gaugeProgress {
     stroke: url(#gradAvailable);
+    stroke-linecap: butt;
     transition: stroke-dasharray 0.9s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-  .gaugeTick { stroke: var(--line); stroke-width: 2; stroke-linecap: round; }
-  .gaugeTip {
-    fill: var(--paper); stroke: url(#gradAvailable); stroke-width: 4;
-    transition: cx 0.9s cubic-bezier(0.22, 1, 0.36, 1), cy 0.9s cubic-bezier(0.22, 1, 0.36, 1);
-    filter: drop-shadow(0 0 4px rgba(63,122,93,0.55));
   }
 
   .gaugeReadout {
-    position: absolute; left: 0; right: 0; bottom: 4px; text-align: center;
-    display: flex; flex-direction: column; align-items: center; gap: 1px;
+    position: absolute; inset: 0; text-align: center;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
   }
   .gaugeReadoutValue {
     font-family: var(--font-display); font-weight: 700; font-size: 34px; line-height: 1;
@@ -266,7 +400,7 @@
   .gaugeDotCooldown { background: var(--amber-tint); border: 2px solid var(--amber); box-shadow: none; }
 
   @media (max-width: 480px) {
-    .gaugeWrap { height: 130px; }
+    .gaugeWrap { max-width: 178px; height: 178px; }
     .gaugeReadoutValue { font-size: 28px; }
     .gaugeStats { gap: 12px; }
   }
@@ -513,7 +647,7 @@
 
   /* ---------- FAB ---------- */
   .fab {
-    position: fixed; right: 20px; bottom: 20px; z-index: 25;
+    position: fixed; right: 20px; bottom: calc(20px + env(safe-area-inset-bottom)); z-index: 25;
     width: 56px; height: 56px; border-radius: 50%;
     background: var(--crimson); color: #fff; border: none;
     box-shadow: 0 10px 24px rgba(158,27,50,0.4);
@@ -535,7 +669,7 @@
     background: var(--paper); width: 100%; max-width: 520px;
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
     max-height: 88vh; overflow-y: auto;
-    padding: 18px 20px 24px;
+    padding: 18px 20px calc(24px + env(safe-area-inset-bottom));
     box-shadow: var(--shadow);
     animation: slideUp 0.22s ease-out;
   }
@@ -582,7 +716,7 @@
 
   /* ---------- Toast ---------- */
   .toast {
-    position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px);
+    position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom)); transform: translate(-50%, 20px);
     background: var(--ink); color: var(--cream); padding: 11px 20px; border-radius: 999px;
     font-size: 13.5px; font-weight: 600; box-shadow: var(--shadow);
     opacity: 0; pointer-events: none; transition: opacity 0.2s ease, transform 0.2s ease; z-index: 60;
@@ -630,30 +764,56 @@
 
 <div class="appBar">
   <div class="appBarLeft">
-    <img class="appLogo" src="fav.jpeg" alt="Blood Donor Network logo">
+    <button type="button" class="iconBtn" id="menuToggleBtn" title="Menu" aria-label="Open menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
     <div class="appTitleBlock">
-      <div class="appTitle">Blood Donor Network <span class="appVersionBadge" id="appVersionBadge">v2.3.0</span></div>
+      <div class="appTitle">Blood Donor Network <span class="appVersionBadge" id="appVersionBadge">v2.4.0</span></div>
       <div class="appTagline">রক্তদাতা নেটওয়ার্ক</div>
     </div>
   </div>
-  <div class="appBarRight">
+  <div class="appBarCenter">
     <div id="syncStatus" class="sync-offline">Checking...</div>
-    <button type="button" class="iconBtn" id="themeToggleBtn" title="Toggle dark mode" aria-label="Toggle dark mode">
-      <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-    </button>
-    <button type="button" class="iconBtn" id="openSettingsBtn" title="Settings" aria-label="Settings">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-    </button>
+  </div>
+  <div class="appBarRight">
+    <img class="appLogo" src="fav.jpeg" alt="Blood Donor Network logo">
   </div>
 </div>
 
-<p class="credit">Development by <u>IBRAHIM KHALIL</u> | <u>SAMIN KHAN</u> &nbsp;•&nbsp; Blood Donor Network <u>v2.3.0</u></p>
+<div class="drawerOverlay" id="drawerOverlay"></div>
+<nav class="sideDrawer" id="sideDrawer" aria-label="Main navigation">
+  <div class="drawerHeader">
+    <img class="drawerLogo" src="fav.jpeg" alt="Blood Donor Network logo">
+    <div>
+      <div class="drawerTitle">Blood Donor Network</div>
+      <div class="drawerTagline">রক্তদাতা নেটওয়ার্ক</div>
+    </div>
+  </div>
+  <div class="drawerNav">
+    <button type="button" class="drawerNavItem active" data-view="dashboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+      <span>Dashboard</span>
+    </button>
+    <button type="button" class="drawerNavItem" data-view="list">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      <span>Donor List</span>
+    </button>
+    <button type="button" class="drawerNavItem" data-view="settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span>Settings</span>
+    </button>
+  </div>
+</nav>
+
+<p class="credit">Development by <u>IBRAHIM KHALIL</u> | <u>SAMIN KHAN</u> &nbsp;•&nbsp; Blood Donor Network <u>v2.4.0</u></p>
 
 <svg class="pulseDivider" viewBox="0 0 600 26" preserveAspectRatio="none" aria-hidden="true">
   <path d="M0,13 L200,13 L215,2 L230,23 L245,7 L258,18 L270,13 L600,13"/>
 </svg>
 
 <main>
+  <section class="pageView activeView" id="dashboardView">
+  <div class="overviewGrid">
   <div class="groupChartCard pieChartCard">
     <div class="pieChartHeader">
       <div class="groupChartTitle">Donor Availability Overview</div>
@@ -661,24 +821,19 @@
     </div>
 
     <div class="gaugeWrap">
-      <svg class="gaugeSvg" viewBox="0 0 220 150" role="img" aria-label="Percentage of donors currently available">
+      <svg class="gaugeSvg" viewBox="0 0 200 200" role="img" aria-label="Pie chart of donor availability: available vs cooldown">
         <defs>
-          <linearGradient id="gradAvailable" x1="0%" y1="0%" x2="100%" y2="0%">
+          <linearGradient id="gradAvailable" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stop-color="#6FC094"/>
             <stop offset="100%" stop-color="#2E6B4C"/>
           </linearGradient>
         </defs>
 
-        <!-- tick marks: 0 / 25 / 50 / 75 / 100 -->
-        <line class="gaugeTick" x1="22" y1="100" x2="12" y2="100"/>
-        <line class="gaugeTick" x1="47.77" y1="37.77" x2="40.70" y2="30.70"/>
-        <line class="gaugeTick" x1="110" y1="12" x2="110" y2="2"/>
-        <line class="gaugeTick" x1="172.23" y1="37.77" x2="179.30" y2="30.70"/>
-        <line class="gaugeTick" x1="198" y1="100" x2="208" y2="100"/>
-
-        <path class="gaugeTrack" d="M 32 100 A 78 78 0 0 1 188 100" fill="none" stroke-width="16" stroke-linecap="round"/>
-        <path id="gaugeProgressPath" class="gaugeProgress" d="M 32 100 A 78 78 0 0 1 188 100" fill="none" stroke-width="16" stroke-linecap="round" stroke-dasharray="0 245.04"/>
-        <circle id="gaugeTip" class="gaugeTip" cx="32" cy="100" r="7"/>
+        <!-- Full circle = 100% (cooldown color shows through the uncovered portion) -->
+        <circle class="gaugeTrack" cx="100" cy="100" r="78" fill="none" stroke-width="30"/>
+        <!-- Available slice, drawn as an arc starting from 12 o'clock -->
+        <circle id="gaugeProgressPath" class="gaugeProgress" cx="100" cy="100" r="78" fill="none" stroke-width="30"
+                stroke-dasharray="0 489.84" transform="rotate(-90 100 100)"/>
       </svg>
 
       <div class="gaugeReadout">
@@ -702,11 +857,29 @@
     </div>
   </div>
 
+  <div class="groupChartCard expChartCard">
+    <div class="expChartHeader">
+      <div class="groupChartTitle">Donor Experience Overview</div>
+      <span class="pieChartBadge" id="expTotalBadge"><span class="liveDot"></span><span id="expTotalBadgeText">0 Total Donations</span></span>
+    </div>
+    <div class="expRangeTabs" id="expRangeTabs" role="tablist" aria-label="Experience chart time range">
+      <button type="button" class="expRangeTab" data-range="10y" role="tab">10 Years</button>
+      <button type="button" class="expRangeTab" data-range="5y" role="tab">5 Years</button>
+      <button type="button" class="expRangeTab active" data-range="1y" role="tab" aria-selected="true">1 Year</button>
+      <button type="button" class="expRangeTab" data-range="1m" role="tab">1 Month</button>
+    </div>
+    <div class="expChartSub" id="expChartSub">Total times donated per month, over the last 12 months</div>
+    <div class="expBarsWrap"><div class="expBars" id="expBars" data-range="1y"><!-- bars inserted by JS --></div></div>
+  </div>
+  </div>
+
   <div class="groupChartCard">
     <div class="groupChartTitle">Blood Group Distribution</div>
     <div id="groupChart" class="groupChart"><!-- bars inserted by JS --></div>
   </div>
+  </section>
 
+  <section class="pageView" id="listView">
   <div class="toolbar">
     <div class="searchBox">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -731,7 +904,7 @@
     </div>
   </div>
 
-  <div class="zoomBar">
+  <div class="zoomBar" id="zoomBar">
     <span class="zoomLabel">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
       Zoom
@@ -768,20 +941,13 @@
       <tbody id="donorList"><!-- rows inserted by JS --></tbody>
     </table>
   </div>
+
   <p id="emptyMsg" style="display:none;">No donors found.</p>
-</main>
+  </section>
 
-<button type="button" class="fab" id="fabAddDonor" aria-label="Add donor">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-</button>
-
-<!-- ================= SETTINGS MODAL ================= -->
-<div class="modalOverlay" id="settingsModalOverlay">
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="settingsModalTitle">
-    <div class="modalHeader">
-      <h2 id="settingsModalTitle">Settings</h2>
-      <button type="button" class="modalClose" id="closeSettingsBtn" aria-label="Close">✕</button>
-    </div>
+  <section class="pageView" id="settingsView">
+  <div class="groupChartCard settingsPageCard">
+    <div class="groupChartTitle">App Settings</div>
     <form id="settingsForm">
       <table>
         <tr>
@@ -789,12 +955,43 @@
           <td><input type="number" id="cooldownDays" min="1" value="90" required></td>
         </tr>
       </table>
+      <div class="settingsFieldHint">Days a donor must wait after donating before becoming eligible again.</div>
+
+      <hr class="settingsDivider">
+      <div class="settingsSectionLabel">Donor List</div>
+      <table>
+        <tr>
+          <td>Default Sort Order:</td>
+          <td>
+            <select id="defaultSortSelect">
+              <option value="name">Name (A–Z)</option>
+              <option value="group">Blood Group</option>
+              <option value="eligible">Next Eligible Date</option>
+            </select>
+          </td>
+        </tr>
+      </table>
+      <div class="settingsFieldHint">Controls how the Donor List is sorted when the app opens.</div>
+
       <div class="modalActions">
-        <button type="submit">Save</button>
+        <button type="submit">Save Settings</button>
       </div>
     </form>
+
+    <hr class="settingsDivider">
+    <div class="settingsSectionLabel">Backup</div>
+    <button type="button" class="ghostBtn exportBtn" id="exportDataBtn" style="margin-left:0;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Export Donor Data (.json)
+    </button>
+    <div class="settingsFieldHint" style="margin-top:8px;">Downloads a backup of all donors and settings currently stored on this device.</div>
   </div>
-</div>
+  </section>
+</main>
+
+<button type="button" class="fab" id="fabAddDonor" aria-label="Add donor">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+</button>
 
 <!-- ================= DONOR MODAL ================= -->
 <div class="modalOverlay" id="donorModalOverlay">
@@ -1081,41 +1278,59 @@ function showToast(message) {
 }
 
 /* ============================================================
-   DARK MODE TOGGLE
+   THEME (always light — toggle button removed from nav bar)
    ============================================================ */
-const THEME_KEY = "blood_donor_theme";
-const themeToggleBtn = document.getElementById("themeToggleBtn");
-const themeIcon = document.getElementById("themeIcon");
-const SUN_PATH = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>';
-const MOON_PATH = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+document.documentElement.setAttribute("data-theme", "light");
 
-function applyTheme(theme) {
-  document.documentElement.setAttribute("data-theme", theme);
-  themeIcon.innerHTML = theme === "dark" ? SUN_PATH : MOON_PATH;
+/* ============================================================
+   SIDE DRAWER NAVIGATION (Dashboard / Donor List / Settings)
+   ============================================================ */
+const menuToggleBtn = document.getElementById("menuToggleBtn");
+const drawerOverlay = document.getElementById("drawerOverlay");
+const sideDrawer = document.getElementById("sideDrawer");
+const drawerNavItems = document.querySelectorAll(".drawerNavItem");
+const fabAddDonor = document.getElementById("fabAddDonor");
+
+const pageViews = {
+  dashboard: document.getElementById("dashboardView"),
+  list: document.getElementById("listView"),
+  settings: document.getElementById("settingsView")
+};
+
+function openDrawer() {
+  drawerOverlay.classList.add("open");
+  sideDrawer.classList.add("open");
+  document.body.style.overflow = "hidden";
 }
-let currentTheme = localStorage.getItem(THEME_KEY) || "light";
-applyTheme(currentTheme);
-themeToggleBtn.addEventListener("click", () => {
-  currentTheme = currentTheme === "dark" ? "light" : "dark";
-  localStorage.setItem(THEME_KEY, currentTheme);
-  applyTheme(currentTheme);
+function closeDrawer() {
+  drawerOverlay.classList.remove("open");
+  sideDrawer.classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+function switchView(view) {
+  if (!pageViews[view]) return;
+  Object.entries(pageViews).forEach(([key, el]) => el.classList.toggle("activeView", key === view));
+  drawerNavItems.forEach(item => item.classList.toggle("active", item.getAttribute("data-view") === view));
+  fabAddDonor.style.display = view === "settings" ? "none" : "flex";
+  closeDrawer();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+menuToggleBtn.addEventListener("click", openDrawer);
+drawerOverlay.addEventListener("click", closeDrawer);
+drawerNavItems.forEach(item => {
+  item.addEventListener("click", () => switchView(item.getAttribute("data-view")));
 });
 
 /* ============================================================
-   MODALS (Settings / Add-Edit Donor)
+   MODALS (Add / Edit Donor)
    ============================================================ */
-const settingsModalOverlay = document.getElementById("settingsModalOverlay");
 const donorModalOverlay = document.getElementById("donorModalOverlay");
-const openSettingsBtn = document.getElementById("openSettingsBtn");
-const closeSettingsBtn = document.getElementById("closeSettingsBtn");
-const fabAddDonor = document.getElementById("fabAddDonor");
 const closeDonorModalBtn = document.getElementById("closeDonorModalBtn");
 
 function openModal(overlay) { overlay.classList.add("open"); document.body.style.overflow = "hidden"; }
 function closeModal(overlay) { overlay.classList.remove("open"); document.body.style.overflow = ""; }
-
-openSettingsBtn.addEventListener("click", () => openModal(settingsModalOverlay));
-closeSettingsBtn.addEventListener("click", () => closeModal(settingsModalOverlay));
 
 fabAddDonor.addEventListener("click", () => {
   resetForm();
@@ -1124,13 +1339,11 @@ fabAddDonor.addEventListener("click", () => {
 });
 closeDonorModalBtn.addEventListener("click", () => closeModal(donorModalOverlay));
 
-[settingsModalOverlay, donorModalOverlay].forEach(overlay => {
-  overlay.addEventListener("click", e => { if (e.target === overlay) closeModal(overlay); });
-});
+donorModalOverlay.addEventListener("click", e => { if (e.target === donorModalOverlay) closeModal(donorModalOverlay); });
 document.addEventListener("keydown", e => {
   if (e.key === "Escape") {
-    closeModal(settingsModalOverlay);
     closeModal(donorModalOverlay);
+    closeDrawer();
   }
 });
 
@@ -1139,9 +1352,17 @@ document.addEventListener("keydown", e => {
    ============================================================ */
 const settingsForm = document.getElementById("settingsForm");
 const cooldownDaysInput = document.getElementById("cooldownDays");
+const defaultSortSelect = document.getElementById("defaultSortSelect");
+const exportDataBtn = document.getElementById("exportDataBtn");
+const DEFAULT_SORT_KEY = "blood_donor_default_sort";
 
 function initSettings() {
   cooldownDaysInput.value = settingsData.cooldownDays;
+  const savedSort = localStorage.getItem(DEFAULT_SORT_KEY);
+  if (savedSort) {
+    sortMode = savedSort;
+    defaultSortSelect.value = savedSort;
+  }
 }
 
 settingsForm.addEventListener("submit", function (e) {
@@ -1155,14 +1376,44 @@ settingsForm.addEventListener("submit", function (e) {
         console.log("Settings saved offline, will sync when online:", err);
       });
     }
+    sortMode = defaultSortSelect.value;
+    try { localStorage.setItem(DEFAULT_SORT_KEY, sortMode); } catch (err) { /* ignore */ }
+
     showToast(isConnected ? "Settings saved" : "Saved offline — will sync when online");
-    closeModal(settingsModalOverlay);
     renderDonors();
   } catch (err) {
     console.log("Failed to save settings:", err);
     showToast("Something went wrong while saving");
   }
 });
+
+// Backup: download every donor + the current settings as a JSON file the
+// user can keep as a safety copy or move to another device.
+exportDataBtn.addEventListener("click", () => {
+  try {
+    const payload = {
+      exportedAt: new Date().toISOString(),
+      settings: settingsData,
+      donors: getMergedDonors()
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const stamp = new Date().toISOString().slice(0, 10);
+    a.href = url;
+    a.download = `blood-donor-backup-${stamp}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    showToast("Backup downloaded");
+  } catch (err) {
+    console.log("Export failed:", err);
+    showToast("Could not export data");
+  }
+});
+
+
 
 /* ============================================================
    DONOR FORM (Add / Edit)
@@ -1371,7 +1622,6 @@ function editDonor(id) {
   cancelEditBtn.style.display = "inline";
   document.getElementById("donorModalTitle").textContent = "Edit Donor";
 
-  closeModal(settingsModalOverlay);
   openModal(donorModalOverlay);
 }
 
@@ -1443,14 +1693,13 @@ const bloodGroupFilter = document.getElementById("bloodGroupFilter");
 const donorSearchInput = document.getElementById("donorSearch");
 const groupChartEl = document.getElementById("groupChart");
 const gaugeProgressPath = document.getElementById("gaugeProgressPath");
-const gaugeTip = document.getElementById("gaugeTip");
 const gaugeReadoutValue = document.getElementById("gaugeReadoutValue");
 const pieAvailableCount = document.getElementById("pieAvailableCount");
 const pieCooldownCount = document.getElementById("pieCooldownCount");
 const pieTotalBadgeText = document.getElementById("pieTotalBadgeText");
 
-const GAUGE_CX = 110, GAUGE_CY = 100, GAUGE_R = 78;
-const GAUGE_ARC_LEN = Math.PI * GAUGE_R; // half the circumference (180° arc)
+const GAUGE_R = 78;
+const GAUGE_CIRC = 2 * Math.PI * GAUGE_R; // full circle circumference (pie chart)
 
 function updatePieChart(total, availableCount) {
   const cooldownCount = total - availableCount;
@@ -1461,16 +1710,8 @@ function updatePieChart(total, availableCount) {
   pieCooldownCount.textContent = cooldownCount;
   pieTotalBadgeText.textContent = `${total} Total Donor${total === 1 ? "" : "s"}`;
 
-  const filledLen = (availablePct / 100) * GAUGE_ARC_LEN;
-  gaugeProgressPath.setAttribute("stroke-dasharray", `${filledLen} ${GAUGE_ARC_LEN - filledLen}`);
-
-  // Move the glowing tip marker to the end of the filled arc (180° sweep, left to right)
-  const angleDeg = 180 * (1 - availablePct / 100);
-  const angleRad = (angleDeg * Math.PI) / 180;
-  const tipX = GAUGE_CX + GAUGE_R * Math.cos(angleRad);
-  const tipY = GAUGE_CY - GAUGE_R * Math.sin(angleRad);
-  gaugeTip.setAttribute("cx", tipX.toFixed(2));
-  gaugeTip.setAttribute("cy", tipY.toFixed(2));
+  const filledLen = (availablePct / 100) * GAUGE_CIRC;
+  gaugeProgressPath.setAttribute("stroke-dasharray", `${filledLen} ${GAUGE_CIRC - filledLen}`);
 }
 
 const BLOOD_GROUPS = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
@@ -1493,6 +1734,120 @@ function updateGroupChart(allDonors) {
     `;
   }).join("");
 }
+
+const expBarsEl = document.getElementById("expBars");
+const expTotalBadgeText = document.getElementById("expTotalBadgeText");
+const expChartSubEl = document.getElementById("expChartSub");
+const expRangeTabsEl = document.getElementById("expRangeTabs");
+
+// Sizing per range so the "poles" never get too wide (5-year view, only
+// 5 bars) or too cramped (30-day view, 30 bars) — bar width scales with
+// how many bars are on screen, within sensible min/max bounds.
+const EXP_RANGE_CONFIG = {
+  "10y": { gap: 8,  minW: 22, maxW: 58, sub: "Total times donated per year, over the last 10 years" },
+  "5y":  { gap: 12, minW: 34, maxW: 80, sub: "Total times donated per year, over the last 5 years" },
+  "1y":  { gap: 6,  minW: 18, maxW: 50, sub: "Total times donated per month, over the last 12 months" },
+  "1m":  { gap: 3,  minW: 9,  maxW: 20, sub: "Total times donated per day, over the last 30 days" }
+};
+
+let expRangeMode = "1y";
+
+// Builds the poles for the selected range: 10 yearly buckets for "10y",
+// 5 for "5y", 12 monthly buckets for "1y", 30 daily buckets for "1m" —
+// each knows how to test whether a donor's last donation date falls in it.
+function buildExpBuckets(mode) {
+  const now = new Date();
+  const buckets = [];
+
+  if (mode === "10y" || mode === "5y") {
+    const count = mode === "10y" ? 10 : 5;
+    const thisYear = now.getFullYear();
+    for (let i = count - 1; i >= 0; i--) {
+      const year = thisYear - i;
+      buckets.push({ key: String(year), label: String(year), test: d => d.getFullYear() === year });
+    }
+  } else if (mode === "1y") {
+    for (let i = 11; i >= 0; i--) {
+      const ref = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const y = ref.getFullYear(), m = ref.getMonth();
+      buckets.push({
+        key: `${y}-${m}`,
+        label: ref.toLocaleDateString(undefined, { month: "short" }),
+        test: d => d.getFullYear() === y && d.getMonth() === m
+      });
+    }
+  } else { // "1m"
+    for (let i = 29; i >= 0; i--) {
+      const ref = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+      const y = ref.getFullYear(), m = ref.getMonth(), day = ref.getDate();
+      buckets.push({
+        key: `${y}-${m}-${day}`,
+        label: String(day),
+        test: d => d.getFullYear() === y && d.getMonth() === m && d.getDate() === day
+      });
+    }
+  }
+  return buckets;
+}
+
+function updateExperienceChart(allDonors) {
+  const buckets = buildExpBuckets(expRangeMode);
+  const totals = buckets.map(() => 0);
+  const donorCounts = buckets.map(() => 0);
+
+  allDonors.forEach(d => {
+    if (!d.lastDonateDate) return;
+    const lastDate = new Date(d.lastDonateDate);
+    if (isNaN(lastDate)) return;
+    const idx = buckets.findIndex(b => b.test(lastDate));
+    if (idx === -1) return;
+    totals[idx] += d.donationCount || 0;
+    donorCounts[idx]++;
+  });
+
+  const grandTotal = totals.reduce((sum, v) => sum + v, 0);
+  expTotalBadgeText.textContent = `${grandTotal} Total Donation${grandTotal === 1 ? "" : "s"}`;
+
+  const cfg = EXP_RANGE_CONFIG[expRangeMode];
+  expChartSubEl.textContent = cfg.sub;
+  expBarsEl.style.setProperty("--exp-gap", cfg.gap + "px");
+  expBarsEl.style.setProperty("--exp-min-w", cfg.minW + "px");
+  expBarsEl.style.setProperty("--exp-max-w", cfg.maxW + "px");
+  expBarsEl.setAttribute("data-range", expRangeMode);
+
+  const maxVal = Math.max(1, ...totals);
+  // Thin out labels when there are too many bars, to avoid clutter (e.g. the 30-day view)
+  const showEveryLabel = buckets.length <= 15;
+
+  expBarsEl.innerHTML = buckets.map((b, i) => {
+    const val = totals[i];
+    const pct = Math.round((val / maxVal) * 100);
+    const isLast = i === buckets.length - 1;
+    const labelVisible = showEveryLabel || i % 5 === 0 || isLast;
+    const tipText = `${b.label}: ${val} donation${val === 1 ? "" : "s"} from ${donorCounts[i]} donor${donorCounts[i] === 1 ? "" : "s"}`;
+    return `
+      <div class="expBarCol" title="${escapeHtml(tipText)}">
+        <div class="expBarValue">${val}</div>
+        <div class="expBarTrack"><div class="expBarFill" style="height:${pct}%"></div></div>
+        <div class="expBarLabel${labelVisible ? "" : " expBarLabelHidden"}">${escapeHtml(b.label)}</div>
+      </div>
+    `;
+  }).join("");
+}
+
+expRangeTabsEl.addEventListener("click", e => {
+  const btn = e.target.closest(".expRangeTab");
+  if (!btn) return;
+  const range = btn.getAttribute("data-range");
+  if (range === expRangeMode) return;
+  expRangeMode = range;
+  expRangeTabsEl.querySelectorAll(".expRangeTab").forEach(t => {
+    const active = t === btn;
+    t.classList.toggle("active", active);
+    t.setAttribute("aria-selected", active ? "true" : "false");
+  });
+  updateExperienceChart(getMergedDonors());
+});
 
 let selectedBloodGroup = "";
 let searchQuery = "";
@@ -1528,6 +1883,7 @@ function renderDonors() {
   });
   updateGroupChart(allDonors);
   updatePieChart(allDonors.length, availableCount);
+  updateExperienceChart(allDonors);
 
   let donors = allDonors;
 
@@ -1631,10 +1987,11 @@ donorSearchInput.addEventListener("input", function () {
    KEYBOARD SHORTCUT — press "/" to jump to search
    ============================================================ */
 document.addEventListener("keydown", e => {
-  if (e.key !== "/" || settingsModalOverlay.classList.contains("open") || donorModalOverlay.classList.contains("open")) return;
+  if (e.key !== "/" || donorModalOverlay.classList.contains("open")) return;
   const tag = document.activeElement.tagName;
   if (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA") return;
   e.preventDefault();
+  switchView("list");
   donorSearchInput.focus();
 });
 

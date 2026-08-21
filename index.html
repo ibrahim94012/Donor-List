@@ -65,6 +65,8 @@
     -webkit-font-smoothing: antialiased;
     transition: background 0.2s ease, color 0.2s ease;
     overscroll-behavior-y: contain;
+    overflow-x: hidden;
+    width: 100%;
   }
   img { max-width: 100%; height: auto; }
   a { color: var(--crimson); }
@@ -73,8 +75,11 @@
 
   main {
     max-width: 900px;
+    width: 100%;
     margin: 0 auto;
     padding: 18px 16px 10px;
+    box-sizing: border-box;
+    overflow-x: hidden;
   }
 
   /* ---------- App bar ---------- */
@@ -83,7 +88,7 @@
     top: 0;
     z-index: 20;
     display: grid;
-    grid-template-columns: 1fr auto 1fr;
+    grid-template-columns: 1fr auto;
     align-items: center;
     gap: 8px;
     padding: calc(10px + env(safe-area-inset-top)) 16px 10px;
@@ -91,7 +96,6 @@
     border-bottom: 1px solid var(--line);
   }
   .appBarLeft { display: flex; align-items: center; gap: 10px; min-width: 0; justify-self: start; }
-  .appBarCenter { display: flex; align-items: center; justify-content: center; min-width: 0; }
   .appBarRight { display: flex; align-items: center; justify-content: flex-end; flex-shrink: 0; justify-self: end; }
   .appLogo {
     width: 38px; height: 38px; border-radius: 50%;
@@ -144,22 +148,34 @@
   .iconBtn svg { width: 18px; height: 18px; }
 
   #syncStatus {
-    display: none;
+    position: fixed;
+    left: 50%;
+    top: calc(10px + env(safe-area-inset-top));
+    z-index: 55;
+    display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 5px 12px 5px 9px;
+    gap: 7px;
+    padding: 8px 16px 8px 12px;
     border-radius: 999px;
-    font-size: 12px;
+    font-size: 12.5px;
     font-weight: 600;
-    background: var(--cream);
-    border: 1px solid var(--line);
+    background: var(--ink);
+    color: var(--cream);
+    box-shadow: var(--shadow);
     white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translate(-50%, -14px);
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
   }
-  #syncStatus.show { display: inline-flex; }
-  #syncStatus::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
-  .sync-online  { color: var(--sage); }
-  .sync-offline { color: var(--crimson); }
-  .sync-pending { color: var(--amber); }
+  #syncStatus.show { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
+  #syncStatus::before {
+    content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex-shrink: 0;
+  }
+  .sync-online  { color: #7BD9A5; }
+  .sync-offline { color: #F0949E; }
+  .sync-pending { color: #F0C766; }
 
   .credit { font-size: 11px; color: var(--muted); text-align: center; padding: 10px 16px 0; }
   .credit u { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--line); }
@@ -242,6 +258,7 @@
   .groupChartCard {
     background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-md);
     padding: 14px 16px; margin-bottom: 16px;
+    min-width: 0; box-sizing: border-box; overflow: hidden;
   }
   .groupChartTitle {
     font-family: var(--font-display); font-weight: 600; font-size: 14.5px; color: var(--ink);
@@ -261,15 +278,16 @@
   /* ---------- Overview row: availability pie chart + experience bar chart side by side ---------- */
   .overviewGrid {
     display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: stretch; margin-bottom: 16px;
+    width: 100%;
   }
-  .overviewGrid > .groupChartCard { margin-bottom: 0; }
+  .overviewGrid > .groupChartCard { margin-bottom: 0; min-width: 0; overflow: hidden; }
   @media (max-width: 700px) {
     .overviewGrid { grid-template-columns: 1fr; }
   }
 
   /* ---------- Donor experience (times donated by tenure) — vertical bar / "pole" chart ---------- */
-  .expChartCard { display: flex; flex-direction: column; }
-  .expChartHeader { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; gap: 8px; flex-wrap: wrap; }
+  .expChartCard { display: flex; flex-direction: column; min-width: 0; }
+  .expChartHeader { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; gap: 8px; flex-wrap: wrap; min-width: 0; }
   .expRangeTabs {
     display: inline-flex; background: var(--cream); border: 1px solid var(--line);
     border-radius: 999px; padding: 2px; gap: 2px; margin-bottom: 10px;
@@ -283,10 +301,11 @@
   .expRangeTab:hover { color: var(--crimson); }
   .expRangeTab.active { background: var(--crimson); color: #fff; }
   .expChartSub { font-size: 11.5px; color: var(--muted); margin-bottom: 12px; }
-  .expBarsWrap { overflow-x: auto; overflow-y: hidden; padding-bottom: 2px; }
+  .expBarsWrap { overflow-x: auto; overflow-y: hidden; padding-bottom: 2px; width: 100%; min-width: 0; }
   .expBars {
     display: flex; align-items: flex-end; justify-content: space-around;
     gap: var(--exp-gap, 8px); min-height: 150px; padding-top: 6px; min-width: 100%;
+    width: max-content;
   }
   .expBars[data-range="1m"] { justify-content: flex-start; }
   .expBarCol {
@@ -338,7 +357,7 @@
     .pieChartCard { animation: none; }
   }
 
-  .pieChartHeader { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+  .pieChartHeader { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; gap: 6px; min-width: 0; }
   .pieChartBadge {
     display: inline-flex; align-items: center; gap: 6px;
     font-family: var(--font-mono); font-size: 11.5px; font-weight: 600;
@@ -346,7 +365,9 @@
     padding: 4px 10px 4px 8px; border-radius: 999px;
     border: 1px solid var(--line);
     box-shadow: 0 1px 3px rgba(33,22,19,0.06);
+    min-width: 0; max-width: 100%; flex-shrink: 1;
   }
+  .pieChartBadge span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .liveDot {
     width: 6px; height: 6px; border-radius: 50%; background: var(--crimson); flex-shrink: 0;
     animation: liveDotPulse 1.8s ease-in-out infinite;
@@ -403,6 +424,50 @@
     .gaugeWrap { max-width: 178px; height: 178px; }
     .gaugeReadoutValue { font-size: 28px; }
     .gaugeStats { gap: 12px; }
+  }
+
+  /* ---------- Dashboard: fine-tuned mobile layout ---------- */
+  @media (max-width: 480px) {
+    .overviewGrid { gap: 12px; margin-bottom: 12px; }
+    .groupChartCard { padding: 12px 13px; margin-bottom: 12px; border-radius: var(--radius-md); }
+    .groupChartTitle { font-size: 13.5px; margin-bottom: 8px; }
+
+    .pieChartHeader { flex-wrap: wrap; gap: 6px; }
+    .pieChartBadge { font-size: 10.5px; padding: 3px 9px 3px 7px; }
+    .liveDot { width: 5px; height: 5px; }
+
+    .gaugeReadoutLabel { font-size: 9.5px; }
+    .gaugeStatLabel { font-size: 11.5px; }
+    .gaugeStatValue { font-size: 13.5px; }
+    .gaugeDot { width: 9px; height: 9px; }
+
+    .expChartHeader { gap: 6px; margin-bottom: 8px; }
+    .expRangeTabs {
+      width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch;
+      justify-content: flex-start; margin-bottom: 8px;
+    }
+    .expRangeTab { padding: 5px 9px; font-size: 10.5px; flex-shrink: 0; }
+    .expChartSub { font-size: 10.5px; margin-bottom: 10px; }
+    .expBars { min-height: 130px; }
+    .expBarTrack { height: 92px; }
+    .expBarValue { font-size: 10.5px; }
+    .expBarLabel { font-size: 9.5px; }
+    .expBarCol { min-width: var(--exp-min-w, 12px); max-width: var(--exp-max-w, 34px); }
+
+    .groupChart { gap: 6px; }
+    .groupLabel { width: 28px; font-size: 11px; }
+    .groupBarTrack { height: 8px; }
+    .groupCount { width: 20px; font-size: 11px; }
+  }
+
+  @media (max-width: 360px) {
+    .groupChartCard { padding: 10px 11px; }
+    .pieChartBadge span:last-child { max-width: 108px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .gaugeWrap { max-width: 150px; height: 150px; }
+    .gaugeReadoutValue { font-size: 24px; }
+    .gaugeReadout { gap: 0; }
+    .gaugeStats { gap: 8px; flex-wrap: wrap; row-gap: 6px; }
+    .expBarTrack { height: 78px; }
   }
 
   /* ---------- Smart address autocomplete ---------- */
@@ -604,7 +669,55 @@
   .status-ok   { background: var(--sage-tint); color: var(--sage); }
   .status-wait { background: var(--amber-tint); color: var(--amber); }
 
+  .mobileColHeader { cursor: pointer; user-select: none; transition: background 0.15s ease; }
+  .mobileColHeader:hover { background: rgba(255,255,255,0.12); }
+  .mobileColHeaderInner { display: inline-flex; align-items: center; gap: 5px; }
+  .mobileLockIcon { width: 12px; height: 12px; flex-shrink: 0; opacity: 0.9; }
+
   .contactCell { display: flex; align-items: center; gap: 6px; }
+  .contactLocked {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--font-mono); font-size: 12.5px; font-weight: 500; color: var(--muted);
+  }
+  .contactLocked svg { width: 13px; height: 13px; color: var(--muted); flex-shrink: 0; }
+
+  /* ---------- PIN modal ---------- */
+  .pinModal { max-width: 340px; }
+  .pinModalHint { font-size: 13px; color: var(--muted); margin: 0 0 14px; line-height: 1.5; }
+  .pinInput {
+    width: 100%; height: 52px; box-sizing: border-box; text-align: center;
+    font-size: 26px; letter-spacing: 10px; font-family: var(--font-mono); color: var(--ink);
+    background: var(--cream); border: 1px solid var(--line); border-radius: var(--radius-sm);
+    margin-bottom: 6px;
+  }
+  .pinInput:focus { border-color: var(--crimson); background: var(--paper); outline: none; }
+  .pinInput.pinShake { animation: pinShake 0.35s; border-color: var(--crimson); }
+  @keyframes pinShake {
+    10%, 90% { transform: translateX(-2px); }
+    20%, 80% { transform: translateX(4px); }
+    30%, 50%, 70% { transform: translateX(-7px); }
+    40%, 60% { transform: translateX(7px); }
+  }
+  .pinModal .modalActions { margin-top: 10px; }
+  .pinModal .modalActions button {
+    min-height: 46px; border-radius: 999px; font-size: 14px; font-weight: 700;
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    cursor: pointer; font-family: var(--font-body); color: #fff;
+  }
+  #pinForm button[type="submit"] {
+    flex: 1;
+    background: linear-gradient(135deg, var(--crimson), var(--crimson-dark));
+    border: none; box-shadow: 0 6px 16px rgba(158,27,50,0.32);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  }
+  #pinForm button[type="submit"]:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(158,27,50,0.4); }
+  #pinForm button[type="submit"]:active { transform: translateY(0); }
+  #cancelPinBtn {
+    background: var(--cream) !important; color: var(--muted) !important;
+    border: 1px solid var(--line) !important; box-shadow: none;
+    flex: 0 0 auto; padding: 0 22px;
+  }
+  #cancelPinBtn:hover { color: var(--ink) !important; border-color: var(--muted) !important; background: var(--paper) !important; }
   .contactLink {
     display: inline-flex; align-items: center; gap: 5px; text-decoration: none;
     color: var(--ink); font-family: var(--font-mono); font-size: 12.5px; font-weight: 500;
@@ -768,35 +881,34 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
     <div class="appTitleBlock">
-      <div class="appTitle">Blood Donor Network <span class="appVersionBadge" id="appVersionBadge">v2.4.0</span></div>
+      <div class="appTitle"><span id="appTitleText">Blood Donor Network</span> <span class="appVersionBadge" id="appVersionBadge">v2.5.0</span></div>
       <div class="appTagline">রক্তদাতা নেটওয়ার্ক</div>
     </div>
-  </div>
-  <div class="appBarCenter">
-    <div id="syncStatus" class="sync-offline">Checking...</div>
   </div>
   <div class="appBarRight">
     <img class="appLogo" src="fav.jpeg" alt="Blood Donor Network logo">
   </div>
 </div>
 
+<div id="syncStatus" class="sync-offline">Checking...</div>
+
 <div class="drawerOverlay" id="drawerOverlay"></div>
 <nav class="sideDrawer" id="sideDrawer" aria-label="Main navigation">
   <div class="drawerHeader">
     <img class="drawerLogo" src="fav.jpeg" alt="Blood Donor Network logo">
     <div>
-      <div class="drawerTitle">Blood Donor Network</div>
+      <div class="drawerTitle" id="drawerTitleText">Blood Donor Network</div>
       <div class="drawerTagline">রক্তদাতা নেটওয়ার্ক</div>
     </div>
   </div>
   <div class="drawerNav">
-    <button type="button" class="drawerNavItem active" data-view="dashboard">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
-      <span>Dashboard</span>
-    </button>
-    <button type="button" class="drawerNavItem" data-view="list">
+    <button type="button" class="drawerNavItem active" data-view="list">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
       <span>Donor List</span>
+    </button>
+    <button type="button" class="drawerNavItem" data-view="dashboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+      <span>Dashboard</span>
     </button>
     <button type="button" class="drawerNavItem" data-view="settings">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -805,14 +917,14 @@
   </div>
 </nav>
 
-<p class="credit">Development by <u>IBRAHIM KHALIL</u> | <u>SAMIN KHAN</u> &nbsp;•&nbsp; Blood Donor Network <u>v2.4.0</u></p>
+<p class="credit">Development by <u>IBRAHIM KHALIL</u> | <u>SAMIN KHAN</u> &nbsp;•&nbsp; Blood Donor Network <u>v2.5.0</u></p>
 
 <svg class="pulseDivider" viewBox="0 0 600 26" preserveAspectRatio="none" aria-hidden="true">
   <path d="M0,13 L200,13 L215,2 L230,23 L245,7 L258,18 L270,13 L600,13"/>
 </svg>
 
 <main>
-  <section class="pageView activeView" id="dashboardView">
+  <section class="pageView" id="dashboardView">
   <div class="overviewGrid">
   <div class="groupChartCard pieChartCard">
     <div class="pieChartHeader">
@@ -879,7 +991,7 @@
   </div>
   </section>
 
-  <section class="pageView" id="listView">
+  <section class="pageView activeView" id="listView">
   <div class="toolbar">
     <div class="searchBox">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -929,7 +1041,12 @@
           <th>Group</th>
           <th>Name</th>
           <th>Address</th>
-          <th>Mobile</th>
+          <th id="mobileColHeader" class="mobileColHeader" title="Click to lock/unlock mobile numbers" role="button" tabindex="0">
+            <span class="mobileColHeaderInner">
+              Mobile
+              <svg id="mobileLockIcon" class="mobileLockIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+            </span>
+          </th>
           <th>Age</th>
           <th>Gender</th>
           <th>Last Donation</th>
@@ -949,6 +1066,14 @@
   <div class="groupChartCard settingsPageCard">
     <div class="groupChartTitle">App Settings</div>
     <form id="settingsForm">
+      <table>
+        <tr>
+          <td>Website Name:</td>
+          <td><input type="text" id="siteNameInput" maxlength="60" placeholder="Blood Donor Network"></td>
+        </tr>
+      </table>
+      <div class="settingsFieldHint">Shown in the app bar, side menu, and browser tab title.</div>
+
       <table>
         <tr>
           <td>Cooldown Time (days):</td>
@@ -1075,6 +1200,32 @@
       <div class="modalActions">
         <button type="submit" id="submitBtn">Add</button>
         <button type="button" id="cancelEditBtn" style="display:none;">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<!-- ================= MOBILE UNLOCK PIN MODAL ================= -->
+<div class="modalOverlay" id="pinModalOverlay">
+  <div class="modal pinModal" role="dialog" aria-modal="true" aria-labelledby="pinModalTitle">
+    <div class="modalHeader">
+      <h2 id="pinModalTitle">Unlock Mobile Numbers</h2>
+      <button type="button" class="modalClose" id="closePinModalBtn" aria-label="Close">✕</button>
+    </div>
+    <form id="pinForm">
+      <p class="pinModalHint">Enter your PIN to reveal and enable calling/copying mobile numbers.</p>
+      <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" id="pinInput" class="pinInput" placeholder="••••" autocomplete="off">
+      <span id="pinError" class="fieldError" style="display:none;">Incorrect PIN. Please try again.</span>
+      <div class="modalActions">
+        <button type="submit">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+          Unlock
+        </button>
+        <button type="button" id="cancelPinBtn">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          Cancel
+        </button>
       </div>
     </form>
   </div>
@@ -1237,9 +1388,11 @@ function trySyncQueue() {
    CONNECTION STATUS
    ============================================================ */
 const syncStatusEl = document.getElementById("syncStatus");
+let syncStatusHideTimer = null;
 
 function updateSyncStatus() {
   const pendingCount = getQueue().length;
+  clearTimeout(syncStatusHideTimer);
   syncStatusEl.classList.add("show");
   if (!navigator.onLine) {
     syncStatusEl.className = "show sync-offline";
@@ -1253,6 +1406,8 @@ function updateSyncStatus() {
   } else {
     syncStatusEl.className = "show sync-online";
     syncStatusEl.textContent = "Online";
+    // Online status is transient — fades away like a toast after a moment.
+    syncStatusHideTimer = setTimeout(() => syncStatusEl.classList.remove("show"), 2800);
   }
 }
 
@@ -1352,9 +1507,24 @@ document.addEventListener("keydown", e => {
    ============================================================ */
 const settingsForm = document.getElementById("settingsForm");
 const cooldownDaysInput = document.getElementById("cooldownDays");
+const siteNameInput = document.getElementById("siteNameInput");
 const defaultSortSelect = document.getElementById("defaultSortSelect");
 const exportDataBtn = document.getElementById("exportDataBtn");
 const DEFAULT_SORT_KEY = "blood_donor_default_sort";
+const SITE_NAME_KEY = "blood_donor_site_name";
+const DEFAULT_SITE_NAME = "Blood Donor Network";
+
+const appTitleTextEl = document.getElementById("appTitleText");
+const drawerTitleTextEl = document.getElementById("drawerTitleText");
+
+function applySiteName(name) {
+  const finalName = (name && name.trim()) ? name.trim() : DEFAULT_SITE_NAME;
+  appTitleTextEl.textContent = finalName;
+  drawerTitleTextEl.textContent = finalName;
+  document.title = finalName;
+  const metaAppTitle = document.querySelector('meta[name="apple-mobile-web-app-title"]');
+  if (metaAppTitle) metaAppTitle.setAttribute("content", finalName);
+}
 
 function initSettings() {
   cooldownDaysInput.value = settingsData.cooldownDays;
@@ -1363,6 +1533,10 @@ function initSettings() {
     sortMode = savedSort;
     defaultSortSelect.value = savedSort;
   }
+  let savedSiteName = "";
+  try { savedSiteName = localStorage.getItem(SITE_NAME_KEY) || ""; } catch (err) { /* ignore */ }
+  siteNameInput.value = savedSiteName;
+  applySiteName(savedSiteName);
 }
 
 settingsForm.addEventListener("submit", function (e) {
@@ -1378,6 +1552,10 @@ settingsForm.addEventListener("submit", function (e) {
     }
     sortMode = defaultSortSelect.value;
     try { localStorage.setItem(DEFAULT_SORT_KEY, sortMode); } catch (err) { /* ignore */ }
+
+    const newSiteName = siteNameInput.value.trim();
+    try { localStorage.setItem(SITE_NAME_KEY, newSiteName); } catch (err) { /* ignore */ }
+    applySiteName(newSiteName);
 
     showToast(isConnected ? "Settings saved" : "Saved offline — will sync when online");
     renderDonors();
@@ -1414,6 +1592,90 @@ exportDataBtn.addEventListener("click", () => {
 });
 
 
+
+/* ============================================================
+   MOBILE NUMBER LOCK (PIN protected)
+   The Mobile column is locked by default: numbers are masked and
+   calling/copying is disabled. Clicking the column header prompts
+   for a PIN; entering a correct PIN unlocks the column for this
+   session. Clicking the header again while unlocked re-locks it.
+   ============================================================ */
+const MOBILE_PINS = ["2962", "9242"];
+let mobileLocked = true;
+
+const mobileColHeader = document.getElementById("mobileColHeader");
+const mobileLockIcon = document.getElementById("mobileLockIcon");
+const pinModalOverlay = document.getElementById("pinModalOverlay");
+const closePinModalBtn = document.getElementById("closePinModalBtn");
+const cancelPinBtn = document.getElementById("cancelPinBtn");
+const pinForm = document.getElementById("pinForm");
+const pinInput = document.getElementById("pinInput");
+const pinError = document.getElementById("pinError");
+
+function maskMobile(mobile) {
+  const str = String(mobile || "");
+  if (str.length <= 3) return str;
+  const visible = str.slice(0, 3);
+  return visible + "*".repeat(str.length - 3);
+}
+
+function updateMobileLockIcon() {
+  if (mobileLocked) {
+    mobileLockIcon.innerHTML = '<rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>';
+    mobileColHeader.title = "Click to unlock mobile numbers";
+  } else {
+    mobileLockIcon.innerHTML = '<rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 7.4-2.3"/>';
+    mobileColHeader.title = "Click to lock mobile numbers";
+  }
+}
+
+function openPinModal() {
+  pinInput.value = "";
+  pinError.style.display = "none";
+  pinInput.classList.remove("pinShake");
+  openModal(pinModalOverlay);
+  setTimeout(() => pinInput.focus(), 50);
+}
+function closePinModal() { closeModal(pinModalOverlay); }
+
+mobileColHeader.addEventListener("click", () => {
+  if (mobileLocked) {
+    openPinModal();
+  } else {
+    mobileLocked = true;
+    updateMobileLockIcon();
+    renderDonors();
+    showToast("Mobile numbers locked");
+  }
+});
+mobileColHeader.addEventListener("keydown", e => {
+  if (e.key === "Enter" || e.key === " ") { e.preventDefault(); mobileColHeader.click(); }
+});
+
+closePinModalBtn.addEventListener("click", closePinModal);
+cancelPinBtn.addEventListener("click", closePinModal);
+pinModalOverlay.addEventListener("click", e => { if (e.target === pinModalOverlay) closePinModal(); });
+
+pinForm.addEventListener("submit", e => {
+  e.preventDefault();
+  const entered = pinInput.value.trim();
+  if (MOBILE_PINS.includes(entered)) {
+    mobileLocked = false;
+    updateMobileLockIcon();
+    closePinModal();
+    renderDonors();
+    showToast("Mobile numbers unlocked");
+  } else {
+    pinError.style.display = "block";
+    pinInput.classList.remove("pinShake");
+    void pinInput.offsetWidth;
+    pinInput.classList.add("pinShake");
+    pinInput.value = "";
+    pinInput.focus();
+  }
+});
+
+updateMobileLockIcon();
 
 /* ============================================================
    DONOR FORM (Add / Edit)
@@ -1932,7 +2194,13 @@ function renderDonors() {
       <td class="addressCell">${escapeHtml(donor.address || "-")}</td>
       <td>
         <div class="contactCell">
-          ${donor.mobile ? `
+          ${donor.mobile ? (
+            mobileLocked
+            ? `<span class="contactLocked" title="Unlock the Mobile column to call or copy">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+                ${escapeHtml(maskMobile(donor.mobile))}
+               </span>`
+            : `
           <a class="contactLink" href="tel:${escapeHtml(donor.mobile)}" title="Call ${escapeHtml(donor.name)}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
             ${escapeHtml(donor.mobile)}
@@ -1940,7 +2208,8 @@ function renderDonors() {
           <button type="button" class="iconBtnSmall copyBtn" data-mobile="${escapeHtml(donor.mobile)}" title="Copy number">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
-          ` : "-"}
+          `
+          ) : "-"}
         </div>
       </td>
       <td class="metaCell">${donor.age ? escapeHtml(donor.age) : "-"}</td>

@@ -232,6 +232,37 @@
   }
   .settingsPageCard { max-width: 480px; }
   .settingsFieldHint { font-size: 11.5px; color: var(--muted); margin-top: -6px; margin-bottom: 10px; }
+
+  /* ---------- Donation history log (Add/Edit Donor form) ---------- */
+  .donationHistoryAdd { display: flex; gap: 8px; }
+  .donationHistoryAdd input[type="date"] { flex: 1; min-width: 0; }
+  .ghostBtnSmall {
+    flex-shrink: 0; height: 42px; padding: 0 14px; border-radius: var(--radius-sm);
+    background: var(--cream); color: var(--crimson); border: 1px solid var(--line);
+    font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .ghostBtnSmall:hover { background: var(--paper); border-color: var(--crimson); }
+  .donationHistoryList {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-top: 8px;
+  }
+  .donationHistoryEmpty { font-size: 12px; color: var(--muted); padding: 2px 0; }
+  .donationHistoryChip {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--cream); border: 1px solid var(--line); border-radius: 999px;
+    padding: 5px 6px 5px 11px; font-size: 12px; font-family: var(--font-mono); color: var(--ink);
+  }
+  .donationHistoryChip button {
+    width: 18px; height: 18px; border-radius: 50%; border: none;
+    background: var(--line); color: var(--ink); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; font-size: 11px; padding: 0; line-height: 1;
+    flex-shrink: 0;
+  }
+  .donationHistoryChip button:hover { background: var(--crimson); color: #fff; }
+  input[readonly]#donationCount, input[readonly]#lastDonateDate {
+    background: var(--cream); color: var(--muted); cursor: not-allowed;
+  }
   .settingsDivider { border: none; border-top: 1px dashed var(--line); margin: 16px 0; }
   .settingsSectionLabel {
     font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: var(--muted);
@@ -505,6 +536,67 @@
     font-weight: 700;
   }
 
+  /* ---------- Donor List: top image slideshow ---------- */
+  .slideshow {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 7;
+    max-height: 260px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    margin-bottom: 16px;
+    background: var(--cream);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+  }
+  .slideshowTrack {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+    will-change: transform;
+  }
+  .slideshowSlide {
+    flex: 0 0 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+  }
+  .slideshowDots {
+    position: absolute;
+    left: 0; right: 0; bottom: 10px;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .slideshowDot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: rgba(255,255,255,0.55);
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.15);
+    transition: width 0.3s ease, background 0.3s ease;
+    cursor: pointer;
+  }
+  .slideshowDot.active { width: 18px; border-radius: 4px; background: #fff; }
+  @media (max-width: 480px) {
+    .slideshow { aspect-ratio: 16 / 9; max-height: 200px; margin-bottom: 12px; }
+  }
+
+  /* ---------- Settings: slideshow image manager ---------- */
+  .slideManagerGrid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; margin-bottom: 4px;
+  }
+  .slideManagerItem {
+    position: relative; aspect-ratio: 1 / 1; border-radius: var(--radius-sm);
+    overflow: hidden; border: 1px solid var(--line); background: var(--cream);
+    background-size: cover; background-position: center;
+  }
+  .slideManagerRemoveBtn {
+    position: absolute; top: 4px; right: 4px; width: 22px; height: 22px; border-radius: 50%;
+    background: rgba(20,14,12,0.68); color: #fff; border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; font-size: 13px; line-height: 1;
+    padding: 0;
+  }
+  .slideManagerRemoveBtn:hover { background: var(--crimson); }
+  .slideManagerEmpty { font-size: 12.5px; color: var(--muted); padding: 4px 0; }
+
   /* ---------- Toolbar ---------- */
   .toolbar {
     display: flex; flex-direction: column; gap: 10px;
@@ -681,43 +773,143 @@
   }
   .contactLocked svg { width: 13px; height: 13px; color: var(--muted); flex-shrink: 0; }
 
-  /* ---------- PIN modal ---------- */
-  .pinModal { max-width: 340px; }
-  .pinModalHint { font-size: 13px; color: var(--muted); margin: 0 0 14px; line-height: 1.5; }
-  .pinInput {
-    width: 100%; height: 52px; box-sizing: border-box; text-align: center;
-    font-size: 26px; letter-spacing: 10px; font-family: var(--font-mono); color: var(--ink);
-    background: var(--cream); border: 1px solid var(--line); border-radius: var(--radius-sm);
-    margin-bottom: 6px;
+  /* ---------- PIN modal: full-screen premium lock-screen style (light) ---------- */
+  .pinFullscreenOverlay {
+    align-items: stretch !important;
+    justify-content: stretch !important;
+    padding: 0 !important;
+    background: #FFFFFF !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
   }
-  .pinInput:focus { border-color: var(--crimson); background: var(--paper); outline: none; }
-  .pinInput.pinShake { animation: pinShake 0.35s; border-color: var(--crimson); }
+  .pinFullscreenOverlay .pinModal {
+    background: transparent;
+    width: 100%;
+    max-width: 420px;
+    height: 100%;
+    max-height: 100%;
+    margin: 0 auto;
+    border-radius: 0;
+    box-shadow: none;
+    padding: calc(22px + env(safe-area-inset-top)) 28px calc(22px + env(safe-area-inset-bottom));
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: pinFadeScaleIn 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow-y: auto;
+  }
+  @keyframes pinFadeScaleIn {
+    from { opacity: 0; transform: scale(0.94) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) { .pinFullscreenOverlay .pinModal { animation: none; } }
+
+  .pinTopClose {
+    align-self: flex-end;
+    width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+    background: var(--cream); border: 1px solid var(--line);
+    color: var(--muted); font-size: 15px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+  .pinTopClose:hover { color: var(--crimson); border-color: var(--crimson); background: var(--paper); }
+
+  .pinModalBody {
+    display: flex; flex-direction: column; align-items: center;
+    flex: 1; justify-content: center;
+    width: 100%; text-align: center;
+    padding-bottom: 12px;
+  }
+  .pinLockBadge {
+    width: 62px; height: 62px; border-radius: 50%;
+    background: linear-gradient(150deg, var(--crimson), var(--crimson-dark));
+    color: #fff; display: flex; align-items: center; justify-content: center;
+    margin-bottom: 18px;
+    box-shadow: 0 10px 26px rgba(158,27,50,0.32), 0 0 0 6px rgba(158,27,50,0.08);
+  }
+  .pinModal h2 {
+    color: var(--ink); font-size: 19px; font-weight: 700; margin: 0 0 8px;
+    letter-spacing: 0.2px;
+  }
+  .pinModalHint {
+    font-size: 13.5px; color: var(--muted); margin: 0 0 26px;
+    line-height: 1.55; max-width: 280px; text-align: center;
+  }
+
+  .pinDots { display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 10px; }
+  .pinDot {
+    width: 15px; height: 15px; border-radius: 50%;
+    border: 1.5px solid var(--line); background: transparent;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .pinDot.filled {
+    background: linear-gradient(150deg, var(--crimson), var(--crimson-dark));
+    border-color: transparent; transform: scale(1.15);
+    box-shadow: 0 0 12px rgba(158,27,50,0.45);
+  }
+  .pinDots.pinShake { animation: pinShake 0.35s; }
   @keyframes pinShake {
-    10%, 90% { transform: translateX(-2px); }
-    20%, 80% { transform: translateX(4px); }
-    30%, 50%, 70% { transform: translateX(-7px); }
-    40%, 60% { transform: translateX(7px); }
+    10%, 90% { transform: translateX(-3px); }
+    20%, 80% { transform: translateX(6px); }
+    30%, 50%, 70% { transform: translateX(-9px); }
+    40%, 60% { transform: translateX(9px); }
   }
-  .pinModal .modalActions { margin-top: 10px; }
-  .pinModal .modalActions button {
-    min-height: 46px; border-radius: 999px; font-size: 14px; font-weight: 700;
-    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-    cursor: pointer; font-family: var(--font-body); color: #fff;
+  .pinErrorMsg {
+    display: block; text-align: center; margin: 14px 0 0;
+    color: var(--crimson); font-weight: 600; font-size: 12.5px;
   }
-  #pinForm button[type="submit"] {
-    flex: 1;
-    background: linear-gradient(135deg, var(--crimson), var(--crimson-dark));
-    border: none; box-shadow: 0 6px 16px rgba(158,27,50,0.32);
-    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+
+  /* Fixed pixel sizing (not percentage/aspect-ratio) keeps every key a true circle
+     regardless of the grid column width. */
+  .pinKeypad {
+    display: grid; grid-template-columns: repeat(3, 68px);
+    justify-content: center;
+    gap: 18px 26px;
+    width: 100%;
+    flex-shrink: 0;
+    margin-bottom: 18px;
   }
-  #pinForm button[type="submit"]:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(158,27,50,0.4); }
-  #pinForm button[type="submit"]:active { transform: translateY(0); }
-  #cancelPinBtn {
-    background: var(--cream) !important; color: var(--muted) !important;
-    border: 1px solid var(--line) !important; box-shadow: none;
-    flex: 0 0 auto; padding: 0 22px;
+  .pinKey {
+    width: 68px; height: 68px; border-radius: 50%;
+    border: 1px solid var(--line);
+    background: var(--cream);
+    color: var(--ink);
+    font-size: 24px; font-weight: 500; font-family: var(--font-mono);
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    -webkit-tap-highlight-color: transparent; user-select: none;
+    box-sizing: border-box; flex-shrink: 0;
+    transition: background 0.12s ease, transform 0.08s ease, border-color 0.12s ease, color 0.12s ease;
   }
-  #cancelPinBtn:hover { color: var(--ink) !important; border-color: var(--muted) !important; background: var(--paper) !important; }
+  .pinKey:active {
+    background: linear-gradient(150deg, var(--crimson), var(--crimson-dark));
+    color: #fff;
+    border-color: transparent; transform: scale(0.92);
+  }
+  .pinKeySpacer { width: 68px; height: 68px; flex-shrink: 0; }
+  .pinKeyGhost { background: transparent; border-color: transparent; color: var(--muted); }
+  .pinKeyGhost:active { background: var(--line); color: var(--ink); border-color: transparent; transform: scale(0.92); }
+
+  .pinCancelLink {
+    background: transparent; border: none; color: var(--muted);
+    font-size: 14px; font-weight: 600; font-family: var(--font-body);
+    cursor: pointer; padding: 8px 16px; flex-shrink: 0;
+    transition: color 0.15s ease;
+  }
+  .pinCancelLink:hover { color: var(--crimson); }
+
+  @media (max-width: 480px) {
+    .pinKeypad { grid-template-columns: repeat(3, 62px); gap: 14px 20px; }
+    .pinKey, .pinKeySpacer { width: 62px; height: 62px; }
+    .pinKey { font-size: 22px; }
+    .pinLockBadge { width: 56px; height: 56px; margin-bottom: 14px; }
+    .pinModal h2 { font-size: 18px; }
+  }
+  @media (max-width: 340px) {
+    .pinKeypad { grid-template-columns: repeat(3, 56px); gap: 12px 16px; }
+    .pinKey, .pinKeySpacer { width: 56px; height: 56px; }
+  }
+
   .contactLink {
     display: inline-flex; align-items: center; gap: 5px; text-decoration: none;
     color: var(--ink); font-family: var(--font-mono); font-size: 12.5px; font-weight: 500;
@@ -881,7 +1073,7 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
     <div class="appTitleBlock">
-      <div class="appTitle"><span id="appTitleText">Blood Donor Network</span> <span class="appVersionBadge" id="appVersionBadge">v2.5.0</span></div>
+      <div class="appTitle"><span id="appTitleText">Blood Donor Network</span> <span class="appVersionBadge" id="appVersionBadge">v2.6.0</span></div>
       <div class="appTagline">রক্তদাতা নেটওয়ার্ক</div>
     </div>
   </div>
@@ -917,7 +1109,7 @@
   </div>
 </nav>
 
-<p class="credit">Development by <u>IBRAHIM KHALIL</u> | <u>SAMIN KHAN</u> &nbsp;•&nbsp; Blood Donor Network <u>v2.5.0</u></p>
+<p class="credit">Development by <u>IBRAHIM KHALIL</u> | <u>SAMIN KHAN</u> &nbsp;•&nbsp; Blood Donor Network <u>v2.6.0</u></p>
 
 <svg class="pulseDivider" viewBox="0 0 600 26" preserveAspectRatio="none" aria-hidden="true">
   <path d="M0,13 L200,13 L215,2 L230,23 L245,7 L258,18 L270,13 L600,13"/>
@@ -971,7 +1163,7 @@
 
   <div class="groupChartCard expChartCard">
     <div class="expChartHeader">
-      <div class="groupChartTitle">Donor Experience Overview</div>
+      <div class="groupChartTitle">Donation Overview</div>
       <span class="pieChartBadge" id="expTotalBadge"><span class="liveDot"></span><span id="expTotalBadgeText">0 Total Donations</span></span>
     </div>
     <div class="expRangeTabs" id="expRangeTabs" role="tablist" aria-label="Experience chart time range">
@@ -992,6 +1184,11 @@
   </section>
 
   <section class="pageView activeView" id="listView">
+  <div class="slideshow" id="donorSlideshow" style="display:none;">
+    <div class="slideshowTrack" id="slideshowTrack"></div>
+    <div class="slideshowDots" id="slideshowDots"></div>
+  </div>
+
   <div class="toolbar">
     <div class="searchBox">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -1098,6 +1295,30 @@
       </table>
       <div class="settingsFieldHint">Controls how the Donor List is sorted when the app opens.</div>
 
+      <hr class="settingsDivider">
+      <div class="settingsSectionLabel">Security PIN</div>
+      <table>
+        <tr>
+          <td>New PIN:</td>
+          <td><input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" id="newPinInput" placeholder="4 digits"></td>
+        </tr>
+        <tr>
+          <td>Confirm PIN:</td>
+          <td><input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" id="confirmPinInput" placeholder="4 digits"></td>
+        </tr>
+      </table>
+      <div class="settingsFieldHint">One PIN protects both Settings access and the Mobile numbers column. Leave blank to keep your current PIN.</div>
+
+      <hr class="settingsDivider">
+      <div class="settingsSectionLabel">Donor List Slideshow</div>
+      <div class="settingsFieldHint" style="margin-top:0;">Shown at the top of the Donor List page. Up to 6 images.</div>
+      <div class="slideManagerGrid" id="slideManagerGrid"></div>
+      <input type="file" id="slideImageFileInput" accept="image/*" style="display:none;">
+      <button type="button" class="ghostBtn" id="addSlideImageBtn" style="margin-left:0; margin-top:8px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        Add Slide Image
+      </button>
+
       <div class="modalActions">
         <button type="submit">Save Settings</button>
       </div>
@@ -1147,6 +1368,17 @@
         <tr>
           <td>Experience (Times Donated):</td>
           <td><input type="number" id="donationCount" min="0" placeholder="e.g. 3" value="0"></td>
+        </tr>
+        <tr>
+          <td>Donation History:</td>
+          <td>
+            <div class="donationHistoryAdd">
+              <input type="date" id="donationHistoryDateInput">
+              <button type="button" id="addDonationDateBtn" class="ghostBtnSmall">+ Add Date</button>
+            </div>
+            <div class="donationHistoryList" id="donationHistoryList"></div>
+            <div class="settingsFieldHint" style="margin-top:6px;">Add each past donation date. Times Donated &amp; Last Donation Date update automatically from this list.</div>
+          </td>
         </tr>
         <tr>
           <td>Donor Type:</td>
@@ -1206,28 +1438,45 @@
 </div>
 
 
-<!-- ================= MOBILE UNLOCK PIN MODAL ================= -->
-<div class="modalOverlay" id="pinModalOverlay">
+<!-- ================= UNIFIED PIN MODAL (Mobile Unlock + Settings) ================= -->
+<div class="modalOverlay pinFullscreenOverlay" id="pinModalOverlay">
   <div class="modal pinModal" role="dialog" aria-modal="true" aria-labelledby="pinModalTitle">
-    <div class="modalHeader">
-      <h2 id="pinModalTitle">Unlock Mobile Numbers</h2>
-      <button type="button" class="modalClose" id="closePinModalBtn" aria-label="Close">✕</button>
-    </div>
-    <form id="pinForm">
-      <p class="pinModalHint">Enter your PIN to reveal and enable calling/copying mobile numbers.</p>
-      <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" id="pinInput" class="pinInput" placeholder="••••" autocomplete="off">
-      <span id="pinError" class="fieldError" style="display:none;">Incorrect PIN. Please try again.</span>
-      <div class="modalActions">
-        <button type="submit">
-          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
-          Unlock
-        </button>
-        <button type="button" id="cancelPinBtn">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          Cancel
-        </button>
+    <button type="button" class="pinTopClose" id="closePinModalBtn" aria-label="Close">✕</button>
+
+    <div class="pinModalBody">
+      <div class="pinLockBadge">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
       </div>
-    </form>
+      <h2 id="pinModalTitle">Unlock Mobile Numbers</h2>
+      <p class="pinModalHint" id="pinModalHint">Enter your PIN to reveal and enable calling/copying mobile numbers.</p>
+
+      <div class="pinDots" id="pinDots">
+        <span class="pinDot"></span>
+        <span class="pinDot"></span>
+        <span class="pinDot"></span>
+        <span class="pinDot"></span>
+      </div>
+      <span id="pinError" class="pinErrorMsg" style="display:none;">Incorrect PIN. Please try again.</span>
+    </div>
+
+    <div class="pinKeypad" id="pinKeypad">
+      <button type="button" class="pinKey" data-digit="1">1</button>
+      <button type="button" class="pinKey" data-digit="2">2</button>
+      <button type="button" class="pinKey" data-digit="3">3</button>
+      <button type="button" class="pinKey" data-digit="4">4</button>
+      <button type="button" class="pinKey" data-digit="5">5</button>
+      <button type="button" class="pinKey" data-digit="6">6</button>
+      <button type="button" class="pinKey" data-digit="7">7</button>
+      <button type="button" class="pinKey" data-digit="8">8</button>
+      <button type="button" class="pinKey" data-digit="9">9</button>
+      <span class="pinKeySpacer" aria-hidden="true"></span>
+      <button type="button" class="pinKey" data-digit="0">0</button>
+      <button type="button" class="pinKey pinKeyGhost" id="pinBackspaceBtn" aria-label="Backspace">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg>
+      </button>
+    </div>
+
+    <button type="button" class="pinCancelLink" id="cancelPinBtn">Cancel</button>
   </div>
 </div>
 
@@ -1250,7 +1499,7 @@ const _cfgB64 = "eyJhcGlLZXkiOiJBSXphU3lDSDVvSEZ6dUM2cWJBalY3Y2dIV1FvcEh0R0ExODB
 const firebaseConfig = JSON.parse(atob(_cfgB64));
 
 let firebaseAvailable = false;
-let db, donorsRef, settingsRef;
+let db, donorsRef, settingsRef, appConfigRef;
 
 /* ============================================================
    LOCAL CACHE + OFFLINE QUEUE
@@ -1260,7 +1509,9 @@ let db, donorsRef, settingsRef;
    ============================================================ */
 const CACHE_DONORS_KEY = "blood_donor_cache";
 const CACHE_SETTINGS_KEY = "blood_donor_settings_cache";
+const CACHE_APPCONFIG_KEY = "blood_donor_appconfig_cache";
 const QUEUE_KEY = "blood_donor_pending_queue";
+const DEFAULT_SETTINGS_PIN = "1234";
 
 function getCachedDonors() {
   try {
@@ -1294,6 +1545,26 @@ function setCachedSettings(settings) {
     console.log("Could not save cached settings:", err);
   }
 }
+function getCachedAppConfig() {
+  try {
+    const data = localStorage.getItem(CACHE_APPCONFIG_KEY);
+    return data ? JSON.parse(data) : { siteName: "", settingsPin: DEFAULT_SETTINGS_PIN, slideImages: [] };
+  } catch (err) {
+    console.log("Could not read cached app config:", err);
+    return { siteName: "", settingsPin: DEFAULT_SETTINGS_PIN, slideImages: [] };
+  }
+}
+function setCachedAppConfig(config) {
+  try {
+    localStorage.setItem(CACHE_APPCONFIG_KEY, JSON.stringify(config));
+  } catch (err) {
+    console.log("Could not save cached app config:", err);
+  }
+}
+function getSettingsPin() {
+  return (appConfigData && appConfigData.settingsPin) ? String(appConfigData.settingsPin) : DEFAULT_SETTINGS_PIN;
+}
+
 function getQueue() {
   try {
     const data = localStorage.getItem(QUEUE_KEY);
@@ -1314,6 +1585,7 @@ function setQueue(queue) {
 
 let firebaseDonors = getCachedDonors();      // Latest confirmed list from Firebase
 let settingsData = getCachedSettings();
+let appConfigData = getCachedAppConfig();    // siteName, settingsPin, slideImages
 let isConnected = false;
 let syncing = false;
 
@@ -1475,7 +1747,18 @@ function switchView(view) {
 menuToggleBtn.addEventListener("click", openDrawer);
 drawerOverlay.addEventListener("click", closeDrawer);
 drawerNavItems.forEach(item => {
-  item.addEventListener("click", () => switchView(item.getAttribute("data-view")));
+  item.addEventListener("click", () => {
+    const view = item.getAttribute("data-view");
+    if (view === "settings" && !settingsUnlocked) {
+      closeDrawer();
+      openPinModal("settings", () => {
+        settingsUnlocked = true;
+        switchView("settings");
+      });
+      return;
+    }
+    switchView(view);
+  });
 });
 
 /* ============================================================
@@ -1508,10 +1791,11 @@ document.addEventListener("keydown", e => {
 const settingsForm = document.getElementById("settingsForm");
 const cooldownDaysInput = document.getElementById("cooldownDays");
 const siteNameInput = document.getElementById("siteNameInput");
+const newPinInput = document.getElementById("newPinInput");
+const confirmPinInput = document.getElementById("confirmPinInput");
 const defaultSortSelect = document.getElementById("defaultSortSelect");
 const exportDataBtn = document.getElementById("exportDataBtn");
 const DEFAULT_SORT_KEY = "blood_donor_default_sort";
-const SITE_NAME_KEY = "blood_donor_site_name";
 const DEFAULT_SITE_NAME = "Blood Donor Network";
 
 const appTitleTextEl = document.getElementById("appTitleText");
@@ -1533,10 +1817,10 @@ function initSettings() {
     sortMode = savedSort;
     defaultSortSelect.value = savedSort;
   }
-  let savedSiteName = "";
-  try { savedSiteName = localStorage.getItem(SITE_NAME_KEY) || ""; } catch (err) { /* ignore */ }
-  siteNameInput.value = savedSiteName;
-  applySiteName(savedSiteName);
+  siteNameInput.value = appConfigData.siteName || "";
+  applySiteName(appConfigData.siteName || "");
+  renderSlideManager();
+  renderSlideshow();
 }
 
 settingsForm.addEventListener("submit", function (e) {
@@ -1553,9 +1837,34 @@ settingsForm.addEventListener("submit", function (e) {
     sortMode = defaultSortSelect.value;
     try { localStorage.setItem(DEFAULT_SORT_KEY, sortMode); } catch (err) { /* ignore */ }
 
-    const newSiteName = siteNameInput.value.trim();
-    try { localStorage.setItem(SITE_NAME_KEY, newSiteName); } catch (err) { /* ignore */ }
-    applySiteName(newSiteName);
+    // Optional PIN change
+    const newPin = newPinInput.value.trim();
+    const confirmPin = confirmPinInput.value.trim();
+    if (newPin || confirmPin) {
+      if (!/^\d{4}$/.test(newPin)) {
+        showToast("PIN must be exactly 4 digits");
+        return;
+      }
+      if (newPin !== confirmPin) {
+        showToast("PIN and Confirm PIN don't match");
+        return;
+      }
+      appConfigData.settingsPin = newPin;
+    }
+
+    appConfigData.siteName = siteNameInput.value.trim();
+    setCachedAppConfig(appConfigData);
+    applySiteName(appConfigData.siteName);
+    if (firebaseAvailable && appConfigRef) {
+      appConfigRef.update({
+        siteName: appConfigData.siteName,
+        settingsPin: appConfigData.settingsPin
+      }).catch(err => {
+        console.log("App config saved offline, will sync when online:", err);
+      });
+    }
+    newPinInput.value = "";
+    confirmPinInput.value = "";
 
     showToast(isConnected ? "Settings saved" : "Saved offline — will sync when online");
     renderDonors();
@@ -1594,23 +1903,199 @@ exportDataBtn.addEventListener("click", () => {
 
 
 /* ============================================================
-   MOBILE NUMBER LOCK (PIN protected)
-   The Mobile column is locked by default: numbers are masked and
-   calling/copying is disabled. Clicking the column header prompts
-   for a PIN; entering a correct PIN unlocks the column for this
-   session. Clicking the header again while unlocked re-locks it.
+   SLIDESHOW IMAGES — SETTINGS MANAGER + DONOR LIST SLIDESHOW
+   Up to 6 images can be uploaded from Settings. Each image is
+   resized/compressed client-side and stored as a base64 data URL,
+   synced to Firebase (appConfig/slideImages) and cached locally.
+   The Donor List page shows them as an auto-playing, smooth-fading
+   slideshow above the toolbar.
    ============================================================ */
-const MOBILE_PINS = ["2962", "9242"];
+const MAX_SLIDE_IMAGES = 6;
+const slideManagerGrid = document.getElementById("slideManagerGrid");
+const slideImageFileInput = document.getElementById("slideImageFileInput");
+const addSlideImageBtn = document.getElementById("addSlideImageBtn");
+
+function persistSlideImages() {
+  setCachedAppConfig(appConfigData);
+  if (firebaseAvailable && appConfigRef) {
+    appConfigRef.child("slideImages").set(appConfigData.slideImages || []).catch(err => {
+      console.log("Slideshow images saved offline, will sync when online:", err);
+    });
+  }
+}
+
+function renderSlideManager() {
+  const images = appConfigData.slideImages || [];
+  if (!images.length) {
+    slideManagerGrid.innerHTML = `<div class="slideManagerEmpty">No slide images yet — add up to ${MAX_SLIDE_IMAGES}.</div>`;
+  } else {
+    slideManagerGrid.innerHTML = images.map((src, i) => `
+      <div class="slideManagerItem" style="background-image:url('${src}')">
+        <button type="button" class="slideManagerRemoveBtn" data-index="${i}" title="Remove image" aria-label="Remove image">✕</button>
+      </div>
+    `).join("");
+  }
+  addSlideImageBtn.disabled = images.length >= MAX_SLIDE_IMAGES;
+  addSlideImageBtn.style.opacity = images.length >= MAX_SLIDE_IMAGES ? "0.5" : "1";
+  addSlideImageBtn.style.cursor = images.length >= MAX_SLIDE_IMAGES ? "not-allowed" : "pointer";
+}
+
+function resizeImageFile(file, maxDim, quality) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("Could not read the selected file"));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error("Could not load the selected image"));
+      img.onload = () => {
+        let width = img.naturalWidth, height = img.naturalHeight;
+        if (width > maxDim || height > maxDim) {
+          if (width >= height) { height = Math.round(height * (maxDim / width)); width = maxDim; }
+          else { width = Math.round(width * (maxDim / height)); height = maxDim; }
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL("image/jpeg", quality));
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+addSlideImageBtn.addEventListener("click", () => {
+  const images = appConfigData.slideImages || [];
+  if (images.length >= MAX_SLIDE_IMAGES) {
+    showToast(`You can add up to ${MAX_SLIDE_IMAGES} slide images`);
+    return;
+  }
+  slideImageFileInput.click();
+});
+
+slideImageFileInput.addEventListener("change", async () => {
+  const file = slideImageFileInput.files && slideImageFileInput.files[0];
+  slideImageFileInput.value = "";
+  if (!file) return;
+  if (!file.type.startsWith("image/")) {
+    showToast("Please choose an image file");
+    return;
+  }
+  try {
+    showToast("Processing image...");
+    const base64 = await resizeImageFile(file, 1280, 0.82);
+    appConfigData.slideImages = appConfigData.slideImages || [];
+    if (appConfigData.slideImages.length >= MAX_SLIDE_IMAGES) {
+      showToast(`You can add up to ${MAX_SLIDE_IMAGES} slide images`);
+      return;
+    }
+    appConfigData.slideImages.push(base64);
+    persistSlideImages();
+    renderSlideManager();
+    renderSlideshow();
+    showToast("Slide image added");
+  } catch (err) {
+    console.log("Failed to process slide image:", err);
+    showToast("Could not process that image");
+  }
+});
+
+slideManagerGrid.addEventListener("click", e => {
+  const btn = e.target.closest(".slideManagerRemoveBtn");
+  if (!btn) return;
+  const index = parseInt(btn.getAttribute("data-index"), 10);
+  const images = appConfigData.slideImages || [];
+  if (Number.isNaN(index) || index < 0 || index >= images.length) return;
+  images.splice(index, 1);
+  appConfigData.slideImages = images;
+  persistSlideImages();
+  renderSlideManager();
+  renderSlideshow();
+  showToast("Slide image removed");
+});
+
+/* ---------- Donor List: auto-playing slideshow ---------- */
+const donorSlideshowEl = document.getElementById("donorSlideshow");
+const slideshowTrackEl = document.getElementById("slideshowTrack");
+const slideshowDotsEl = document.getElementById("slideshowDots");
+let slideshowIndex = 0;
+let slideshowTimer = null;
+
+function goToSlide(i) {
+  const images = appConfigData.slideImages || [];
+  if (!images.length) return;
+  slideshowIndex = ((i % images.length) + images.length) % images.length;
+  slideshowTrackEl.style.transform = `translateX(-${slideshowIndex * 100}%)`;
+  slideshowDotsEl.querySelectorAll(".slideshowDot").forEach((dot, di) => {
+    dot.classList.toggle("active", di === slideshowIndex);
+  });
+}
+
+function renderSlideshow() {
+  clearInterval(slideshowTimer);
+  const images = appConfigData.slideImages || [];
+  if (!images.length) {
+    donorSlideshowEl.style.display = "none";
+    slideshowTrackEl.innerHTML = "";
+    slideshowDotsEl.innerHTML = "";
+    return;
+  }
+  donorSlideshowEl.style.display = "block";
+  slideshowTrackEl.innerHTML = images.map(src => `<div class="slideshowSlide" style="background-image:url('${src}')"></div>`).join("");
+  slideshowDotsEl.innerHTML = images.map((_, i) => `<div class="slideshowDot${i === 0 ? " active" : ""}" data-index="${i}"></div>`).join("");
+  slideshowIndex = 0;
+  slideshowTrackEl.style.transform = "translateX(0%)";
+
+  if (images.length > 1) {
+    slideshowTimer = setInterval(() => goToSlide(slideshowIndex + 1), 4200);
+  }
+}
+
+slideshowDotsEl.addEventListener("click", e => {
+  const dot = e.target.closest(".slideshowDot");
+  if (!dot) return;
+  const index = parseInt(dot.getAttribute("data-index"), 10);
+  if (Number.isNaN(index)) return;
+  goToSlide(index);
+  clearInterval(slideshowTimer);
+  const images = appConfigData.slideImages || [];
+  if (images.length > 1) {
+    slideshowTimer = setInterval(() => goToSlide(slideshowIndex + 1), 4200);
+  }
+});
+
+
+
+/* ============================================================
+   SHARED PIN MODAL — one PIN, two uses:
+   1) "mobile"   — unlocking the masked Mobile column
+   2) "settings" — gating access to the Settings page
+   The PIN itself is set/changed from inside Settings and is
+   entered here via an on-screen numeric keypad, like a phone's
+   lock screen — no typing needed.
+   ============================================================ */
 let mobileLocked = true;
+let settingsUnlocked = false;
 
 const mobileColHeader = document.getElementById("mobileColHeader");
 const mobileLockIcon = document.getElementById("mobileLockIcon");
 const pinModalOverlay = document.getElementById("pinModalOverlay");
+const pinModalTitle = document.getElementById("pinModalTitle");
+const pinModalHint = document.getElementById("pinModalHint");
 const closePinModalBtn = document.getElementById("closePinModalBtn");
 const cancelPinBtn = document.getElementById("cancelPinBtn");
-const pinForm = document.getElementById("pinForm");
-const pinInput = document.getElementById("pinInput");
+const pinBackspaceBtn = document.getElementById("pinBackspaceBtn");
+const pinKeypad = document.getElementById("pinKeypad");
+const pinDotsEl = document.getElementById("pinDots");
+const pinDots = pinDotsEl.querySelectorAll(".pinDot");
 const pinError = document.getElementById("pinError");
+
+let pinModalPurpose = "mobile";
+let pinModalOnSuccess = null;
+let pinValue = "";
+let pinCheckLock = false;
 
 function maskMobile(mobile) {
   const str = String(mobile || "");
@@ -1629,18 +2114,60 @@ function updateMobileLockIcon() {
   }
 }
 
-function openPinModal() {
-  pinInput.value = "";
+function renderPinDots() {
+  pinDots.forEach((dot, i) => dot.classList.toggle("filled", i < pinValue.length));
+}
+
+function openPinModal(purpose, onSuccess) {
+  pinModalPurpose = purpose;
+  pinModalOnSuccess = onSuccess || null;
+  if (purpose === "settings") {
+    pinModalTitle.textContent = "Enter PIN";
+    pinModalHint.textContent = "This area is PIN protected. Enter your PIN to open Settings.";
+  } else {
+    pinModalTitle.textContent = "Unlock Mobile Numbers";
+    pinModalHint.textContent = "Enter your PIN to reveal and enable calling/copying mobile numbers.";
+  }
+  pinValue = "";
+  pinCheckLock = false;
   pinError.style.display = "none";
-  pinInput.classList.remove("pinShake");
+  pinDotsEl.classList.remove("pinShake");
+  renderPinDots();
   openModal(pinModalOverlay);
-  setTimeout(() => pinInput.focus(), 50);
 }
 function closePinModal() { closeModal(pinModalOverlay); }
 
+function checkPin() {
+  if (pinCheckLock) return;
+  pinCheckLock = true;
+  const isCorrect = pinValue === getSettingsPin();
+
+  if (isCorrect) {
+    if (pinModalPurpose === "mobile") {
+      mobileLocked = false;
+      updateMobileLockIcon();
+      renderDonors();
+      showToast("Mobile numbers unlocked");
+    }
+    const onSuccess = pinModalOnSuccess;
+    closePinModal();
+    if (onSuccess) onSuccess();
+  } else {
+    pinError.style.display = "block";
+    pinDotsEl.classList.remove("pinShake");
+    void pinDotsEl.offsetWidth;
+    pinDotsEl.classList.add("pinShake");
+    setTimeout(() => {
+      pinValue = "";
+      renderPinDots();
+      pinCheckLock = false;
+    }, 320);
+  }
+}
+
 mobileColHeader.addEventListener("click", () => {
   if (mobileLocked) {
-    openPinModal();
+    openPinModal("mobile");
   } else {
     mobileLocked = true;
     updateMobileLockIcon();
@@ -1656,22 +2183,33 @@ closePinModalBtn.addEventListener("click", closePinModal);
 cancelPinBtn.addEventListener("click", closePinModal);
 pinModalOverlay.addEventListener("click", e => { if (e.target === pinModalOverlay) closePinModal(); });
 
-pinForm.addEventListener("submit", e => {
-  e.preventDefault();
-  const entered = pinInput.value.trim();
-  if (MOBILE_PINS.includes(entered)) {
-    mobileLocked = false;
-    updateMobileLockIcon();
+pinKeypad.addEventListener("click", e => {
+  const keyBtn = e.target.closest(".pinKey[data-digit]");
+  if (!keyBtn || pinCheckLock) return;
+  if (pinValue.length >= 4) return;
+  pinValue += keyBtn.getAttribute("data-digit");
+  pinError.style.display = "none";
+  renderPinDots();
+  if (pinValue.length === 4) {
+    setTimeout(checkPin, 150);
+  }
+});
+
+pinBackspaceBtn.addEventListener("click", () => {
+  if (pinCheckLock) return;
+  pinValue = pinValue.slice(0, -1);
+  pinError.style.display = "none";
+  renderPinDots();
+});
+
+document.addEventListener("keydown", e => {
+  if (!pinModalOverlay.classList.contains("open")) return;
+  if (/^[0-9]$/.test(e.key)) {
+    pinKeypad.querySelector(`.pinKey[data-digit="${e.key}"]`).click();
+  } else if (e.key === "Backspace") {
+    pinBackspaceBtn.click();
+  } else if (e.key === "Escape") {
     closePinModal();
-    renderDonors();
-    showToast("Mobile numbers unlocked");
-  } else {
-    pinError.style.display = "block";
-    pinInput.classList.remove("pinShake");
-    void pinInput.offsetWidth;
-    pinInput.classList.add("pinShake");
-    pinInput.value = "";
-    pinInput.focus();
   }
 });
 
@@ -1801,6 +2339,67 @@ const submitBtn = document.getElementById("submitBtn");
 const cancelEditBtn = document.getElementById("cancelEditBtn");
 const ageError = document.getElementById("ageError");
 
+/* ---------- Donation history log ----------
+   Each donor can carry a `donationHistory` array of individual donation
+   dates (ISO strings). Times Donated & Last Donation Date are derived
+   automatically from this list whenever it has entries — so the count
+   always matches one real dated donation, and the Donation Overview
+   chart can plot each donation on its actual date. Donors saved before
+   this feature (no history) keep working via their old single count +
+   last-date fields. */
+const donationHistoryDateInput = document.getElementById("donationHistoryDateInput");
+const addDonationDateBtn = document.getElementById("addDonationDateBtn");
+const donationHistoryListEl = document.getElementById("donationHistoryList");
+let formDonationHistory = [];
+
+function renderDonationHistoryList() {
+  const sorted = [...formDonationHistory].sort((a, b) => b.localeCompare(a));
+  if (!sorted.length) {
+    donationHistoryListEl.innerHTML = `<div class="donationHistoryEmpty">No donation dates logged yet.</div>`;
+  } else {
+    donationHistoryListEl.innerHTML = sorted.map(dateStr => `
+      <span class="donationHistoryChip">
+        ${escapeHtml(formatDate(new Date(dateStr)))}
+        <button type="button" data-date="${escapeHtml(dateStr)}" aria-label="Remove this date">✕</button>
+      </span>
+    `).join("");
+  }
+
+  if (formDonationHistory.length > 0) {
+    donationCountInput.value = formDonationHistory.length;
+    donationCountInput.readOnly = true;
+    lastDonateDateInput.value = sorted[0];
+    lastDonateDateInput.readOnly = true;
+  } else {
+    donationCountInput.readOnly = false;
+    lastDonateDateInput.readOnly = false;
+  }
+}
+
+addDonationDateBtn.addEventListener("click", () => {
+  const dateVal = donationHistoryDateInput.value;
+  if (!dateVal) {
+    showToast("Pick a date to add");
+    return;
+  }
+  if (formDonationHistory.includes(dateVal)) {
+    showToast("That date is already logged");
+    return;
+  }
+  formDonationHistory.push(dateVal);
+  donationHistoryDateInput.value = "";
+  renderDonationHistoryList();
+});
+
+donationHistoryListEl.addEventListener("click", e => {
+  const btn = e.target.closest("button[data-date]");
+  if (!btn) return;
+  const dateVal = btn.getAttribute("data-date");
+  formDonationHistory = formDonationHistory.filter(d => d !== dateVal);
+  renderDonationHistoryList();
+});
+renderDonationHistoryList();
+
 function checkAgeValidity() {
   const age = parseInt(ageInput.value, 10);
   if (!isNaN(age) && age < 18) {
@@ -1831,6 +2430,7 @@ donorForm.addEventListener("submit", function (e) {
       address: addressInput.value.trim(),
       mobile: mobileInput.value.trim(),
       donationCount: donationCountInput.value ? parseInt(donationCountInput.value, 10) : 0,
+      donationHistory: [...formDonationHistory],
       donorType: donorTypeInput.value || "Regular",
       bloodGroup: bloodGroupInput.value,
       age: ageInput.value,
@@ -1863,6 +2463,10 @@ function resetForm() {
   submitBtn.textContent = "Add";
   cancelEditBtn.style.display = "none";
   ageError.style.display = "none";
+  formDonationHistory = [];
+  donationCountInput.readOnly = false;
+  lastDonateDateInput.readOnly = false;
+  renderDonationHistoryList();
 }
 
 function editDonor(id) {
@@ -1879,6 +2483,8 @@ function editDonor(id) {
   genderInput.value = donor.gender;
   lastDonateDateInput.value = donor.lastDonateDate;
   editIdInput.value = donor.id;
+  formDonationHistory = Array.isArray(donor.donationHistory) ? [...donor.donationHistory] : [];
+  renderDonationHistoryList();
 
   submitBtn.textContent = "Update";
   cancelEditBtn.style.display = "inline";
@@ -2055,18 +2661,34 @@ function buildExpBuckets(mode) {
 function updateExperienceChart(allDonors) {
   const buckets = buildExpBuckets(expRangeMode);
   const totals = buckets.map(() => 0);
-  const donorCounts = buckets.map(() => 0);
+  const donorSets = buckets.map(() => new Set());
 
   allDonors.forEach(d => {
-    if (!d.lastDonateDate) return;
-    const lastDate = new Date(d.lastDonateDate);
-    if (isNaN(lastDate)) return;
-    const idx = buckets.findIndex(b => b.test(lastDate));
-    if (idx === -1) return;
-    totals[idx] += d.donationCount || 0;
-    donorCounts[idx]++;
+    const history = Array.isArray(d.donationHistory) ? d.donationHistory : [];
+
+    if (history.length > 0) {
+      // Preferred path: one data point per real logged donation date.
+      history.forEach(dateStr => {
+        const date = new Date(dateStr);
+        if (isNaN(date)) return;
+        const idx = buckets.findIndex(b => b.test(date));
+        if (idx === -1) return;
+        totals[idx] += 1;
+        donorSets[idx].add(d.id);
+      });
+    } else if (d.lastDonateDate) {
+      // Legacy fallback for donors saved before donation history existed:
+      // approximate by placing their whole count on the last known date.
+      const lastDate = new Date(d.lastDonateDate);
+      if (isNaN(lastDate)) return;
+      const idx = buckets.findIndex(b => b.test(lastDate));
+      if (idx === -1) return;
+      totals[idx] += d.donationCount || 0;
+      donorSets[idx].add(d.id);
+    }
   });
 
+  const donorCounts = donorSets.map(s => s.size);
   const grandTotal = totals.reduce((sum, v) => sum + v, 0);
   expTotalBadgeText.textContent = `${grandTotal} Total Donation${grandTotal === 1 ? "" : "s"}`;
 
@@ -2364,6 +2986,7 @@ function setupFirebase() {
     db = firebase.database();
     donorsRef = db.ref("donors");
     settingsRef = db.ref("settings");
+    appConfigRef = db.ref("appConfig");
     firebaseAvailable = true;
 
     donorsRef.on("value", snapshot => {
@@ -2380,6 +3003,22 @@ function setupFirebase() {
         setCachedSettings(settingsData);
         cooldownDaysInput.value = settingsData.cooldownDays;
         renderDonors();
+      }
+    });
+
+    appConfigRef.on("value", snapshot => {
+      const val = snapshot.val();
+      if (val) {
+        appConfigData = {
+          siteName: val.siteName || "",
+          settingsPin: val.settingsPin || DEFAULT_SETTINGS_PIN,
+          slideImages: val.slideImages || []
+        };
+        setCachedAppConfig(appConfigData);
+        siteNameInput.value = appConfigData.siteName;
+        applySiteName(appConfigData.siteName);
+        renderSlideManager();
+        renderSlideshow();
       }
     });
 

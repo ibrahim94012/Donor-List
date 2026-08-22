@@ -7,9 +7,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Blood Donor">
-<link rel="apple-touch-icon" href="fav.jpeg">
+<link rel="apple-touch-icon" id="appleTouchIconLink" href="fav.jpeg">
 <title>Blood Donor Network</title>
-<link rel="icon" type="image/x-icon" href="fav.jpeg">
+<link rel="icon" type="image/x-icon" id="faviconLink" href="fav.jpeg">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#9E1B32">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -97,6 +97,15 @@
   }
   .appBarLeft { display: flex; align-items: center; gap: 10px; min-width: 0; justify-self: start; }
   .appBarRight { display: flex; align-items: center; justify-content: flex-end; flex-shrink: 0; justify-self: end; }
+
+  .drawerDivider { height: 1px; background: var(--line); margin: 8px 10px; flex-shrink: 0; }
+  .drawerNavItem.adminActive { background: var(--sage-tint); color: var(--sage); }
+  .drawerNavItem.adminActive svg { color: var(--sage); }
+  .drawerAdminBadge {
+    margin-left: auto; display: inline-flex; align-items: center; flex-shrink: 0;
+    font-family: var(--font-mono); font-size: 9.5px; font-weight: 700;
+    color: var(--sage); background: var(--sage-tint); padding: 2px 7px; border-radius: 999px;
+  }
   .appLogo {
     width: 38px; height: 38px; border-radius: 50%;
     border: 2px solid var(--crimson); object-fit: cover; flex-shrink: 0;
@@ -536,6 +545,20 @@
     font-weight: 700;
   }
 
+  /* ---------- Donor List: header text (set from Settings) ---------- */
+  .donorListHeaderText {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 22px;
+    line-height: 1.3;
+    color: var(--ink);
+    margin: 2px 0 16px;
+    text-align: center;
+  }
+  @media (max-width: 480px) {
+    .donorListHeaderText { font-size: 18px; }
+  }
+
   /* ---------- Donor List: top image slideshow ---------- */
   .slideshow {
     position: relative;
@@ -589,13 +612,22 @@
     background-size: cover; background-position: center;
   }
   .slideManagerRemoveBtn {
-    position: absolute; top: 4px; right: 4px; width: 22px; height: 22px; border-radius: 50%;
+    width: 22px; height: 22px; border-radius: 50%;
     background: rgba(20,14,12,0.68); color: #fff; border: none; cursor: pointer;
     display: flex; align-items: center; justify-content: center; font-size: 13px; line-height: 1;
-    padding: 0;
+    padding: 0; flex-shrink: 0;
   }
   .slideManagerRemoveBtn:hover { background: var(--crimson); }
   .slideManagerEmpty { font-size: 12.5px; color: var(--muted); padding: 4px 0; }
+
+  /* ---------- Settings: website logo manager ---------- */
+  .logoSettingRow { display: flex; align-items: center; gap: 14px; margin-top: 10px; flex-wrap: wrap; }
+  .logoPreviewImg {
+    width: 56px; height: 56px; border-radius: 50%;
+    border: 2px solid var(--crimson); object-fit: cover; flex-shrink: 0;
+    background: var(--cream);
+  }
+  .logoSettingActions { display: flex; gap: 8px; flex-wrap: wrap; }
 
   /* ---------- Toolbar ---------- */
   .toolbar {
@@ -772,6 +804,13 @@
     font-family: var(--font-mono); font-size: 12.5px; font-weight: 500; color: var(--muted);
   }
   .contactLocked svg { width: 13px; height: 13px; color: var(--muted); flex-shrink: 0; }
+
+  .actionsLockedCell {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--font-mono); font-size: 11.5px; font-weight: 500; color: var(--muted);
+    white-space: nowrap;
+  }
+  .actionsLockedCell svg { width: 13px; height: 13px; color: var(--muted); flex-shrink: 0; }
 
   /* ---------- PIN modal: full-screen premium lock-screen style (light) ---------- */
   .pinFullscreenOverlay {
@@ -1019,6 +1058,39 @@
 
   .fieldError { color: var(--crimson); font-weight: 600; font-size: 12.5px; display: block; margin-top: 5px; }
 
+  /* ---------- Image crop modal (used for slide images) ---------- */
+  .cropModal { max-width: 420px; }
+  .cropBody { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .cropFrame {
+    position: relative; width: 100%; aspect-ratio: 16 / 9;
+    overflow: hidden; border-radius: var(--radius-md);
+    background: var(--ink); border: 1px solid var(--line);
+    touch-action: none; cursor: grab;
+  }
+  .cropFrame.dragging { cursor: grabbing; }
+  .cropImageEl {
+    position: absolute; top: 0; left: 0;
+    transform-origin: 0 0; user-select: none; -webkit-user-drag: none;
+    max-width: none; max-height: none;
+  }
+  .cropZoomRow { display: flex; align-items: center; gap: 10px; width: 100%; color: var(--muted); }
+  .cropZoomRow svg { flex-shrink: 0; }
+  .cropZoomRow .zoomSlider { flex: 1; }
+  .cropHint { font-size: 11.5px; color: var(--muted); text-align: center; }
+
+  .slideManagerItem { position: relative; }
+  .slideManagerActions {
+    position: absolute; top: 4px; left: 4px; right: 4px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .slideManagerCropBtn {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: rgba(20,14,12,0.68); color: #fff; border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; padding: 0; flex-shrink: 0;
+  }
+  .slideManagerCropBtn svg { width: 12px; height: 12px; }
+  .slideManagerCropBtn:hover { background: var(--crimson); }
+
   /* ---------- Toast ---------- */
   .toast {
     position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom)); transform: translate(-50%, 20px);
@@ -1073,12 +1145,12 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
     <div class="appTitleBlock">
-      <div class="appTitle"><span id="appTitleText">Blood Donor Network</span> <span class="appVersionBadge" id="appVersionBadge">v2.6.0</span></div>
+      <div class="appTitle"><span id="appTitleText">Blood Donor Network</span> <span class="appVersionBadge" id="appVersionBadge">v2.7.0</span></div>
       <div class="appTagline">রক্তদাতা নেটওয়ার্ক</div>
     </div>
   </div>
   <div class="appBarRight">
-    <img class="appLogo" src="fav.jpeg" alt="Blood Donor Network logo">
+    <img class="appLogo" id="appLogoImg" src="fav.jpeg" alt="Blood Donor Network logo">
   </div>
 </div>
 
@@ -1087,7 +1159,7 @@
 <div class="drawerOverlay" id="drawerOverlay"></div>
 <nav class="sideDrawer" id="sideDrawer" aria-label="Main navigation">
   <div class="drawerHeader">
-    <img class="drawerLogo" src="fav.jpeg" alt="Blood Donor Network logo">
+    <img class="drawerLogo" id="drawerLogoImg" src="fav.jpeg" alt="Blood Donor Network logo">
     <div>
       <div class="drawerTitle" id="drawerTitleText">Blood Donor Network</div>
       <div class="drawerTagline">রক্তদাতা নেটওয়ার্ক</div>
@@ -1106,10 +1178,16 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       <span>Settings</span>
     </button>
+    <div class="drawerDivider"></div>
+    <button type="button" class="drawerNavItem" id="adminLoginBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span id="adminLoginBtnLabel">Admin Login</span>
+      <span class="drawerAdminBadge" id="adminActiveBadge" style="display:none;">ON</span>
+    </button>
   </div>
 </nav>
 
-<p class="credit">Development by <u>IBRAHIM KHALIL</u> | <u>SAMIN KHAN</u> &nbsp;•&nbsp; Blood Donor Network <u>v2.6.0</u></p>
+<p class="credit">Development by <u>IBRAHIM KHALIL</u> | <u>SAMIN KHAN</u></p>
 
 <svg class="pulseDivider" viewBox="0 0 600 26" preserveAspectRatio="none" aria-hidden="true">
   <path d="M0,13 L200,13 L215,2 L230,23 L245,7 L258,18 L270,13 L600,13"/>
@@ -1184,6 +1262,7 @@
   </section>
 
   <section class="pageView activeView" id="listView">
+  <h2 class="donorListHeaderText" id="donorListHeaderText" style="display:none;"></h2>
   <div class="slideshow" id="donorSlideshow" style="display:none;">
     <div class="slideshowTrack" id="slideshowTrack"></div>
     <div class="slideshowDots" id="slideshowDots"></div>
@@ -1249,7 +1328,12 @@
           <th>Last Donation</th>
           <th>Next Eligible</th>
           <th>Status</th>
-          <th>Actions</th>
+          <th id="actionsColHeader" class="mobileColHeader" title="Click to lock/unlock actions" role="button" tabindex="0">
+            <span class="mobileColHeaderInner">
+              Actions
+              <svg id="actionsLockIcon" class="mobileLockIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+            </span>
+          </th>
         </tr>
       </thead>
       <tbody id="donorList"><!-- rows inserted by JS --></tbody>
@@ -1270,6 +1354,24 @@
         </tr>
       </table>
       <div class="settingsFieldHint">Shown in the app bar, side menu, and browser tab title.</div>
+
+      <hr class="settingsDivider">
+      <div class="settingsSectionLabel">Website Logo</div>
+      <div class="logoSettingRow">
+        <img id="logoPreviewImg" class="logoPreviewImg" src="fav.jpeg" alt="Current logo">
+        <div class="logoSettingActions">
+          <input type="file" id="logoFileInput" accept="image/*" style="display:none;">
+          <button type="button" class="ghostBtn" id="uploadLogoBtn" style="margin-left:0;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            Upload Logo
+          </button>
+          <button type="button" class="ghostBtn" id="resetLogoBtn" style="margin-left:0;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+            Reset to Default
+          </button>
+        </div>
+      </div>
+      <div class="settingsFieldHint" style="margin-top:8px;">Shown in the app bar and side menu. Square images work best.</div>
 
       <table>
         <tr>
@@ -1292,8 +1394,12 @@
             </select>
           </td>
         </tr>
+        <tr>
+          <td>Header Text:</td>
+          <td><input type="text" id="donorListHeaderTextInput" maxlength="100" placeholder="e.g. আমাদের রক্তদাতা তালিকা"></td>
+        </tr>
       </table>
-      <div class="settingsFieldHint">Controls how the Donor List is sorted when the app opens.</div>
+      <div class="settingsFieldHint">Controls how the Donor List is sorted when the app opens. The Header Text appears at the top of the Donor List page — leave blank to hide it.</div>
 
       <hr class="settingsDivider">
       <div class="settingsSectionLabel">Security PIN</div>
@@ -1307,7 +1413,7 @@
           <td><input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" id="confirmPinInput" placeholder="4 digits"></td>
         </tr>
       </table>
-      <div class="settingsFieldHint">One PIN protects both Settings access and the Mobile numbers column. Leave blank to keep your current PIN.</div>
+      <div class="settingsFieldHint">One PIN protects Settings, Mobile numbers, and Actions. Leave blank to keep your current PIN. Stored as a secure encrypted hash — never saved in plain text.</div>
 
       <hr class="settingsDivider">
       <div class="settingsSectionLabel">Donor List Slideshow</div>
@@ -1438,6 +1544,30 @@
 </div>
 
 
+<!-- ================= IMAGE CROP MODAL (Slide Images) ================= -->
+<div class="modalOverlay" id="cropModalOverlay">
+  <div class="modal cropModal" role="dialog" aria-modal="true" aria-labelledby="cropModalTitle">
+    <div class="modalHeader">
+      <h2 id="cropModalTitle">Crop Slide Image</h2>
+      <button type="button" class="modalClose" id="closeCropModalBtn" aria-label="Close">✕</button>
+    </div>
+    <div class="cropBody">
+      <div class="cropFrame" id="cropFrame">
+        <img id="cropImageEl" class="cropImageEl" alt="Crop preview" draggable="false">
+      </div>
+      <div class="cropZoomRow">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="range" id="cropZoomSlider" class="zoomSlider" min="100" max="300" step="1" value="100" aria-label="Zoom">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+      </div>
+      <div class="cropHint">Drag the image to reposition it, and use the slider to zoom.</div>
+    </div>
+    <div class="modalActions">
+      <button type="button" id="cropConfirmBtn">Use This Crop</button>
+    </div>
+  </div>
+</div>
+
 <!-- ================= UNIFIED PIN MODAL (Mobile Unlock + Settings) ================= -->
 <div class="modalOverlay pinFullscreenOverlay" id="pinModalOverlay">
   <div class="modal pinModal" role="dialog" aria-modal="true" aria-labelledby="pinModalTitle">
@@ -1548,10 +1678,10 @@ function setCachedSettings(settings) {
 function getCachedAppConfig() {
   try {
     const data = localStorage.getItem(CACHE_APPCONFIG_KEY);
-    return data ? JSON.parse(data) : { siteName: "", settingsPin: DEFAULT_SETTINGS_PIN, slideImages: [] };
+    return data ? JSON.parse(data) : { siteName: "", settingsPin: DEFAULT_SETTINGS_PIN, slideImages: [], logoImage: "", donorListHeaderText: "" };
   } catch (err) {
     console.log("Could not read cached app config:", err);
-    return { siteName: "", settingsPin: DEFAULT_SETTINGS_PIN, slideImages: [] };
+    return { siteName: "", settingsPin: DEFAULT_SETTINGS_PIN, slideImages: [], logoImage: "", donorListHeaderText: "" };
   }
 }
 function setCachedAppConfig(config) {
@@ -1561,8 +1691,56 @@ function setCachedAppConfig(config) {
     console.log("Could not save cached app config:", err);
   }
 }
-function getSettingsPin() {
-  return (appConfigData && appConfigData.settingsPin) ? String(appConfigData.settingsPin) : DEFAULT_SETTINGS_PIN;
+/* ============================================================
+   PIN SECURITY — SHA-256 hashing (Web Crypto API)
+   The PIN itself is never stored or synced in plain text. Only a
+   salted SHA-256 hash of it is saved to localStorage and Firebase,
+   so a snoop looking at the browser storage or the Firebase
+   console cannot read the actual PIN. Any existing install that
+   still has a plain 4-digit PIN saved from before this change is
+   silently upgraded to a hash the next time that PIN is entered
+   correctly — no action needed from the admin.
+   ============================================================ */
+const PIN_SALT = "blood_donor_network_pin_v1";
+
+async function sha256Hex(text) {
+  const data = new TextEncoder().encode(text);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+function hashPin(pin) {
+  return sha256Hex(PIN_SALT + ":" + pin);
+}
+
+function isHashedPin(value) {
+  return typeof value === "string" && /^[0-9a-f]{64}$/i.test(value);
+}
+
+async function verifyPin(enteredPin) {
+  const stored = (appConfigData && appConfigData.settingsPin) ? String(appConfigData.settingsPin) : DEFAULT_SETTINGS_PIN;
+  if (isHashedPin(stored)) {
+    const enteredHash = await hashPin(enteredPin);
+    return enteredHash === stored.toLowerCase();
+  }
+  // Legacy plain-text PIN (or the untouched default) — verify directly,
+  // then upgrade storage to a hash so it is never kept as plain text again.
+  const matches = enteredPin === stored;
+  if (matches) {
+    try {
+      const upgradedHash = await hashPin(enteredPin);
+      appConfigData.settingsPin = upgradedHash;
+      setCachedAppConfig(appConfigData);
+      if (firebaseAvailable && appConfigRef) {
+        appConfigRef.child("settingsPin").set(upgradedHash).catch(err => {
+          console.log("Could not sync upgraded PIN hash:", err);
+        });
+      }
+    } catch (err) {
+      console.log("Could not upgrade PIN to hashed storage:", err);
+    }
+  }
+  return matches;
 }
 
 function getQueue() {
@@ -1585,7 +1763,7 @@ function setQueue(queue) {
 
 let firebaseDonors = getCachedDonors();      // Latest confirmed list from Firebase
 let settingsData = getCachedSettings();
-let appConfigData = getCachedAppConfig();    // siteName, settingsPin, slideImages
+let appConfigData = getCachedAppConfig();    // siteName, settingsPin, slideImages, logoImage
 let isConnected = false;
 let syncing = false;
 
@@ -1794,12 +1972,32 @@ const siteNameInput = document.getElementById("siteNameInput");
 const newPinInput = document.getElementById("newPinInput");
 const confirmPinInput = document.getElementById("confirmPinInput");
 const defaultSortSelect = document.getElementById("defaultSortSelect");
+const donorListHeaderTextInput = document.getElementById("donorListHeaderTextInput");
+const donorListHeaderTextEl = document.getElementById("donorListHeaderText");
 const exportDataBtn = document.getElementById("exportDataBtn");
 const DEFAULT_SORT_KEY = "blood_donor_default_sort";
 const DEFAULT_SITE_NAME = "Blood Donor Network";
 
 const appTitleTextEl = document.getElementById("appTitleText");
 const drawerTitleTextEl = document.getElementById("drawerTitleText");
+const appLogoImg = document.getElementById("appLogoImg");
+const drawerLogoImg = document.getElementById("drawerLogoImg");
+const logoPreviewImg = document.getElementById("logoPreviewImg");
+const logoFileInput = document.getElementById("logoFileInput");
+const uploadLogoBtn = document.getElementById("uploadLogoBtn");
+const resetLogoBtn = document.getElementById("resetLogoBtn");
+const appleTouchIconLink = document.getElementById("appleTouchIconLink");
+const faviconLink = document.getElementById("faviconLink");
+const DEFAULT_LOGO_SRC = "fav.jpeg";
+
+function applyLogo(base64) {
+  const src = base64 && base64.trim() ? base64 : DEFAULT_LOGO_SRC;
+  appLogoImg.src = src;
+  drawerLogoImg.src = src;
+  logoPreviewImg.src = src;
+  if (appleTouchIconLink) appleTouchIconLink.setAttribute("href", src);
+  if (faviconLink) faviconLink.setAttribute("href", src);
+}
 
 function applySiteName(name) {
   const finalName = (name && name.trim()) ? name.trim() : DEFAULT_SITE_NAME;
@@ -1808,6 +2006,12 @@ function applySiteName(name) {
   document.title = finalName;
   const metaAppTitle = document.querySelector('meta[name="apple-mobile-web-app-title"]');
   if (metaAppTitle) metaAppTitle.setAttribute("content", finalName);
+}
+
+function applyDonorListHeaderText(text) {
+  const finalText = (text && text.trim()) ? text.trim() : "";
+  donorListHeaderTextEl.textContent = finalText;
+  donorListHeaderTextEl.style.display = finalText ? "" : "none";
 }
 
 function initSettings() {
@@ -1819,11 +2023,14 @@ function initSettings() {
   }
   siteNameInput.value = appConfigData.siteName || "";
   applySiteName(appConfigData.siteName || "");
+  applyLogo(appConfigData.logoImage || "");
+  donorListHeaderTextInput.value = appConfigData.donorListHeaderText || "";
+  applyDonorListHeaderText(appConfigData.donorListHeaderText || "");
   renderSlideManager();
   renderSlideshow();
 }
 
-settingsForm.addEventListener("submit", function (e) {
+settingsForm.addEventListener("submit", async function (e) {
   e.preventDefault();
   try {
     const settings = { cooldownDays: parseInt(cooldownDaysInput.value, 10) };
@@ -1837,7 +2044,8 @@ settingsForm.addEventListener("submit", function (e) {
     sortMode = defaultSortSelect.value;
     try { localStorage.setItem(DEFAULT_SORT_KEY, sortMode); } catch (err) { /* ignore */ }
 
-    // Optional PIN change
+    // Optional PIN change — the PIN is hashed (SHA-256) before it's ever
+    // stored or synced, so the real 4-digit PIN never touches storage.
     const newPin = newPinInput.value.trim();
     const confirmPin = confirmPinInput.value.trim();
     if (newPin || confirmPin) {
@@ -1849,16 +2057,19 @@ settingsForm.addEventListener("submit", function (e) {
         showToast("PIN and Confirm PIN don't match");
         return;
       }
-      appConfigData.settingsPin = newPin;
+      appConfigData.settingsPin = await hashPin(newPin);
     }
 
     appConfigData.siteName = siteNameInput.value.trim();
+    appConfigData.donorListHeaderText = donorListHeaderTextInput.value.trim();
     setCachedAppConfig(appConfigData);
     applySiteName(appConfigData.siteName);
+    applyDonorListHeaderText(appConfigData.donorListHeaderText);
     if (firebaseAvailable && appConfigRef) {
       appConfigRef.update({
         siteName: appConfigData.siteName,
-        settingsPin: appConfigData.settingsPin
+        settingsPin: appConfigData.settingsPin,
+        donorListHeaderText: appConfigData.donorListHeaderText
       }).catch(err => {
         console.log("App config saved offline, will sync when online:", err);
       });
@@ -1903,6 +2114,54 @@ exportDataBtn.addEventListener("click", () => {
 
 
 /* ============================================================
+   WEBSITE LOGO — SETTINGS UPLOAD (stored as base64)
+   The chosen image is resized/compressed client-side into a
+   base64 data URL, then saved into appConfig/logoImage the same
+   way the slideshow images and site name are — synced to Firebase
+   and cached locally so it persists and works offline.
+   ============================================================ */
+function persistLogo() {
+  setCachedAppConfig(appConfigData);
+  if (firebaseAvailable && appConfigRef) {
+    appConfigRef.child("logoImage").set(appConfigData.logoImage || "").catch(err => {
+      console.log("Logo saved offline, will sync when online:", err);
+    });
+  }
+}
+
+uploadLogoBtn.addEventListener("click", () => {
+  logoFileInput.click();
+});
+
+logoFileInput.addEventListener("change", async () => {
+  const file = logoFileInput.files && logoFileInput.files[0];
+  logoFileInput.value = "";
+  if (!file) return;
+  if (!file.type.startsWith("image/")) {
+    showToast("Please choose an image file");
+    return;
+  }
+  try {
+    showToast("Processing logo...");
+    const base64 = await resizeImageFile(file, 512, 0.9);
+    appConfigData.logoImage = base64;
+    persistLogo();
+    applyLogo(base64);
+    showToast("Logo updated");
+  } catch (err) {
+    console.log("Failed to process logo image:", err);
+    showToast("Could not process that image");
+  }
+});
+
+resetLogoBtn.addEventListener("click", () => {
+  appConfigData.logoImage = "";
+  persistLogo();
+  applyLogo("");
+  showToast("Logo reset to default");
+});
+
+/* ============================================================
    SLIDESHOW IMAGES — SETTINGS MANAGER + DONOR LIST SLIDESHOW
    Up to 6 images can be uploaded from Settings. Each image is
    resized/compressed client-side and stored as a base64 data URL,
@@ -1931,7 +2190,12 @@ function renderSlideManager() {
   } else {
     slideManagerGrid.innerHTML = images.map((src, i) => `
       <div class="slideManagerItem" style="background-image:url('${src}')">
-        <button type="button" class="slideManagerRemoveBtn" data-index="${i}" title="Remove image" aria-label="Remove image">✕</button>
+        <div class="slideManagerActions">
+          <button type="button" class="slideManagerCropBtn" data-index="${i}" title="Adjust crop" aria-label="Adjust crop">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/></svg>
+          </button>
+          <button type="button" class="slideManagerRemoveBtn" data-index="${i}" title="Remove image" aria-label="Remove image">✕</button>
+        </div>
       </div>
     `).join("");
   }
@@ -1966,6 +2230,151 @@ function resizeImageFile(file, maxDim, quality) {
   });
 }
 
+function readFileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("Could not read the selected file"));
+    reader.onload = () => resolve(reader.result);
+    reader.readAsDataURL(file);
+  });
+}
+
+/* ============================================================
+   IMAGE CROPPER (drag to reposition, slider to zoom)
+   A lightweight "cover fit" cropper: the image always fills the
+   crop frame with no empty borders, matching the slideshow's
+   16:9 aspect ratio. Used both when adding a new slide image and
+   when re-adjusting the crop of one already saved.
+   ============================================================ */
+const cropModalOverlay = document.getElementById("cropModalOverlay");
+const closeCropModalBtn = document.getElementById("closeCropModalBtn");
+const cropFrame = document.getElementById("cropFrame");
+const cropImageEl = document.getElementById("cropImageEl");
+const cropZoomSlider = document.getElementById("cropZoomSlider");
+const cropConfirmBtn = document.getElementById("cropConfirmBtn");
+
+const CROP_ASPECT_W = 16, CROP_ASPECT_H = 9;
+const CROP_OUTPUT_WIDTH = 1280;
+
+let cropState = null;
+let cropResolve = null;
+let cropDragging = false;
+let cropDragStart = null;
+
+function clampCropTranslate() {
+  if (!cropState) return;
+  const dispW = cropState.natW * cropState.scale;
+  const dispH = cropState.natH * cropState.scale;
+  const minTx = cropState.frameW - dispW;
+  const minTy = cropState.frameH - dispH;
+  cropState.tx = Math.min(0, Math.max(minTx, cropState.tx));
+  cropState.ty = Math.min(0, Math.max(minTy, cropState.ty));
+}
+
+function applyCropTransform() {
+  if (!cropState) return;
+  cropImageEl.style.width = (cropState.natW * cropState.scale) + "px";
+  cropImageEl.style.height = (cropState.natH * cropState.scale) + "px";
+  cropImageEl.style.transform = `translate(${cropState.tx}px, ${cropState.ty}px)`;
+}
+
+function openCropModal(dataUrl) {
+  return new Promise(resolve => {
+    cropResolve = resolve;
+    const img = new Image();
+    img.onload = () => {
+      const rect = cropFrame.getBoundingClientRect();
+      const frameW = rect.width || 360;
+      const frameH = rect.height || (frameW * CROP_ASPECT_H / CROP_ASPECT_W);
+      const baseScale = Math.max(frameW / img.naturalWidth, frameH / img.naturalHeight);
+      cropState = {
+        natW: img.naturalWidth,
+        natH: img.naturalHeight,
+        frameW, frameH, baseScale,
+        scale: baseScale,
+        tx: (frameW - img.naturalWidth * baseScale) / 2,
+        ty: (frameH - img.naturalHeight * baseScale) / 2
+      };
+      cropImageEl.src = dataUrl;
+      cropZoomSlider.value = 100;
+      clampCropTranslate();
+      applyCropTransform();
+      openModal(cropModalOverlay);
+    };
+    img.onerror = () => resolve(null);
+    img.src = dataUrl;
+  });
+}
+
+function closeCropModal(result) {
+  closeModal(cropModalOverlay);
+  const resolve = cropResolve;
+  cropResolve = null;
+  cropState = null;
+  if (resolve) resolve(result === undefined ? null : result);
+}
+
+closeCropModalBtn.addEventListener("click", () => closeCropModal(null));
+cropModalOverlay.addEventListener("click", e => { if (e.target === cropModalOverlay) closeCropModal(null); });
+
+cropZoomSlider.addEventListener("input", () => {
+  if (!cropState) return;
+  const zoomFactor = parseInt(cropZoomSlider.value, 10) / 100;
+  cropState.scale = cropState.baseScale * zoomFactor;
+  clampCropTranslate();
+  applyCropTransform();
+});
+
+function cropPointerDown(x, y) {
+  if (!cropState) return;
+  cropDragging = true;
+  cropDragStart = { x, y, tx: cropState.tx, ty: cropState.ty };
+  cropFrame.classList.add("dragging");
+}
+function cropPointerMove(x, y) {
+  if (!cropDragging || !cropState || !cropDragStart) return;
+  cropState.tx = cropDragStart.tx + (x - cropDragStart.x);
+  cropState.ty = cropDragStart.ty + (y - cropDragStart.y);
+  clampCropTranslate();
+  applyCropTransform();
+}
+function cropPointerUp() {
+  cropDragging = false;
+  cropDragStart = null;
+  cropFrame.classList.remove("dragging");
+}
+
+cropFrame.addEventListener("pointerdown", e => {
+  if (cropFrame.setPointerCapture) { try { cropFrame.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ } }
+  cropPointerDown(e.clientX, e.clientY);
+});
+cropFrame.addEventListener("pointermove", e => cropPointerMove(e.clientX, e.clientY));
+cropFrame.addEventListener("pointerup", cropPointerUp);
+cropFrame.addEventListener("pointercancel", cropPointerUp);
+
+cropConfirmBtn.addEventListener("click", () => {
+  if (!cropState) { closeCropModal(null); return; }
+  try {
+    const outW = CROP_OUTPUT_WIDTH;
+    const outH = Math.round(outW * CROP_ASPECT_H / CROP_ASPECT_W);
+    const cropX = -cropState.tx / cropState.scale;
+    const cropY = -cropState.ty / cropState.scale;
+    const cropW = cropState.frameW / cropState.scale;
+    const cropH = cropState.frameH / cropState.scale;
+    const canvas = document.createElement("canvas");
+    canvas.width = outW;
+    canvas.height = outH;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(cropImageEl, cropX, cropY, cropW, cropH, 0, 0, outW, outH);
+    const base64 = canvas.toDataURL("image/jpeg", 0.86);
+    closeCropModal(base64);
+  } catch (err) {
+    console.log("Crop failed:", err);
+    showToast("Could not crop that image");
+    closeCropModal(null);
+  }
+});
+
 addSlideImageBtn.addEventListener("click", () => {
   const images = appConfigData.slideImages || [];
   if (images.length >= MAX_SLIDE_IMAGES) {
@@ -1984,14 +2393,15 @@ slideImageFileInput.addEventListener("change", async () => {
     return;
   }
   try {
-    showToast("Processing image...");
-    const base64 = await resizeImageFile(file, 1280, 0.82);
+    const rawDataUrl = await readFileAsDataUrl(file);
+    const cropped = await openCropModal(rawDataUrl);
+    if (!cropped) return; // user cancelled the crop
     appConfigData.slideImages = appConfigData.slideImages || [];
     if (appConfigData.slideImages.length >= MAX_SLIDE_IMAGES) {
       showToast(`You can add up to ${MAX_SLIDE_IMAGES} slide images`);
       return;
     }
-    appConfigData.slideImages.push(base64);
+    appConfigData.slideImages.push(cropped);
     persistSlideImages();
     renderSlideManager();
     renderSlideshow();
@@ -2002,18 +2412,41 @@ slideImageFileInput.addEventListener("change", async () => {
   }
 });
 
-slideManagerGrid.addEventListener("click", e => {
-  const btn = e.target.closest(".slideManagerRemoveBtn");
-  if (!btn) return;
-  const index = parseInt(btn.getAttribute("data-index"), 10);
-  const images = appConfigData.slideImages || [];
-  if (Number.isNaN(index) || index < 0 || index >= images.length) return;
-  images.splice(index, 1);
-  appConfigData.slideImages = images;
-  persistSlideImages();
-  renderSlideManager();
-  renderSlideshow();
-  showToast("Slide image removed");
+slideManagerGrid.addEventListener("click", async e => {
+  const removeBtn = e.target.closest(".slideManagerRemoveBtn");
+  const cropBtn = e.target.closest(".slideManagerCropBtn");
+
+  if (removeBtn) {
+    const index = parseInt(removeBtn.getAttribute("data-index"), 10);
+    const images = appConfigData.slideImages || [];
+    if (Number.isNaN(index) || index < 0 || index >= images.length) return;
+    images.splice(index, 1);
+    appConfigData.slideImages = images;
+    persistSlideImages();
+    renderSlideManager();
+    renderSlideshow();
+    showToast("Slide image removed");
+    return;
+  }
+
+  if (cropBtn) {
+    const index = parseInt(cropBtn.getAttribute("data-index"), 10);
+    const images = appConfigData.slideImages || [];
+    if (Number.isNaN(index) || index < 0 || index >= images.length) return;
+    try {
+      const cropped = await openCropModal(images[index]);
+      if (!cropped) return; // user cancelled
+      images[index] = cropped;
+      appConfigData.slideImages = images;
+      persistSlideImages();
+      renderSlideManager();
+      renderSlideshow();
+      showToast("Crop updated");
+    } catch (err) {
+      console.log("Failed to re-crop slide image:", err);
+      showToast("Could not adjust that crop");
+    }
+  }
 });
 
 /* ---------- Donor List: auto-playing slideshow ---------- */
@@ -2077,10 +2510,17 @@ slideshowDotsEl.addEventListener("click", e => {
    lock screen — no typing needed.
    ============================================================ */
 let mobileLocked = true;
+let actionsLocked = true;
 let settingsUnlocked = false;
+let adminUnlocked = false;
 
 const mobileColHeader = document.getElementById("mobileColHeader");
 const mobileLockIcon = document.getElementById("mobileLockIcon");
+const actionsColHeader = document.getElementById("actionsColHeader");
+const actionsLockIcon = document.getElementById("actionsLockIcon");
+const adminLoginBtn = document.getElementById("adminLoginBtn");
+const adminLoginBtnLabel = document.getElementById("adminLoginBtnLabel");
+const adminActiveBadge = document.getElementById("adminActiveBadge");
 const pinModalOverlay = document.getElementById("pinModalOverlay");
 const pinModalTitle = document.getElementById("pinModalTitle");
 const pinModalHint = document.getElementById("pinModalHint");
@@ -2114,6 +2554,28 @@ function updateMobileLockIcon() {
   }
 }
 
+function updateActionsLockIcon() {
+  if (actionsLocked) {
+    actionsLockIcon.innerHTML = '<rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>';
+    actionsColHeader.title = "Click to unlock actions";
+  } else {
+    actionsLockIcon.innerHTML = '<rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 7.4-2.3"/>';
+    actionsColHeader.title = "Click to lock actions";
+  }
+}
+
+function updateAdminMenuUI() {
+  if (adminUnlocked) {
+    adminLoginBtnLabel.textContent = "Admin Logout";
+    adminLoginBtn.classList.add("adminActive");
+    adminActiveBadge.style.display = "inline-flex";
+  } else {
+    adminLoginBtnLabel.textContent = "Admin Login";
+    adminLoginBtn.classList.remove("adminActive");
+    adminActiveBadge.style.display = "none";
+  }
+}
+
 function renderPinDots() {
   pinDots.forEach((dot, i) => dot.classList.toggle("filled", i < pinValue.length));
 }
@@ -2124,6 +2586,12 @@ function openPinModal(purpose, onSuccess) {
   if (purpose === "settings") {
     pinModalTitle.textContent = "Enter PIN";
     pinModalHint.textContent = "This area is PIN protected. Enter your PIN to open Settings.";
+  } else if (purpose === "actions") {
+    pinModalTitle.textContent = "Unlock Actions";
+    pinModalHint.textContent = "Enter your PIN to enable editing and deleting donors.";
+  } else if (purpose === "admin") {
+    pinModalTitle.textContent = "Admin Login";
+    pinModalHint.textContent = "Enter the admin PIN to unlock full access — mobile numbers, actions and settings.";
   } else {
     pinModalTitle.textContent = "Unlock Mobile Numbers";
     pinModalHint.textContent = "Enter your PIN to reveal and enable calling/copying mobile numbers.";
@@ -2137,10 +2605,16 @@ function openPinModal(purpose, onSuccess) {
 }
 function closePinModal() { closeModal(pinModalOverlay); }
 
-function checkPin() {
+async function checkPin() {
   if (pinCheckLock) return;
   pinCheckLock = true;
-  const isCorrect = pinValue === getSettingsPin();
+  let isCorrect = false;
+  try {
+    isCorrect = await verifyPin(pinValue);
+  } catch (err) {
+    console.log("PIN verification failed:", err);
+    isCorrect = false;
+  }
 
   if (isCorrect) {
     if (pinModalPurpose === "mobile") {
@@ -2148,6 +2622,21 @@ function checkPin() {
       updateMobileLockIcon();
       renderDonors();
       showToast("Mobile numbers unlocked");
+    } else if (pinModalPurpose === "actions") {
+      actionsLocked = false;
+      updateActionsLockIcon();
+      renderDonors();
+      showToast("Actions unlocked");
+    } else if (pinModalPurpose === "admin") {
+      adminUnlocked = true;
+      mobileLocked = false;
+      actionsLocked = false;
+      settingsUnlocked = true;
+      updateMobileLockIcon();
+      updateActionsLockIcon();
+      updateAdminMenuUI();
+      renderDonors();
+      showToast("Admin unlocked — full access granted");
     }
     const onSuccess = pinModalOnSuccess;
     closePinModal();
@@ -2177,6 +2666,46 @@ mobileColHeader.addEventListener("click", () => {
 });
 mobileColHeader.addEventListener("keydown", e => {
   if (e.key === "Enter" || e.key === " ") { e.preventDefault(); mobileColHeader.click(); }
+});
+
+actionsColHeader.addEventListener("click", () => {
+  if (actionsLocked) {
+    openPinModal("actions");
+  } else {
+    actionsLocked = true;
+    updateActionsLockIcon();
+    renderDonors();
+    showToast("Actions locked");
+  }
+});
+actionsColHeader.addEventListener("keydown", e => {
+  if (e.key === "Enter" || e.key === " ") { e.preventDefault(); actionsColHeader.click(); }
+});
+
+/* ============================================================
+   SIDE DRAWER — Admin Login / Logout
+   Logging in with the admin PIN unlocks everything at once:
+   mobile numbers, the Actions column, and the Settings page.
+   ============================================================ */
+adminLoginBtn.addEventListener("click", () => {
+  if (adminUnlocked) {
+    adminUnlocked = false;
+    mobileLocked = true;
+    actionsLocked = true;
+    settingsUnlocked = false;
+    updateMobileLockIcon();
+    updateActionsLockIcon();
+    updateAdminMenuUI();
+    closeDrawer();
+    if (pageViews.settings && pageViews.settings.classList.contains("activeView")) {
+      switchView("list");
+    }
+    renderDonors();
+    showToast("Admin locked");
+  } else {
+    closeDrawer();
+    openPinModal("admin");
+  }
 });
 
 closePinModalBtn.addEventListener("click", closePinModal);
@@ -2214,6 +2743,8 @@ document.addEventListener("keydown", e => {
 });
 
 updateMobileLockIcon();
+updateActionsLockIcon();
+updateAdminMenuUI();
 
 /* ============================================================
    DONOR FORM (Add / Edit)
@@ -2840,14 +3371,20 @@ function renderDonors() {
       <td class="dateCell">${nextEligible ? formatDate(nextEligible) : "-"}</td>
       <td><span class="statusPill ${statusClass}">${escapeHtml(status)}</span></td>
       <td>
-        <div class="cardActionsRow">
+        ${actionsLocked
+          ? `<span class="actionsLockedCell" title="Unlock the Actions column to edit or delete">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+              Locked
+             </span>`
+          : `<div class="cardActionsRow">
           <button type="button" class="editBtn" onclick="editDonor('${donor.id}')" title="Edit" aria-label="Edit donor">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg>
           </button>
           <button type="button" class="deleteBtn" onclick="deleteDonor('${donor.id}')" title="Delete" aria-label="Delete donor">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
           </button>
-        </div>
+        </div>`
+        }
       </td>
     `;
     donorList.appendChild(row);
@@ -3012,11 +3549,16 @@ function setupFirebase() {
         appConfigData = {
           siteName: val.siteName || "",
           settingsPin: val.settingsPin || DEFAULT_SETTINGS_PIN,
-          slideImages: val.slideImages || []
+          slideImages: val.slideImages || [],
+          logoImage: val.logoImage || "",
+          donorListHeaderText: val.donorListHeaderText || ""
         };
         setCachedAppConfig(appConfigData);
         siteNameInput.value = appConfigData.siteName;
         applySiteName(appConfigData.siteName);
+        applyLogo(appConfigData.logoImage);
+        donorListHeaderTextInput.value = appConfigData.donorListHeaderText;
+        applyDonorListHeaderText(appConfigData.donorListHeaderText);
         renderSlideManager();
         renderSlideshow();
       }

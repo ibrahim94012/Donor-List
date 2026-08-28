@@ -1,15 +1,23 @@
 {
-  "name": "Blood Donor List",
-  "short_name": "BloodDonor",
+  "name": "Blood Network Baraikhali",
+  "short_name": "B.N.B",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#a30000",
   "icons": [
     {
       "src": "fav.jpeg",
-      "sizes": "70x70",
-      "type": "image/jpeg"
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any"
+    },
+    {
+      "src": "fav.jpeg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
     }
   ]
 }

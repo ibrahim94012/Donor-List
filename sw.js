@@ -21,7 +21,7 @@
    ("./index.html"), not just an exact URL match.
    ============================================================ */
 
-const CACHE_NAME = "blood-donor-app-v4";
+const CACHE_NAME = "blood-donor-app-v5";
 const APP_SHELL = "./index.html";
 
 const ASSETS_TO_CACHE = [

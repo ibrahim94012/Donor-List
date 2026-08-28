@@ -559,67 +559,6 @@
     .donorListHeaderText { font-size: 18px; }
   }
 
-  /* ---------- Donor List: top image slideshow ---------- */
-  .slideshow {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 16 / 7;
-    max-height: 260px;
-    border-radius: var(--radius-md);
-    overflow: hidden;
-    margin-bottom: 16px;
-    background: var(--cream);
-    border: 1px solid var(--line);
-    box-shadow: var(--shadow);
-  }
-  .slideshowTrack {
-    display: flex;
-    height: 100%;
-    width: 100%;
-    transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
-    will-change: transform;
-  }
-  .slideshowSlide {
-    flex: 0 0 100%;
-    height: 100%;
-    background-size: cover;
-    background-position: center;
-  }
-  .slideshowDots {
-    position: absolute;
-    left: 0; right: 0; bottom: 10px;
-    display: flex; align-items: center; justify-content: center; gap: 6px;
-  }
-  .slideshowDot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: rgba(255,255,255,0.55);
-    box-shadow: 0 0 0 1px rgba(0,0,0,0.15);
-    transition: width 0.3s ease, background 0.3s ease;
-    cursor: pointer;
-  }
-  .slideshowDot.active { width: 18px; border-radius: 4px; background: #fff; }
-  @media (max-width: 480px) {
-    .slideshow { aspect-ratio: 16 / 9; max-height: 200px; margin-bottom: 12px; }
-  }
-
-  /* ---------- Settings: slideshow image manager ---------- */
-  .slideManagerGrid {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; margin-bottom: 4px;
-  }
-  .slideManagerItem {
-    position: relative; aspect-ratio: 1 / 1; border-radius: var(--radius-sm);
-    overflow: hidden; border: 1px solid var(--line); background: var(--cream);
-    background-size: cover; background-position: center;
-  }
-  .slideManagerRemoveBtn {
-    width: 22px; height: 22px; border-radius: 50%;
-    background: rgba(20,14,12,0.68); color: #fff; border: none; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; font-size: 13px; line-height: 1;
-    padding: 0; flex-shrink: 0;
-  }
-  .slideManagerRemoveBtn:hover { background: var(--crimson); }
-  .slideManagerEmpty { font-size: 12.5px; color: var(--muted); padding: 4px 0; }
-
   /* ---------- Settings: website logo manager ---------- */
   .logoSettingRow { display: flex; align-items: center; gap: 14px; margin-top: 10px; flex-wrap: wrap; }
   .logoPreviewImg {
@@ -1058,39 +997,6 @@
 
   .fieldError { color: var(--crimson); font-weight: 600; font-size: 12.5px; display: block; margin-top: 5px; }
 
-  /* ---------- Image crop modal (used for slide images) ---------- */
-  .cropModal { max-width: 420px; }
-  .cropBody { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 8px; }
-  .cropFrame {
-    position: relative; width: 100%; aspect-ratio: 16 / 9;
-    overflow: hidden; border-radius: var(--radius-md);
-    background: var(--ink); border: 1px solid var(--line);
-    touch-action: none; cursor: grab;
-  }
-  .cropFrame.dragging { cursor: grabbing; }
-  .cropImageEl {
-    position: absolute; top: 0; left: 0;
-    transform-origin: 0 0; user-select: none; -webkit-user-drag: none;
-    max-width: none; max-height: none;
-  }
-  .cropZoomRow { display: flex; align-items: center; gap: 10px; width: 100%; color: var(--muted); }
-  .cropZoomRow svg { flex-shrink: 0; }
-  .cropZoomRow .zoomSlider { flex: 1; }
-  .cropHint { font-size: 11.5px; color: var(--muted); text-align: center; }
-
-  .slideManagerItem { position: relative; }
-  .slideManagerActions {
-    position: absolute; top: 4px; left: 4px; right: 4px;
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .slideManagerCropBtn {
-    width: 22px; height: 22px; border-radius: 50%;
-    background: rgba(20,14,12,0.68); color: #fff; border: none; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; padding: 0; flex-shrink: 0;
-  }
-  .slideManagerCropBtn svg { width: 12px; height: 12px; }
-  .slideManagerCropBtn:hover { background: var(--crimson); }
-
   /* ---------- Toast ---------- */
   .toast {
     position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom)); transform: translate(-50%, 20px);
@@ -1263,10 +1169,6 @@
 
   <section class="pageView activeView" id="listView">
   <h2 class="donorListHeaderText" id="donorListHeaderText" style="display:none;"></h2>
-  <div class="slideshow" id="donorSlideshow" style="display:none;">
-    <div class="slideshowTrack" id="slideshowTrack"></div>
-    <div class="slideshowDots" id="slideshowDots"></div>
-  </div>
 
   <div class="toolbar">
     <div class="searchBox">
@@ -1415,16 +1317,6 @@
       </table>
       <div class="settingsFieldHint">One PIN protects Settings, Mobile numbers, and Actions. Leave blank to keep your current PIN. Stored as a secure encrypted hash — never saved in plain text.</div>
 
-      <hr class="settingsDivider">
-      <div class="settingsSectionLabel">Donor List Slideshow</div>
-      <div class="settingsFieldHint" style="margin-top:0;">Shown at the top of the Donor List page. Up to 6 images.</div>
-      <div class="slideManagerGrid" id="slideManagerGrid"></div>
-      <input type="file" id="slideImageFileInput" accept="image/*" style="display:none;">
-      <button type="button" class="ghostBtn" id="addSlideImageBtn" style="margin-left:0; margin-top:8px;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-        Add Slide Image
-      </button>
-
       <div class="modalActions">
         <button type="submit">Save Settings</button>
       </div>
@@ -1544,30 +1436,6 @@
 </div>
 
 
-<!-- ================= IMAGE CROP MODAL (Slide Images) ================= -->
-<div class="modalOverlay" id="cropModalOverlay">
-  <div class="modal cropModal" role="dialog" aria-modal="true" aria-labelledby="cropModalTitle">
-    <div class="modalHeader">
-      <h2 id="cropModalTitle">Crop Slide Image</h2>
-      <button type="button" class="modalClose" id="closeCropModalBtn" aria-label="Close">✕</button>
-    </div>
-    <div class="cropBody">
-      <div class="cropFrame" id="cropFrame">
-        <img id="cropImageEl" class="cropImageEl" alt="Crop preview" draggable="false">
-      </div>
-      <div class="cropZoomRow">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="range" id="cropZoomSlider" class="zoomSlider" min="100" max="300" step="1" value="100" aria-label="Zoom">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
-      </div>
-      <div class="cropHint">Drag the image to reposition it, and use the slider to zoom.</div>
-    </div>
-    <div class="modalActions">
-      <button type="button" id="cropConfirmBtn">Use This Crop</button>
-    </div>
-  </div>
-</div>
-
 <!-- ================= UNIFIED PIN MODAL (Mobile Unlock + Settings) ================= -->
 <div class="modalOverlay pinFullscreenOverlay" id="pinModalOverlay">
   <div class="modal pinModal" role="dialog" aria-modal="true" aria-labelledby="pinModalTitle">
@@ -1629,7 +1497,7 @@ const _cfgB64 = "eyJhcGlLZXkiOiJBSXphU3lDSDVvSEZ6dUM2cWJBalY3Y2dIV1FvcEh0R0ExODB
 const firebaseConfig = JSON.parse(atob(_cfgB64));
 
 let firebaseAvailable = false;
-let db, donorsRef, settingsRef, appConfigRef;
+let db, donorsRef, settingsRef, appConfigRef, siteStatsRef;
 
 /* ============================================================
    LOCAL CACHE + OFFLINE QUEUE
@@ -1678,10 +1546,10 @@ function setCachedSettings(settings) {
 function getCachedAppConfig() {
   try {
     const data = localStorage.getItem(CACHE_APPCONFIG_KEY);
-    return data ? JSON.parse(data) : { siteName: "", settingsPin: DEFAULT_SETTINGS_PIN, slideImages: [], logoImage: "", donorListHeaderText: "" };
+    return data ? JSON.parse(data) : { siteName: "", settingsPin: DEFAULT_SETTINGS_PIN, logoImage: "", donorListHeaderText: "" };
   } catch (err) {
     console.log("Could not read cached app config:", err);
-    return { siteName: "", settingsPin: DEFAULT_SETTINGS_PIN, slideImages: [], logoImage: "", donorListHeaderText: "" };
+    return { siteName: "", settingsPin: DEFAULT_SETTINGS_PIN, logoImage: "", donorListHeaderText: "" };
   }
 }
 function setCachedAppConfig(config) {
@@ -1763,7 +1631,7 @@ function setQueue(queue) {
 
 let firebaseDonors = getCachedDonors();      // Latest confirmed list from Firebase
 let settingsData = getCachedSettings();
-let appConfigData = getCachedAppConfig();    // siteName, settingsPin, slideImages, logoImage
+let appConfigData = getCachedAppConfig();    // siteName, settingsPin, logoImage
 let isConnected = false;
 let syncing = false;
 
@@ -1825,6 +1693,7 @@ function trySyncQueue() {
   opPromise.then(() => {
     setQueue(getQueue().slice(1));
     syncing = false;
+    syncSiteStats();
     trySyncQueue();
   }).catch(err => {
     console.log("Sync failed, will retry later:", err);
@@ -1832,6 +1701,40 @@ function trySyncQueue() {
     updateSyncStatus();
     setTimeout(trySyncQueue, 5000);
   });
+}
+
+/* ============================================================
+   AGGREGATE SITE STATS
+   The landing page (index.html) used to download the entire donors
+   list just to show a few numbers (donor count, total donations,
+   lives impacted, blood-group breakdown). Instead, this page — the
+   only place donors are actually added/edited/deleted — keeps a
+   small "siteStats" summary node up to date, so the landing page
+   only ever has to read a handful of numbers.
+   ============================================================ */
+const BLOOD_GROUPS_FOR_STATS = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+function computeAggregateStats(list) {
+  const bloodGroups = {};
+  BLOOD_GROUPS_FOR_STATS.forEach(g => { bloodGroups[g] = 0; });
+  let totalDonations = 0;
+  list.forEach(d => {
+    totalDonations += parseInt(d.donationCount, 10) || 0;
+    const g = (d.bloodGroup || "").toString().trim().toUpperCase();
+    if (bloodGroups.hasOwnProperty(g)) bloodGroups[g]++;
+  });
+  return { donorCount: list.length, totalDonations, bloodGroups };
+}
+let siteStatsSyncTimeout = null;
+function syncSiteStats() {
+  if (!firebaseAvailable || !siteStatsRef) return;
+  // Debounced: several quick edits collapse into a single small write.
+  clearTimeout(siteStatsSyncTimeout);
+  siteStatsSyncTimeout = setTimeout(() => {
+    const stats = computeAggregateStats(firebaseDonors);
+    siteStatsRef.update(stats).catch(err => {
+      console.log("Site stats sync failed (will retry on next edit):", err);
+    });
+  }, 800);
 }
 
 /* ============================================================
@@ -2026,8 +1929,6 @@ function initSettings() {
   applyLogo(appConfigData.logoImage || "");
   donorListHeaderTextInput.value = appConfigData.donorListHeaderText || "";
   applyDonorListHeaderText(appConfigData.donorListHeaderText || "");
-  renderSlideManager();
-  renderSlideshow();
 }
 
 settingsForm.addEventListener("submit", async function (e) {
@@ -2117,7 +2018,7 @@ exportDataBtn.addEventListener("click", () => {
    WEBSITE LOGO — SETTINGS UPLOAD (stored as base64)
    The chosen image is resized/compressed client-side into a
    base64 data URL, then saved into appConfig/logoImage the same
-   way the slideshow images and site name are — synced to Firebase
+   way the site name is — synced to Firebase
    and cached locally so it persists and works offline.
    ============================================================ */
 function persistLogo() {
@@ -2161,343 +2062,6 @@ resetLogoBtn.addEventListener("click", () => {
   showToast("Logo reset to default");
 });
 
-/* ============================================================
-   SLIDESHOW IMAGES — SETTINGS MANAGER + DONOR LIST SLIDESHOW
-   Up to 6 images can be uploaded from Settings. Each image is
-   resized/compressed client-side and stored as a base64 data URL,
-   synced to Firebase (appConfig/slideImages) and cached locally.
-   The Donor List page shows them as an auto-playing, smooth-fading
-   slideshow above the toolbar.
-   ============================================================ */
-const MAX_SLIDE_IMAGES = 6;
-const slideManagerGrid = document.getElementById("slideManagerGrid");
-const slideImageFileInput = document.getElementById("slideImageFileInput");
-const addSlideImageBtn = document.getElementById("addSlideImageBtn");
-
-function persistSlideImages() {
-  setCachedAppConfig(appConfigData);
-  if (firebaseAvailable && appConfigRef) {
-    appConfigRef.child("slideImages").set(appConfigData.slideImages || []).catch(err => {
-      console.log("Slideshow images saved offline, will sync when online:", err);
-    });
-  }
-}
-
-function renderSlideManager() {
-  const images = appConfigData.slideImages || [];
-  if (!images.length) {
-    slideManagerGrid.innerHTML = `<div class="slideManagerEmpty">No slide images yet — add up to ${MAX_SLIDE_IMAGES}.</div>`;
-  } else {
-    slideManagerGrid.innerHTML = images.map((src, i) => `
-      <div class="slideManagerItem" style="background-image:url('${src}')">
-        <div class="slideManagerActions">
-          <button type="button" class="slideManagerCropBtn" data-index="${i}" title="Adjust crop" aria-label="Adjust crop">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/></svg>
-          </button>
-          <button type="button" class="slideManagerRemoveBtn" data-index="${i}" title="Remove image" aria-label="Remove image">✕</button>
-        </div>
-      </div>
-    `).join("");
-  }
-  addSlideImageBtn.disabled = images.length >= MAX_SLIDE_IMAGES;
-  addSlideImageBtn.style.opacity = images.length >= MAX_SLIDE_IMAGES ? "0.5" : "1";
-  addSlideImageBtn.style.cursor = images.length >= MAX_SLIDE_IMAGES ? "not-allowed" : "pointer";
-}
-
-function resizeImageFile(file, maxDim, quality) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onerror = () => reject(new Error("Could not read the selected file"));
-    reader.onload = () => {
-      const img = new Image();
-      img.onerror = () => reject(new Error("Could not load the selected image"));
-      img.onload = () => {
-        let width = img.naturalWidth, height = img.naturalHeight;
-        if (width > maxDim || height > maxDim) {
-          if (width >= height) { height = Math.round(height * (maxDim / width)); width = maxDim; }
-          else { width = Math.round(width * (maxDim / height)); height = maxDim; }
-        }
-        const canvas = document.createElement("canvas");
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0, width, height);
-        resolve(canvas.toDataURL("image/jpeg", quality));
-      };
-      img.src = reader.result;
-    };
-    reader.readAsDataURL(file);
-  });
-}
-
-function readFileAsDataUrl(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onerror = () => reject(new Error("Could not read the selected file"));
-    reader.onload = () => resolve(reader.result);
-    reader.readAsDataURL(file);
-  });
-}
-
-/* ============================================================
-   IMAGE CROPPER (drag to reposition, slider to zoom)
-   A lightweight "cover fit" cropper: the image always fills the
-   crop frame with no empty borders, matching the slideshow's
-   16:9 aspect ratio. Used both when adding a new slide image and
-   when re-adjusting the crop of one already saved.
-   ============================================================ */
-const cropModalOverlay = document.getElementById("cropModalOverlay");
-const closeCropModalBtn = document.getElementById("closeCropModalBtn");
-const cropFrame = document.getElementById("cropFrame");
-const cropImageEl = document.getElementById("cropImageEl");
-const cropZoomSlider = document.getElementById("cropZoomSlider");
-const cropConfirmBtn = document.getElementById("cropConfirmBtn");
-
-const CROP_ASPECT_W = 16, CROP_ASPECT_H = 9;
-const CROP_OUTPUT_WIDTH = 1280;
-
-let cropState = null;
-let cropResolve = null;
-let cropDragging = false;
-let cropDragStart = null;
-
-function clampCropTranslate() {
-  if (!cropState) return;
-  const dispW = cropState.natW * cropState.scale;
-  const dispH = cropState.natH * cropState.scale;
-  const minTx = cropState.frameW - dispW;
-  const minTy = cropState.frameH - dispH;
-  cropState.tx = Math.min(0, Math.max(minTx, cropState.tx));
-  cropState.ty = Math.min(0, Math.max(minTy, cropState.ty));
-}
-
-function applyCropTransform() {
-  if (!cropState) return;
-  cropImageEl.style.width = (cropState.natW * cropState.scale) + "px";
-  cropImageEl.style.height = (cropState.natH * cropState.scale) + "px";
-  cropImageEl.style.transform = `translate(${cropState.tx}px, ${cropState.ty}px)`;
-}
-
-function openCropModal(dataUrl) {
-  return new Promise(resolve => {
-    cropResolve = resolve;
-    const img = new Image();
-    img.onload = () => {
-      const rect = cropFrame.getBoundingClientRect();
-      const frameW = rect.width || 360;
-      const frameH = rect.height || (frameW * CROP_ASPECT_H / CROP_ASPECT_W);
-      const baseScale = Math.max(frameW / img.naturalWidth, frameH / img.naturalHeight);
-      cropState = {
-        natW: img.naturalWidth,
-        natH: img.naturalHeight,
-        frameW, frameH, baseScale,
-        scale: baseScale,
-        tx: (frameW - img.naturalWidth * baseScale) / 2,
-        ty: (frameH - img.naturalHeight * baseScale) / 2
-      };
-      cropImageEl.src = dataUrl;
-      cropZoomSlider.value = 100;
-      clampCropTranslate();
-      applyCropTransform();
-      openModal(cropModalOverlay);
-    };
-    img.onerror = () => resolve(null);
-    img.src = dataUrl;
-  });
-}
-
-function closeCropModal(result) {
-  closeModal(cropModalOverlay);
-  const resolve = cropResolve;
-  cropResolve = null;
-  cropState = null;
-  if (resolve) resolve(result === undefined ? null : result);
-}
-
-closeCropModalBtn.addEventListener("click", () => closeCropModal(null));
-cropModalOverlay.addEventListener("click", e => { if (e.target === cropModalOverlay) closeCropModal(null); });
-
-cropZoomSlider.addEventListener("input", () => {
-  if (!cropState) return;
-  const zoomFactor = parseInt(cropZoomSlider.value, 10) / 100;
-  cropState.scale = cropState.baseScale * zoomFactor;
-  clampCropTranslate();
-  applyCropTransform();
-});
-
-function cropPointerDown(x, y) {
-  if (!cropState) return;
-  cropDragging = true;
-  cropDragStart = { x, y, tx: cropState.tx, ty: cropState.ty };
-  cropFrame.classList.add("dragging");
-}
-function cropPointerMove(x, y) {
-  if (!cropDragging || !cropState || !cropDragStart) return;
-  cropState.tx = cropDragStart.tx + (x - cropDragStart.x);
-  cropState.ty = cropDragStart.ty + (y - cropDragStart.y);
-  clampCropTranslate();
-  applyCropTransform();
-}
-function cropPointerUp() {
-  cropDragging = false;
-  cropDragStart = null;
-  cropFrame.classList.remove("dragging");
-}
-
-cropFrame.addEventListener("pointerdown", e => {
-  if (cropFrame.setPointerCapture) { try { cropFrame.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ } }
-  cropPointerDown(e.clientX, e.clientY);
-});
-cropFrame.addEventListener("pointermove", e => cropPointerMove(e.clientX, e.clientY));
-cropFrame.addEventListener("pointerup", cropPointerUp);
-cropFrame.addEventListener("pointercancel", cropPointerUp);
-
-cropConfirmBtn.addEventListener("click", () => {
-  if (!cropState) { closeCropModal(null); return; }
-  try {
-    const outW = CROP_OUTPUT_WIDTH;
-    const outH = Math.round(outW * CROP_ASPECT_H / CROP_ASPECT_W);
-    const cropX = -cropState.tx / cropState.scale;
-    const cropY = -cropState.ty / cropState.scale;
-    const cropW = cropState.frameW / cropState.scale;
-    const cropH = cropState.frameH / cropState.scale;
-    const canvas = document.createElement("canvas");
-    canvas.width = outW;
-    canvas.height = outH;
-    const ctx = canvas.getContext("2d");
-    ctx.drawImage(cropImageEl, cropX, cropY, cropW, cropH, 0, 0, outW, outH);
-    const base64 = canvas.toDataURL("image/jpeg", 0.86);
-    closeCropModal(base64);
-  } catch (err) {
-    console.log("Crop failed:", err);
-    showToast("Could not crop that image");
-    closeCropModal(null);
-  }
-});
-
-addSlideImageBtn.addEventListener("click", () => {
-  const images = appConfigData.slideImages || [];
-  if (images.length >= MAX_SLIDE_IMAGES) {
-    showToast(`You can add up to ${MAX_SLIDE_IMAGES} slide images`);
-    return;
-  }
-  slideImageFileInput.click();
-});
-
-slideImageFileInput.addEventListener("change", async () => {
-  const file = slideImageFileInput.files && slideImageFileInput.files[0];
-  slideImageFileInput.value = "";
-  if (!file) return;
-  if (!file.type.startsWith("image/")) {
-    showToast("Please choose an image file");
-    return;
-  }
-  try {
-    const rawDataUrl = await readFileAsDataUrl(file);
-    const cropped = await openCropModal(rawDataUrl);
-    if (!cropped) return; // user cancelled the crop
-    appConfigData.slideImages = appConfigData.slideImages || [];
-    if (appConfigData.slideImages.length >= MAX_SLIDE_IMAGES) {
-      showToast(`You can add up to ${MAX_SLIDE_IMAGES} slide images`);
-      return;
-    }
-    appConfigData.slideImages.push(cropped);
-    persistSlideImages();
-    renderSlideManager();
-    renderSlideshow();
-    showToast("Slide image added");
-  } catch (err) {
-    console.log("Failed to process slide image:", err);
-    showToast("Could not process that image");
-  }
-});
-
-slideManagerGrid.addEventListener("click", async e => {
-  const removeBtn = e.target.closest(".slideManagerRemoveBtn");
-  const cropBtn = e.target.closest(".slideManagerCropBtn");
-
-  if (removeBtn) {
-    const index = parseInt(removeBtn.getAttribute("data-index"), 10);
-    const images = appConfigData.slideImages || [];
-    if (Number.isNaN(index) || index < 0 || index >= images.length) return;
-    images.splice(index, 1);
-    appConfigData.slideImages = images;
-    persistSlideImages();
-    renderSlideManager();
-    renderSlideshow();
-    showToast("Slide image removed");
-    return;
-  }
-
-  if (cropBtn) {
-    const index = parseInt(cropBtn.getAttribute("data-index"), 10);
-    const images = appConfigData.slideImages || [];
-    if (Number.isNaN(index) || index < 0 || index >= images.length) return;
-    try {
-      const cropped = await openCropModal(images[index]);
-      if (!cropped) return; // user cancelled
-      images[index] = cropped;
-      appConfigData.slideImages = images;
-      persistSlideImages();
-      renderSlideManager();
-      renderSlideshow();
-      showToast("Crop updated");
-    } catch (err) {
-      console.log("Failed to re-crop slide image:", err);
-      showToast("Could not adjust that crop");
-    }
-  }
-});
-
-/* ---------- Donor List: auto-playing slideshow ---------- */
-const donorSlideshowEl = document.getElementById("donorSlideshow");
-const slideshowTrackEl = document.getElementById("slideshowTrack");
-const slideshowDotsEl = document.getElementById("slideshowDots");
-let slideshowIndex = 0;
-let slideshowTimer = null;
-
-function goToSlide(i) {
-  const images = appConfigData.slideImages || [];
-  if (!images.length) return;
-  slideshowIndex = ((i % images.length) + images.length) % images.length;
-  slideshowTrackEl.style.transform = `translateX(-${slideshowIndex * 100}%)`;
-  slideshowDotsEl.querySelectorAll(".slideshowDot").forEach((dot, di) => {
-    dot.classList.toggle("active", di === slideshowIndex);
-  });
-}
-
-function renderSlideshow() {
-  clearInterval(slideshowTimer);
-  const images = appConfigData.slideImages || [];
-  if (!images.length) {
-    donorSlideshowEl.style.display = "none";
-    slideshowTrackEl.innerHTML = "";
-    slideshowDotsEl.innerHTML = "";
-    return;
-  }
-  donorSlideshowEl.style.display = "block";
-  slideshowTrackEl.innerHTML = images.map(src => `<div class="slideshowSlide" style="background-image:url('${src}')"></div>`).join("");
-  slideshowDotsEl.innerHTML = images.map((_, i) => `<div class="slideshowDot${i === 0 ? " active" : ""}" data-index="${i}"></div>`).join("");
-  slideshowIndex = 0;
-  slideshowTrackEl.style.transform = "translateX(0%)";
-
-  if (images.length > 1) {
-    slideshowTimer = setInterval(() => goToSlide(slideshowIndex + 1), 4200);
-  }
-}
-
-slideshowDotsEl.addEventListener("click", e => {
-  const dot = e.target.closest(".slideshowDot");
-  if (!dot) return;
-  const index = parseInt(dot.getAttribute("data-index"), 10);
-  if (Number.isNaN(index)) return;
-  goToSlide(index);
-  clearInterval(slideshowTimer);
-  const images = appConfigData.slideImages || [];
-  if (images.length > 1) {
-    slideshowTimer = setInterval(() => goToSlide(slideshowIndex + 1), 4200);
-  }
-});
 
 
 
@@ -3524,14 +3088,45 @@ function setupFirebase() {
     donorsRef = db.ref("donors");
     settingsRef = db.ref("settings");
     appConfigRef = db.ref("appConfig");
+    siteStatsRef = db.ref("siteStats");
     firebaseAvailable = true;
 
-    donorsRef.on("value", snapshot => {
-      const val = snapshot.val() || {};
-      firebaseDonors = Object.keys(val).map(key => ({ ...val[key], id: key }));
+    /* child_* listeners instead of a single "value" listener: on the
+       initial load Firebase still has to send every donor once (same as
+       before), but after that, a single donor being added/edited/removed
+       only downloads that one record — not the entire donors list again
+       on every change, for every visitor with this page open. */
+    let donorsMap = {};
+    let donorsRenderTimeout = null;
+    function scheduleDonorsUpdate() {
       setCachedDonors(firebaseDonors);
-      renderDonors();
+      clearTimeout(donorsRenderTimeout);
+      donorsRenderTimeout = setTimeout(renderDonors, 60);
+    }
+    donorsRef.on("child_added", snapshot => {
+      donorsMap[snapshot.key] = { ...snapshot.val(), id: snapshot.key };
+      firebaseDonors = Object.values(donorsMap);
+      scheduleDonorsUpdate();
     });
+    donorsRef.on("child_changed", snapshot => {
+      donorsMap[snapshot.key] = { ...snapshot.val(), id: snapshot.key };
+      firebaseDonors = Object.values(donorsMap);
+      scheduleDonorsUpdate();
+    });
+    donorsRef.on("child_removed", snapshot => {
+      delete donorsMap[snapshot.key];
+      firebaseDonors = Object.values(donorsMap);
+      scheduleDonorsUpdate();
+    });
+
+    // One-time backfill: if siteStats/donorCount has never been written
+    // (e.g. right after this update is deployed), compute it once from
+    // the list this page just loaded so index.html has real numbers
+    // immediately, instead of waiting for the next donor edit.
+    siteStatsRef.child("donorCount").once("value").then(snap => {
+      if (snap.exists()) return;
+      setTimeout(syncSiteStats, 1500);
+    }).catch(() => {});
 
     settingsRef.on("value", snapshot => {
       const val = snapshot.val();
@@ -3549,7 +3144,6 @@ function setupFirebase() {
         appConfigData = {
           siteName: val.siteName || "",
           settingsPin: val.settingsPin || DEFAULT_SETTINGS_PIN,
-          slideImages: val.slideImages || [],
           logoImage: val.logoImage || "",
           donorListHeaderText: val.donorListHeaderText || ""
         };
@@ -3559,8 +3153,14 @@ function setupFirebase() {
         applyLogo(appConfigData.logoImage);
         donorListHeaderTextInput.value = appConfigData.donorListHeaderText;
         applyDonorListHeaderText(appConfigData.donorListHeaderText);
-        renderSlideManager();
-        renderSlideshow();
+        // One-time cleanup: the old slideshow feature stored images
+        // (base64, potentially large) at appConfig/slideImages. Nothing
+        // reads that field anymore, but Firebase still sends it with
+        // every appConfig update since "value" downloads the whole node —
+        // so remove it once to stop paying for it on every load/edit.
+        if (val.slideImages) {
+          appConfigRef.child("slideImages").remove().catch(() => {});
+        }
       }
     });
 

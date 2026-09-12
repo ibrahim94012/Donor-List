@@ -98,14 +98,6 @@
   .appBarLeft { display: flex; align-items: center; gap: 10px; min-width: 0; justify-self: start; }
   .appBarRight { display: flex; align-items: center; justify-content: flex-end; flex-shrink: 0; justify-self: end; }
 
-  .drawerDivider { height: 1px; background: var(--line); margin: 8px 10px; flex-shrink: 0; }
-  .drawerNavItem.adminActive { background: var(--sage-tint); color: var(--sage); }
-  .drawerNavItem.adminActive svg { color: var(--sage); }
-  .drawerAdminBadge {
-    margin-left: auto; display: inline-flex; align-items: center; flex-shrink: 0;
-    font-family: var(--font-mono); font-size: 9.5px; font-weight: 700;
-    color: var(--sage); background: var(--sage-tint); padding: 2px 7px; border-radius: 999px;
-  }
   .appLogo {
     width: 38px; height: 38px; border-radius: 50%;
     border: 2px solid var(--crimson); object-fit: cover; flex-shrink: 0;
@@ -924,10 +916,7 @@
     width: 100%; overflow: auto; -webkit-overflow-scrolling: touch;
     border: 1px solid var(--line); border-radius: 0;
     box-shadow: var(--shadow); background: var(--paper);
-    cursor: grab;
-    user-select: none;
   }
-  .tableWrapper.dragging { cursor: grabbing; scroll-behavior: auto; }
   #donorTable {
     width: 100%; min-width: 900px; border-collapse: collapse; font-size: 12.5px;
     transform-origin: top left;
@@ -1011,24 +1000,7 @@
   .status-ok   { background: var(--sage-tint); color: var(--sage); }
   .status-wait { background: var(--amber-tint); color: var(--amber); }
 
-  .mobileColHeader { cursor: pointer; user-select: none; transition: background 0.15s ease; }
-  .mobileColHeader:hover { background: rgba(255,255,255,0.12); }
-  .mobileColHeaderInner { display: inline-flex; align-items: center; gap: 5px; }
-  .mobileLockIcon { width: 12px; height: 12px; flex-shrink: 0; opacity: 0.9; }
-
   .contactCell { display: flex; align-items: center; gap: 6px; }
-  .contactLocked {
-    display: inline-flex; align-items: center; gap: 6px;
-    font-family: var(--font-mono); font-size: 12.5px; font-weight: 500; color: var(--muted);
-  }
-  .contactLocked svg { width: 13px; height: 13px; color: var(--muted); flex-shrink: 0; }
-
-  .actionsLockedCell {
-    display: inline-flex; align-items: center; gap: 6px;
-    font-family: var(--font-mono); font-size: 11.5px; font-weight: 500; color: var(--muted);
-    white-space: nowrap;
-  }
-  .actionsLockedCell svg { width: 13px; height: 13px; color: var(--muted); flex-shrink: 0; }
 
   /* ---------- PIN modal: full-screen premium lock-screen style (light) ---------- */
   .pinFullscreenOverlay {
@@ -1061,16 +1033,6 @@
     to { opacity: 1; transform: scale(1) translateY(0); }
   }
   @media (prefers-reduced-motion: reduce) { .pinFullscreenOverlay .pinModal { animation: none; } }
-
-  .pinTopClose {
-    align-self: flex-end;
-    width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
-    background: var(--cream); border: 1px solid var(--line);
-    color: var(--muted); font-size: 15px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
-  }
-  .pinTopClose:hover { color: var(--crimson); border-color: var(--crimson); background: var(--paper); }
 
   .pinModalBody {
     display: flex; flex-direction: column; align-items: center;
@@ -1117,21 +1079,20 @@
     color: var(--crimson); font-weight: 600; font-size: 12.5px;
   }
 
-  /* ---------- Admin email/password login (real Firebase Auth) ---------- */
-  .adminLoginForm { width: 100%; max-width: 280px; display: flex; flex-direction: column; gap: 12px; margin-top: 6px; }
-  .adminLoginField { display: flex; flex-direction: column; gap: 5px; text-align: left; }
-  .adminLoginField span { font-size: 12px; font-weight: 600; color: var(--ink); }
-  .adminLoginField input {
-    width: 100%; font-family: var(--font-body); font-size: 14px; padding: 10px 12px;
-    border-radius: var(--radius-md); border: 1.5px solid var(--line); background: var(--cream); color: var(--ink);
+  /* ---------- App entry PIN gate (replaces the old Firebase admin login —
+     works fully offline, gates the whole site instead of one feature) ---------- */
+  .pendingRow { background: var(--amber-tint) !important; }
+  .pendingRow td { position: relative; }
+  .pendingRow td:first-child::before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--amber);
   }
-  .adminLoginField input:focus { border-color: var(--crimson); outline: none; }
-  .adminLoginSubmitBtn {
-    width: 100%; padding: 11px; border-radius: 999px; border: none; cursor: pointer; margin-top: 2px;
-    background: var(--crimson); color: #fff; font-family: var(--font-body); font-weight: 700; font-size: 13.5px;
+  .cooldownDot, .soonDot {
+    position: absolute; top: -3px; right: 2px; z-index: 2;
+    width: 12px; height: 12px; border-radius: 50%;
+    border: 2px solid var(--paper);
   }
-  .adminLoginSubmitBtn:hover { background: var(--crimson-dark); }
-  .adminLoginSubmitBtn:disabled { opacity: 0.6; cursor: default; }
+  .cooldownDot { background: var(--crimson); box-shadow: 0 0 0 1px var(--crimson); }
+  .soonDot { background: var(--amber); box-shadow: 0 0 0 1px var(--amber); }
 
   /* Fixed pixel sizing (not percentage/aspect-ratio) keeps every key a true circle
      regardless of the grid column width. */
@@ -1162,14 +1123,6 @@
   .pinKeySpacer { width: 68px; height: 68px; flex-shrink: 0; }
   .pinKeyGhost { background: transparent; border-color: transparent; color: var(--muted); }
   .pinKeyGhost:active { background: var(--line); color: var(--ink); border-color: transparent; transform: scale(0.92); }
-
-  .pinCancelLink {
-    background: transparent; border: none; color: var(--muted);
-    font-size: 14px; font-weight: 600; font-family: var(--font-body);
-    cursor: pointer; padding: 8px 16px; flex-shrink: 0;
-    transition: color 0.15s ease;
-  }
-  .pinCancelLink:hover { color: var(--crimson); }
 
   @media (max-width: 480px) {
     .pinKeypad { grid-template-columns: repeat(3, 62px); gap: 14px 20px; }
@@ -1358,8 +1311,8 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
     <div class="appTitleBlock">
-      <div class="appTitle"><span id="appTitleText">Blood Donor Network</span> <span class="appVersionBadge" id="appVersionBadge">v2.7.0</span></div>
-      <div class="appTagline">রক্তদাতা নেটওয়ার্ক</div>
+      <div class="appTitle"><span id="appTitleText">Blood Donor Network</span> <span class="appVersionBadge" id="appVersionBadge">v2.7.1</span></div>
+      <div class="appTagline">BNB</div>
     </div>
   </div>
   <div class="appBarRight">
@@ -1395,12 +1348,6 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       <span>Donor Requests</span>
       <span class="drawerReqBadge" id="requestsNavBadge" style="display:none;">0</span>
-    </button>
-    <div class="drawerDivider"></div>
-    <button type="button" class="drawerNavItem" id="adminLoginBtn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      <span id="adminLoginBtnLabel">Admin Login</span>
-      <span class="drawerAdminBadge" id="adminActiveBadge" style="display:none;">ON</span>
     </button>
   </div>
 </nav>
@@ -1556,23 +1503,13 @@
           <th>Group</th>
           <th>Name</th>
           <th>Address</th>
-          <th id="mobileColHeader" class="mobileColHeader" title="Click to lock/unlock mobile numbers" role="button" tabindex="0">
-            <span class="mobileColHeaderInner">
-              Mobile
-              <svg id="mobileLockIcon" class="mobileLockIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
-            </span>
-          </th>
+          <th>Mobile</th>
           <th>Age</th>
           <th>Gender</th>
           <th>Last Donation</th>
           <th>Next Eligible</th>
           <th>Status</th>
-          <th id="actionsColHeader" class="mobileColHeader" title="Click to lock/unlock actions" role="button" tabindex="0">
-            <span class="mobileColHeaderInner">
-              Actions
-              <svg id="actionsLockIcon" class="mobileLockIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
-            </span>
-          </th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody id="donorList"><!-- rows inserted by JS --></tbody>
@@ -1898,17 +1835,20 @@
 </div>
 
 
-<!-- ================= UNIFIED PIN MODAL (Mobile Unlock + Settings) ================= -->
-<div class="modalOverlay pinFullscreenOverlay" id="pinModalOverlay">
+<!-- ================= APP ENTRY PIN GATE =================
+     Shown the instant the app loads, on top of everything else, and
+     cannot be closed or dismissed — the PIN must be entered correctly
+     before the site can be used at all. Verified with the same local,
+     salted-hash PIN check used before (see verifyPin), so it works
+     completely offline; no login/network account involved anymore. -->
+<div class="modalOverlay pinFullscreenOverlay open" id="pinModalOverlay">
   <div class="modal pinModal" role="dialog" aria-modal="true" aria-labelledby="pinModalTitle">
-    <button type="button" class="pinTopClose" id="closePinModalBtn" aria-label="Close">✕</button>
-
     <div class="pinModalBody">
       <div class="pinLockBadge">
         <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
       </div>
-      <h2 id="pinModalTitle">Unlock Mobile Numbers</h2>
-      <p class="pinModalHint" id="pinModalHint">Enter your PIN to reveal and enable calling/copying mobile numbers.</p>
+      <h2 id="pinModalTitle">Enter PIN to Continue</h2>
+      <p class="pinModalHint" id="pinModalHint">This site is PIN protected. Enter your PIN to enter.</p>
 
       <div class="pinDots" id="pinDots">
         <span class="pinDot"></span>
@@ -1917,25 +1857,6 @@
         <span class="pinDot"></span>
       </div>
       <span id="pinError" class="pinErrorMsg" style="display:none;">Incorrect PIN. Please try again.</span>
-
-      <!-- Real Firebase Authentication (email + password), used ONLY for the
-           "admin" purpose. Unlike the numeric PIN above — which is a purely
-           client-side convenience gate — this actually signs into Firebase,
-           so the database security rules can tell a genuine admin apart from
-           any visitor and grant access to sensitive data (like donor join
-           requests) accordingly. -->
-      <div id="adminLoginForm" class="adminLoginForm" style="display:none;">
-        <label class="adminLoginField">
-          <span>Email</span>
-          <input type="email" id="adminEmailInput" autocomplete="username" placeholder="admin@example.com">
-        </label>
-        <label class="adminLoginField">
-          <span>Password</span>
-          <input type="password" id="adminPasswordInput" autocomplete="current-password" placeholder="••••••••">
-        </label>
-        <span id="adminLoginError" class="pinErrorMsg" style="display:none;">Incorrect email or password.</span>
-        <button type="button" id="adminLoginSubmitBtn" class="adminLoginSubmitBtn">Login</button>
-      </div>
     </div>
 
     <div class="pinKeypad" id="pinKeypad">
@@ -1954,8 +1875,6 @@
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg>
       </button>
     </div>
-
-    <button type="button" class="pinCancelLink" id="cancelPinBtn">Cancel</button>
   </div>
 </div>
 
@@ -1978,7 +1897,7 @@ const _cfgB64 = "eyJhcGlLZXkiOiJBSXphU3lDSDVvSEZ6dUM2cWJBalY3Y2dIV1FvcEh0R0ExODB
 const firebaseConfig = JSON.parse(atob(_cfgB64));
 
 let firebaseAvailable = false;
-let db, auth, donorsRef, settingsRef, appConfigRef, siteStatsRef, landingPageRef, donorRequestsRef;
+let db, donorsRef, settingsRef, appConfigRef, siteStatsRef, landingPageRef, donorRequestsRef;
 
 /* ============================================================
    LOCAL CACHE + OFFLINE QUEUE
@@ -2528,21 +2447,6 @@ drawerOverlay.addEventListener("click", closeDrawer);
 drawerNavItems.forEach(item => {
   item.addEventListener("click", () => {
     const view = item.getAttribute("data-view");
-    if (view === "settings" && !settingsUnlocked) {
-      closeDrawer();
-      openPinModal("settings", () => {
-        settingsUnlocked = true;
-        switchView("settings");
-      });
-      return;
-    }
-    if (view === "requests" && !adminUnlocked) {
-      closeDrawer();
-      openPinModal("admin", () => {
-        switchView("requests");
-      });
-      return;
-    }
     switchView(view);
   });
 });
@@ -3108,84 +3012,24 @@ importCsvInput.addEventListener("change", () => {
 
 
 /* ============================================================
-   SHARED PIN MODAL — one PIN, two uses:
-   1) "mobile"   — unlocking the masked Mobile column
-   2) "settings" — gating access to the Settings page
-   The PIN itself is set/changed from inside Settings and is
-   entered here via an on-screen numeric keypad, like a phone's
-   lock screen — no typing needed.
+   APP ENTRY PIN GATE
+   The old separate lock tiers (mobile numbers / actions / settings /
+   admin) all depended on a Firebase email+password "Admin Login" that
+   required an internet connection — useless for an app meant to work
+   offline. That login has been removed entirely; everything it used to
+   gate is unlocked permanently now. The only gate left is a single PIN
+   entry screen shown every time the app opens (see below), checked
+   locally against the salted PIN hash so it works fully offline.
    ============================================================ */
-let mobileLocked = true;
-let actionsLocked = true;
-let settingsUnlocked = false;
-let adminUnlocked = false;
-
-const mobileColHeader = document.getElementById("mobileColHeader");
-const mobileLockIcon = document.getElementById("mobileLockIcon");
-const actionsColHeader = document.getElementById("actionsColHeader");
-const actionsLockIcon = document.getElementById("actionsLockIcon");
-const adminLoginBtn = document.getElementById("adminLoginBtn");
-const adminLoginBtnLabel = document.getElementById("adminLoginBtnLabel");
-const adminActiveBadge = document.getElementById("adminActiveBadge");
 const pinModalOverlay = document.getElementById("pinModalOverlay");
-const pinModalTitle = document.getElementById("pinModalTitle");
-const pinModalHint = document.getElementById("pinModalHint");
-const closePinModalBtn = document.getElementById("closePinModalBtn");
-const cancelPinBtn = document.getElementById("cancelPinBtn");
 const pinBackspaceBtn = document.getElementById("pinBackspaceBtn");
 const pinKeypad = document.getElementById("pinKeypad");
 const pinDotsEl = document.getElementById("pinDots");
 const pinDots = pinDotsEl.querySelectorAll(".pinDot");
 const pinError = document.getElementById("pinError");
-const adminLoginForm = document.getElementById("adminLoginForm");
-const adminEmailInput = document.getElementById("adminEmailInput");
-const adminPasswordInput = document.getElementById("adminPasswordInput");
-const adminLoginError = document.getElementById("adminLoginError");
-const adminLoginSubmitBtn = document.getElementById("adminLoginSubmitBtn");
 
-let pinModalPurpose = "mobile";
-let pinModalOnSuccess = null;
 let pinValue = "";
 let pinCheckLock = false;
-
-function maskMobile(mobile) {
-  const str = String(mobile || "");
-  if (str.length <= 3) return str;
-  const visible = str.slice(0, 3);
-  return visible + "*".repeat(str.length - 3);
-}
-
-function updateMobileLockIcon() {
-  if (mobileLocked) {
-    mobileLockIcon.innerHTML = '<rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>';
-    mobileColHeader.title = "Click to unlock mobile numbers";
-  } else {
-    mobileLockIcon.innerHTML = '<rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 7.4-2.3"/>';
-    mobileColHeader.title = "Click to lock mobile numbers";
-  }
-}
-
-function updateActionsLockIcon() {
-  if (actionsLocked) {
-    actionsLockIcon.innerHTML = '<rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>';
-    actionsColHeader.title = "Click to unlock actions";
-  } else {
-    actionsLockIcon.innerHTML = '<rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 7.4-2.3"/>';
-    actionsColHeader.title = "Click to lock actions";
-  }
-}
-
-function updateAdminMenuUI() {
-  if (adminUnlocked) {
-    adminLoginBtnLabel.textContent = "Admin Logout";
-    adminLoginBtn.classList.add("adminActive");
-    adminActiveBadge.style.display = "inline-flex";
-  } else {
-    adminLoginBtnLabel.textContent = "Admin Login";
-    adminLoginBtn.classList.remove("adminActive");
-    adminActiveBadge.style.display = "none";
-  }
-}
 
 function renderPinDots() {
   pinDots.forEach((dot, i) => dot.classList.toggle("filled", i < pinValue.length));
@@ -3238,83 +3082,27 @@ function applyPinLockUI() {
   return true;
 }
 
-function openPinModal(purpose, onSuccess) {
-  pinModalPurpose = purpose;
-  pinModalOnSuccess = onSuccess || null;
-  const isAdminPurpose = purpose === "admin";
-
-  if (purpose === "settings") {
-    pinModalTitle.textContent = "Enter PIN";
-    pinModalHint.textContent = "This area is PIN protected. Enter your PIN to open Settings.";
-  } else if (purpose === "actions") {
-    pinModalTitle.textContent = "Unlock Actions";
-    pinModalHint.textContent = "Enter your PIN to enable editing and deleting donors.";
-  } else if (isAdminPurpose) {
-    pinModalTitle.textContent = "Admin Login";
-    pinModalHint.textContent = "Sign in with your admin email and password to unlock full access — mobile numbers, actions, settings and donor requests.";
-  } else {
-    pinModalTitle.textContent = "Unlock Mobile Numbers";
-    pinModalHint.textContent = "Enter your PIN to reveal and enable calling/copying mobile numbers.";
-  }
-
-  // The "admin" purpose signs into real Firebase Authentication (email +
-  // password) instead of the numeric PIN, since it's the only tier the
-  // database security rules can actually verify. Every other purpose keeps
-  // using the on-screen PIN keypad as before.
-  pinDotsEl.style.display = isAdminPurpose ? "none" : "flex";
-  pinKeypad.style.display = isAdminPurpose ? "none" : "grid";
-  adminLoginForm.style.display = isAdminPurpose ? "flex" : "none";
-  pinError.style.display = "none";
-  adminLoginError.style.display = "none";
-  adminEmailInput.value = "";
-  adminPasswordInput.value = "";
-
+/* ============================================================
+   APP ENTRY PIN GATE
+   The overlay opens by default in the HTML (class="open") so it
+   covers the app before any script even runs. It cannot be closed
+   except by entering the correct PIN — no cancel/close button, no
+   backdrop-click-to-dismiss, no Escape key. verifyPin() checks
+   against the locally cached PIN hash, so this works fully offline.
+   ============================================================ */
+function openEntryGate() {
   pinValue = "";
   pinCheckLock = false;
-  pinError.textContent = "Incorrect PIN. Please try again.";
+  pinError.style.display = "none";
   pinDotsEl.classList.remove("pinShake");
   renderPinDots();
-  openModal(pinModalOverlay);
-  if (isAdminPurpose) {
-    setTimeout(() => adminEmailInput.focus(), 50);
-  } else {
-    applyPinLockUI();
-  }
+  document.body.style.overflow = "hidden";
+  pinModalOverlay.classList.add("open");
+  applyPinLockUI();
 }
-function closePinModal() { closeModal(pinModalOverlay); }
-
-async function attemptAdminLogin() {
-  const email = adminEmailInput.value.trim();
-  const password = adminPasswordInput.value;
-  adminLoginError.style.display = "none";
-  if (!email || !password) {
-    adminLoginError.textContent = "Please enter both email and password.";
-    adminLoginError.style.display = "block";
-    return;
-  }
-  if (!firebaseAvailable || !auth) {
-    adminLoginError.textContent = "Service not ready, please try again shortly.";
-    adminLoginError.style.display = "block";
-    return;
-  }
-  adminLoginSubmitBtn.disabled = true;
-  adminLoginSubmitBtn.textContent = "Signing in…";
-  try {
-    await auth.signInWithEmailAndPassword(email, password);
-    // adminUnlocked and the rest of the UI are updated by the
-    // onAuthStateChanged listener set up in initFirebase.
-    const onSuccess = pinModalOnSuccess;
-    closePinModal();
-    showToast("Admin unlocked — full access granted");
-    if (onSuccess) onSuccess();
-  } catch (err) {
-    console.log("Admin login failed:", err);
-    adminLoginError.textContent = "Incorrect email or password.";
-    adminLoginError.style.display = "block";
-  } finally {
-    adminLoginSubmitBtn.disabled = false;
-    adminLoginSubmitBtn.textContent = "Login";
-  }
+function closeEntryGate() {
+  pinModalOverlay.classList.remove("open");
+  document.body.style.overflow = "";
 }
 
 async function checkPin() {
@@ -3335,20 +3123,7 @@ async function checkPin() {
 
   if (isCorrect) {
     resetPinAttempts();
-    if (pinModalPurpose === "mobile") {
-      mobileLocked = false;
-      updateMobileLockIcon();
-      renderDonors();
-      showToast("Mobile numbers unlocked");
-    } else if (pinModalPurpose === "actions") {
-      actionsLocked = false;
-      updateActionsLockIcon();
-      renderDonors();
-      showToast("Actions unlocked");
-    }
-    const onSuccess = pinModalOnSuccess;
-    closePinModal();
-    if (onSuccess) onSuccess();
+    closeEntryGate();
   } else {
     registerFailedPinAttempt();
     pinError.textContent = "Incorrect PIN. Please try again.";
@@ -3365,73 +3140,7 @@ async function checkPin() {
   }
 }
 
-mobileColHeader.addEventListener("click", () => {
-  if (mobileLocked) {
-    openPinModal("mobile");
-  } else {
-    mobileLocked = true;
-    updateMobileLockIcon();
-    renderDonors();
-    showToast("Mobile numbers locked");
-  }
-});
-mobileColHeader.addEventListener("keydown", e => {
-  if (e.key === "Enter" || e.key === " ") { e.preventDefault(); mobileColHeader.click(); }
-});
-
-actionsColHeader.addEventListener("click", () => {
-  if (actionsLocked) {
-    openPinModal("actions");
-  } else {
-    actionsLocked = true;
-    updateActionsLockIcon();
-    renderDonors();
-    showToast("Actions locked");
-  }
-});
-actionsColHeader.addEventListener("keydown", e => {
-  if (e.key === "Enter" || e.key === " ") { e.preventDefault(); actionsColHeader.click(); }
-});
-
-/* ============================================================
-   SIDE DRAWER — Admin Login / Logout
-   Logging in with the admin PIN unlocks everything at once:
-   mobile numbers, the Actions column, and the Settings page.
-   ============================================================ */
-adminLoginBtn.addEventListener("click", () => {
-  if (adminUnlocked) {
-    if (firebaseAvailable && auth) auth.signOut().catch(() => {});
-    adminUnlocked = false;
-    mobileLocked = true;
-    actionsLocked = true;
-    settingsUnlocked = false;
-    updateMobileLockIcon();
-    updateActionsLockIcon();
-    updateAdminMenuUI();
-    closeDrawer();
-    if ((pageViews.settings && pageViews.settings.classList.contains("activeView")) ||
-        (pageViews.requests && pageViews.requests.classList.contains("activeView"))) {
-      switchView("list");
-    }
-    renderDonors();
-    renderRequests();
-    showToast("Admin locked");
-  } else {
-    closeDrawer();
-    openPinModal("admin");
-  }
-});
-
-adminLoginSubmitBtn.addEventListener("click", attemptAdminLogin);
-adminPasswordInput.addEventListener("keydown", e => { if (e.key === "Enter") attemptAdminLogin(); });
-adminEmailInput.addEventListener("keydown", e => { if (e.key === "Enter") adminPasswordInput.focus(); });
-
-closePinModalBtn.addEventListener("click", closePinModal);
-cancelPinBtn.addEventListener("click", closePinModal);
-pinModalOverlay.addEventListener("click", e => { if (e.target === pinModalOverlay) closePinModal(); });
-
 pinKeypad.addEventListener("click", e => {
-  if (pinModalPurpose === "admin") return;
   const keyBtn = e.target.closest(".pinKey[data-digit]");
   if (!keyBtn || pinCheckLock) return;
   if (pinValue.length >= 4) return;
@@ -3444,7 +3153,6 @@ pinKeypad.addEventListener("click", e => {
 });
 
 pinBackspaceBtn.addEventListener("click", () => {
-  if (pinModalPurpose === "admin") return;
   if (pinCheckLock) return;
   pinValue = pinValue.slice(0, -1);
   pinError.style.display = "none";
@@ -3453,18 +3161,19 @@ pinBackspaceBtn.addEventListener("click", () => {
 
 document.addEventListener("keydown", e => {
   if (!pinModalOverlay.classList.contains("open")) return;
-  if (e.key === "Escape") { closePinModal(); return; }
-  if (pinModalPurpose === "admin") return; // admin uses the email/password form, not the keypad
   if (/^[0-9]$/.test(e.key)) {
-    pinKeypad.querySelector(`.pinKey[data-digit="${e.key}"]`).click();
+    const keyBtn = pinKeypad.querySelector(`.pinKey[data-digit="${e.key}"]`);
+    if (keyBtn) keyBtn.click();
   } else if (e.key === "Backspace") {
     pinBackspaceBtn.click();
   }
+  // No Escape handler on purpose — the gate cannot be dismissed without
+  // the correct PIN.
 });
 
-updateMobileLockIcon();
-updateActionsLockIcon();
-updateAdminMenuUI();
+// Show the gate every time the app opens (no "remember me" — a fresh PIN
+// entry is required on every visit, matching a lock-screen).
+openEntryGate();
 
 /* ============================================================
    DONOR FORM (Add / Edit)
@@ -3803,10 +3512,6 @@ const donorProfileCancelAddBtn = document.getElementById("donorProfileCancelAddB
 let donorProfileEditingDate = null;
 
 function openDonorProfile(id) {
-  if (!adminUnlocked) {
-    showToast("Admin access required to view donor profiles");
-    return;
-  }
   donorProfileIdInput.value = id;
   closeAddRecordForm();
   renderDonorProfile();
@@ -3867,7 +3572,7 @@ function renderDonorProfile() {
   const history = Array.isArray(donor.donationHistory) ? donor.donationHistory : [];
   const sortedHistory = [...history].sort((a, b) => historyDate(b).localeCompare(historyDate(a)));
 
-  if (donorProfileEditBtn) donorProfileEditBtn.classList.toggle("isHidden", actionsLocked);
+  if (donorProfileEditBtn) donorProfileEditBtn.classList.remove("isHidden");
 
   donorProfileInitialEl.textContent = (donor.name || "?").trim().charAt(0).toUpperCase() || "?";
   donorProfileNameEl.textContent = donor.name || "-";
@@ -4500,7 +4205,11 @@ function renderDonors() {
     const pendingBadge = donor._pending ? '<span class="pendingBadge">🔄 Syncing</span>' : "";
     const isNew = donor.createdAt && (Date.now() - donor.createdAt) < 3 * 24 * 60 * 60 * 1000;
     const newBadge = isNew ? '<span class="newBadge">NEW</span>' : "";
-    const availTag = statusClass === 'status-ok' ? '<span class="availTag" title="Available"></span>' : "";
+    // Available donors get a green dot; donors still in cooldown get a red
+    // dot, or amber/yellow if they're eligible again soon (status-soon).
+    const availTag = statusClass === 'status-ok' ? '<span class="availTag" title="Available"></span>'
+      : statusClass === 'status-soon' ? '<span class="soonDot" title="Eligible soon"></span>'
+      : '<span class="cooldownDot" title="In cooldown"></span>';
     const donationCount = donor.donationCount || 0;
     const donationBadge = `<span class="donationBadge" title="Times donated"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c-3 4.5-6 7.5-6 11a6 6 0 0 0 12 0c0-3.5-3-6.5-6-11z"/></svg>${donationCount}</span>`;
     const vipTag = donor.donorType === 'VIP' ? '<span class="vipTag" title="VIP Donor"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 16L3 6l5.5 4L12 3l3.5 7L21 6l-2 10H5zm0 2h14v2H5v-2z"/></svg>VIP</span>' : "";
@@ -4508,6 +4217,9 @@ function renderDonors() {
     const isChecked = selectedDonorIds.has(donor.id);
 
     const row = document.createElement("tr");
+    // A row for a donor whose add/edit/delete hasn't synced to Firebase yet
+    // gets a distinct amber tint + left border until the sync succeeds.
+    if (donor._pending) row.classList.add("pendingRow");
     row.innerHTML = `
       <td class="checkboxCol"><input type="checkbox" class="rowSelectCheckbox" data-id="${escapeHtml(donor.id)}" ${isChecked ? "checked" : ""} aria-label="Select ${escapeHtml(donor.name)}"></td>
       <td class="noCell">${index + 1}</td>
@@ -4516,13 +4228,7 @@ function renderDonors() {
       <td class="addressCell">${escapeHtml(donor.address || "-")}</td>
       <td>
         <div class="contactCell">
-          ${donor.mobile ? (
-            mobileLocked
-            ? `<span class="contactLocked" title="Unlock the Mobile column to call or copy">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
-                ${escapeHtml(maskMobile(donor.mobile))}
-               </span>`
-            : `
+          ${donor.mobile ? `
           <a class="contactLink" href="tel:${escapeHtml(donor.mobile)}" title="Call ${escapeHtml(donor.name)}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
             ${escapeHtml(donor.mobile)}
@@ -4534,8 +4240,7 @@ function renderDonors() {
           <a class="waBtn" href="https://wa.me/${waNumber}" target="_blank" rel="noopener" title="Message on WhatsApp">
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.5 0-9.96 4.46-9.96 9.96 0 1.76.46 3.45 1.33 4.95L2 22l5.24-1.37a9.9 9.9 0 0 0 4.8 1.23h.01c5.5 0 9.96-4.46 9.96-9.96S17.54 2 12.04 2zm0 18.2c-1.5 0-2.97-.4-4.25-1.16l-.3-.18-3.15.83.84-3.07-.2-.32a8.17 8.17 0 0 1-1.26-4.34c0-4.53 3.69-8.22 8.23-8.22 4.53 0 8.22 3.69 8.22 8.22 0 4.54-3.69 8.24-8.23 8.24z"/></svg>
           </a>` : ""}
-          `
-          ) : "-"}
+          ` : "-"}
         </div>
       </td>
       <td class="metaCell">${donor.age ? escapeHtml(donor.age) : "-"}</td>
@@ -4545,20 +4250,12 @@ function renderDonors() {
       <td><span class="statusPill ${statusClass}">${escapeHtml(status)}</span></td>
       <td>
         <div class="cardActionsRow">
-          ${adminUnlocked ? `
           <button type="button" class="profileBtn" onclick="openDonorProfile('${donor.id}')" title="View Profile" aria-label="View donor profile">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
-          </button>` : ""}
-          ${actionsLocked
-            ? `<span class="actionsLockedCell" title="Unlock the Actions column to edit or delete">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
-                Locked
-               </span>`
-            : `
+          </button>
           <button type="button" class="deleteBtn" onclick="deleteDonor('${donor.id}')" title="Delete" aria-label="Delete donor">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-          </button>`
-          }
+          </button>
         </div>
       </td>
     `;
@@ -4695,110 +4392,6 @@ function applyTableZoom(pct, save) {
   }
 }
 
-/* ============================================================
-   MAP-STYLE DRAG TO PAN — click and drag the table like a map,
-   in any direction, in addition to the zoom controls above.
-   ============================================================ */
-let isDraggingTable = false;
-let dragStartX = 0, dragStartY = 0;
-let dragScrollLeft = 0, dragScrollTop = 0;
-
-tableWrapperEl.addEventListener("mousedown", (e) => {
-  // Ignore drags that start on interactive elements inside the table
-  if (e.target.closest("input, button, a, select, textarea")) return;
-  isDraggingTable = true;
-  tableWrapperEl.classList.add("dragging");
-  dragStartX = e.pageX;
-  dragStartY = e.pageY;
-  dragScrollLeft = tableWrapperEl.scrollLeft;
-  dragScrollTop = tableWrapperEl.scrollTop;
-});
-
-window.addEventListener("mousemove", (e) => {
-  if (!isDraggingTable) return;
-  e.preventDefault();
-  const dx = e.pageX - dragStartX;
-  const dy = e.pageY - dragStartY;
-  tableWrapperEl.scrollLeft = dragScrollLeft - dx;
-  tableWrapperEl.scrollTop = dragScrollTop - dy;
-});
-
-function endTableDrag() {
-  if (!isDraggingTable) return;
-  isDraggingTable = false;
-  tableWrapperEl.classList.remove("dragging");
-}
-window.addEventListener("mouseup", endTableDrag);
-window.addEventListener("mouseleave", endTableDrag);
-
-/* ---- Mobile: one-finger drag to pan the list horizontally.
-   Vertical drags are left alone so the page scrolls normally —
-   the table itself has no fixed height, so it never owns vertical
-   scroll; only left-right panning (for the wide table) is handled here. ---- */
-let isTouchPanning = false;
-let touchMoved = false;
-let touchDirection = null; // "x" | "y" | null, locked in once we know which way the drag is going
-let touchDownX = 0, touchDownY = 0;
-let touchPanScrollLeft = 0;
-const PAN_MOVE_THRESHOLD = 8; // px of finger movement before a tap becomes a drag
-
-// Batches scroll updates to once per animation frame for smooth panning.
-let pendingScroll = null, panRafId = null;
-function queuePan(scrollLeft) {
-  pendingScroll = scrollLeft;
-  if (panRafId) return;
-  panRafId = requestAnimationFrame(() => {
-    panRafId = null;
-    if (pendingScroll !== null) {
-      tableWrapperEl.scrollLeft = pendingScroll;
-      pendingScroll = null;
-    }
-  });
-}
-
-tableWrapperEl.addEventListener("touchstart", (e) => {
-  if (e.touches.length !== 1) return;
-  touchMoved = false;
-  touchDirection = null;
-  isTouchPanning = true;
-  touchDownX = e.touches[0].clientX;
-  touchDownY = e.touches[0].clientY;
-  touchPanScrollLeft = tableWrapperEl.scrollLeft;
-}, { passive: true });
-
-tableWrapperEl.addEventListener("touchmove", (e) => {
-  if (e.touches.length !== 1 || !isTouchPanning) return;
-  const dx = e.touches[0].clientX - touchDownX;
-  const dy = e.touches[0].clientY - touchDownY;
-
-  if (!touchDirection) {
-    if (Math.hypot(dx, dy) < PAN_MOVE_THRESHOLD) {
-      // Finger barely moved yet — leave it alone so a tap on a button/link
-      // (edit, delete, call, WhatsApp icons, etc.) still works normally.
-      return;
-    }
-    // Lock the gesture to whichever axis the finger moved more on.
-    touchDirection = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
-  }
-
-  if (touchDirection === "y") {
-    // Vertical drag — do nothing and let the browser scroll the page as usual.
-    return;
-  }
-
-  touchMoved = true;
-  e.preventDefault();
-  queuePan(touchPanScrollLeft - dx);
-}, { passive: false });
-
-function endTableTouch() {
-  isTouchPanning = false;
-  touchMoved = false;
-  touchDirection = null;
-}
-tableWrapperEl.addEventListener("touchend", endTableTouch);
-tableWrapperEl.addEventListener("touchcancel", endTableTouch);
-
 zoomInBtn.addEventListener("click", () => applyTableZoom(tableZoomPct + ZOOM_STEP));
 zoomOutBtn.addEventListener("click", () => applyTableZoom(tableZoomPct - ZOOM_STEP));
 zoomSlider.addEventListener("input", () => applyTableZoom(parseInt(zoomSlider.value, 10)));
@@ -4851,7 +4444,6 @@ function setupFirebase() {
   try {
     firebase.initializeApp(firebaseConfig);
     db = firebase.database();
-    auth = firebase.auth();
     donorsRef = db.ref("donors");
     settingsRef = db.ref("settings");
     appConfigRef = db.ref("appConfig");
@@ -4859,31 +4451,6 @@ function setupFirebase() {
     landingPageRef = db.ref("landingPage");
     donorRequestsRef = db.ref("donorRequests");
     firebaseAvailable = true;
-
-    /* Real Firebase Authentication drives the "admin" tier. Database
-       security rules only ever see this sign-in state (never the PIN),
-       so this is what actually gates sensitive reads/writes like donor
-       join requests. A persisted session (from a previous visit) will
-       fire this immediately with the signed-in user, unlocking admin
-       access automatically without asking to log in again. */
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        adminUnlocked = true;
-        mobileLocked = false;
-        actionsLocked = false;
-        settingsUnlocked = true;
-      } else {
-        adminUnlocked = false;
-        mobileLocked = true;
-        actionsLocked = true;
-        settingsUnlocked = false;
-      }
-      updateMobileLockIcon();
-      updateActionsLockIcon();
-      updateAdminMenuUI();
-      renderDonors();
-      renderRequests();
-    });
 
     /* Donor join requests submitted from the public website — kept as a
        live map so the "Donor Requests" panel and its sidebar badge
@@ -4989,10 +4556,7 @@ function setupFirebase() {
 }
 
 loadScript("https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js")
-  .then(() => Promise.all([
-    loadScript("https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"),
-    loadScript("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js")
-  ]))
+  .then(() => loadScript("https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"))
   .then(setupFirebase)
   .catch(err => {
     console.log("Could not load Firebase SDK (likely offline):", err);

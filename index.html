@@ -6,9 +6,9 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Blood Donor">
+<meta name="apple-mobile-web-app-title" content="Blood Network">
 <link rel="apple-touch-icon" id="appleTouchIconLink" href="fav.jpeg">
-<title>Blood Donor Network</title>
+<title>Blood Network Baraikhali</title>
 <link rel="icon" type="image/x-icon" id="faviconLink" href="fav.jpeg">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#9E1B32">
@@ -1198,9 +1198,6 @@
     cursor: pointer; transition: transform 0.15s ease, background 0.15s ease;
   }
   .fab:hover { background: var(--crimson-dark); transform: translateY(-2px); }
-  /* second FAB: "Add Donation" (sits just above the + Add Donor button) */
-  .fab.fabDonation { bottom: calc(88px + env(safe-area-inset-bottom)); background: var(--sage); box-shadow: 0 10px 24px rgba(63,122,93,0.4); }
-  .fab.fabDonation:hover { filter: brightness(0.92); background: var(--sage); }
   .donorNoTag { display: inline-block; margin-left: 6px; padding: 1px 6px; border-radius: 4px; font-family: var(--font-mono); font-size: 10px; font-weight: 700; color: var(--muted); background: var(--cream); border: 1px solid var(--line); vertical-align: middle; }
   .donationEntryHint { font-size: 12.5px; line-height: 1.45; padding: 8px 10px; border-radius: var(--radius-sm); margin: 0 0 12px; border: 1px solid var(--line); background: var(--cream); color: var(--muted); }
   .donationEntryHint.isExisting { border-color: var(--sage); background: var(--sage-tint); color: var(--ink); }
@@ -1310,7 +1307,6 @@
     .pulseDivider { max-width: 1100px; }
     #donorTable { font-size: 13.5px; }
     .fab { right: 32px; bottom: 32px; }
-    .fab.fabDonation { bottom: 104px; }
     .tableWrapper:hover { box-shadow: 0 10px 28px rgba(33,22,19,0.12); }
   }
 </style>
@@ -1323,12 +1319,12 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
     <div class="appTitleBlock">
-      <div class="appTitle"><span id="appTitleText">Blood Donor Network</span> <span class="appVersionBadge" id="appVersionBadge">v2.7.1</span></div>
+      <div class="appTitle"><span id="appTitleText">Blood Network Baraikhali</span> <span class="appVersionBadge" id="appVersionBadge">v2.7.2</span></div>
       <div class="appTagline">BNB</div>
     </div>
   </div>
   <div class="appBarRight">
-    <img class="appLogo" id="appLogoImg" src="fav.jpeg" alt="Blood Donor Network logo">
+    <img class="appLogo" id="appLogoImg" src="fav.jpeg" alt="Blood Network Baraikhali logo">
   </div>
 </div>
 
@@ -1337,9 +1333,9 @@
 <div class="drawerOverlay" id="drawerOverlay"></div>
 <nav class="sideDrawer" id="sideDrawer" aria-label="Main navigation">
   <div class="drawerHeader">
-    <img class="drawerLogo" id="drawerLogoImg" src="fav.jpeg" alt="Blood Donor Network logo">
+    <img class="drawerLogo" id="drawerLogoImg" src="fav.jpeg" alt="Blood Network Baraikhali logo">
     <div>
-      <div class="drawerTitle" id="drawerTitleText">Blood Donor Network</div>
+      <div class="drawerTitle" id="drawerTitleText">Blood Network Baraikhali</div>
       <div class="drawerTagline">রক্তদাতা নেটওয়ার্ক</div>
     </div>
   </div>
@@ -1543,7 +1539,7 @@
       <table>
         <tr>
           <td>Website Name:</td>
-          <td><input type="text" id="siteNameInput" maxlength="60" placeholder="Blood Donor Network"></td>
+          <td><input type="text" id="siteNameInput" maxlength="60" placeholder="Blood Network Baraikhali"></td>
         </tr>
       </table>
       <div class="settingsFieldHint">Shown in the app bar, side menu, and browser tab title.</div>
@@ -1632,7 +1628,7 @@
         Download Statement (.pdf)
       </button>
     </div>
-    <div class="settingsFieldHint" style="margin-top:8px;">Downloads a PDF statement — with your logo, site name, and a faint watermark — of donors whose last donation date falls within the selected range. Mobile numbers are half-masked for privacy.</div>
+    <div class="settingsFieldHint" style="margin-top:8px;">Downloads a PDF statement — with your logo, site name, and a faint watermark — of donors whose last donation date falls within the selected range. Each row shows Name, Blood Group, Address, Hospital and Donate Date (no mobile numbers), followed by a summary with blood-group and hospital charts. Bangla text is rendered correctly.</div>
 
     <hr class="settingsDivider">
     <div class="settingsSectionLabel">Bulk Import</div>
@@ -1672,10 +1668,6 @@
 
 <button type="button" class="fab" id="fabAddDonor" aria-label="Add donor">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-</button>
-
-<button type="button" class="fab fabDonation" id="fabAddDonation" aria-label="Add donation record" title="Add donation record">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c-3 4.5-6 7.5-6 11a6 6 0 0 0 12 0c0-3.5-3-6.5-6-11z"/><line x1="12" y1="10" x2="12" y2="16"/><line x1="9" y1="13" x2="15" y2="13"/></svg>
 </button>
 
 <!-- ================= ADD DONATION (checks Donor ID / phone first) ================= -->
@@ -2685,7 +2677,7 @@ const donorListHeaderTextInput = document.getElementById("donorListHeaderTextInp
 const donorListHeaderTextEl = document.getElementById("donorListHeaderText");
 const exportDataBtn = document.getElementById("exportDataBtn");
 const DEFAULT_SORT_KEY = "blood_donor_default_sort";
-const DEFAULT_SITE_NAME = "Blood Donor Network";
+const DEFAULT_SITE_NAME = "Blood Network Baraikhali";
 
 const appTitleTextEl = document.getElementById("appTitleText");
 const drawerTitleTextEl = document.getElementById("drawerTitleText");
@@ -2934,65 +2926,104 @@ function ensurePdfLibs() {
   return pdfLibsPromise;
 }
 
-// jsPDF's built-in fonts (helvetica etc.) only understand WinAnsi/Latin
-// characters, so any Bangla text (hospital names, donor names, site name)
-// comes out as garbled boxes/symbols in the exported PDF. To fix this we
-// fetch a Unicode font that includes Bengali + Latin glyphs, embed it into
-// the PDF, and use it for every text call so both scripts render correctly.
-const BENGALI_FONT_NAME = "NotoBengali";
-let bengaliFontPromise = null;
-function arrayBufferToBase64(buffer) {
-  let binary = "";
-  const bytes = new Uint8Array(buffer);
-  const chunkSize = 0x8000;
-  for (let i = 0; i < bytes.length; i += chunkSize) {
-    binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
-  }
-  return btoa(binary);
-}
-async function fetchFontBase64(url) {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error("Font fetch failed: " + url);
-  const buf = await res.arrayBuffer();
-  return arrayBufferToBase64(buf);
-}
-function ensureBengaliFont(doc) {
-  if (!bengaliFontPromise) {
-    bengaliFontPromise = Promise.all([
-      fetchFontBase64("https://cdn.jsdelivr.net/gh/notofonts/notofonts.github.io/fonts/NotoSansBengali/hinted/ttf/NotoSansBengali-Regular.ttf"),
-      fetchFontBase64("https://cdn.jsdelivr.net/gh/notofonts/notofonts.github.io/fonts/NotoSansBengali/hinted/ttf/NotoSansBengali-Bold.ttf")
-    ]).catch(err => {
-      console.log("Could not load Bengali font for PDF, falling back to helvetica:", err);
-      bengaliFontPromise = null;
-      return null;
-    });
-  }
-  return bengaliFontPromise.then(fonts => {
-    if (!fonts) return false;
-    const [regularB64, boldB64] = fonts;
-    // addFont/addFileToVFS only need to run once per jsPDF instance.
-    if (!doc.__bengaliFontLoaded) {
-      doc.addFileToVFS("NotoSansBengali-Regular.ttf", regularB64);
-      doc.addFont("NotoSansBengali-Regular.ttf", BENGALI_FONT_NAME, "normal");
-      doc.addFileToVFS("NotoSansBengali-Bold.ttf", boldB64);
-      doc.addFont("NotoSansBengali-Bold.ttf", BENGALI_FONT_NAME, "bold");
-      doc.__bengaliFontLoaded = true;
-    }
-    return true;
-  });
+/* ---- Bangla-safe PDF text ----
+   jsPDF cannot shape Bengali script (conjuncts and vowel signs come out
+   broken even with an embedded TTF). So any text that contains Bengali is
+   drawn by the browser onto a canvas — which shapes it correctly — and
+   embedded as a high-resolution image. Latin / numeric text stays real,
+   selectable PDF text. */
+const BENGALI_RANGE = /[\u0980-\u09FF]/;
+const BN_CANVAS_SCALE = 4;
+const BN_FONT_STACK = '"Noto Sans Bengali","Inter",Arial,sans-serif';
+
+function ensureBengaliCanvasFont(sampleText) {
+  if (!document.fonts || !document.fonts.load) return Promise.resolve();
+  const sample = (sampleText && BENGALI_RANGE.test(sampleText)) ? sampleText : "অআকখ";
+  return Promise.all([
+    document.fonts.load('400 16px "Noto Sans Bengali"', sample),
+    document.fonts.load('600 16px "Noto Sans Bengali"', sample)
+  ]).catch(() => {}).then(() => document.fonts.ready).catch(() => {});
 }
 
-// Masks the second half of a mobile number for privacy in the printed
-// statement, e.g. "01712345678" -> "017123*****".
-function maskMobileNumber(mobile) {
-  const digits = String(mobile || "");
-  if (!digits) return "";
-  const visibleLen = Math.ceil(digits.length / 2);
-  return digits.slice(0, visibleLen) + "*".repeat(digits.length - visibleLen);
+function rgbToCss(rgb) {
+  return Array.isArray(rgb) ? `rgb(${rgb[0]},${rgb[1]},${rgb[2]})` : (rgb || "#211613");
+}
+
+function wrapCanvasText(ctx, text, maxWidthPx) {
+  const words = String(text).split(/\s+/).filter(Boolean);
+  const lines = [];
+  let cur = "";
+  words.forEach(w => {
+    const t = cur ? cur + " " + w : w;
+    if (!cur || ctx.measureText(t).width <= maxWidthPx) cur = t;
+    else { lines.push(cur); cur = w; }
+  });
+  if (cur) lines.push(cur);
+  return lines.length ? lines : [""];
+}
+
+// Renders (possibly Bengali) text to a PNG data URL. Sizes are in PDF points.
+function renderTextImage(text, opts) {
+  const fs = opts.fontSize || 9;
+  const S = BN_CANVAS_SCALE;
+  const font = `${opts.bold ? 600 : 400} ${fs * S}px ${BN_FONT_STACK}`;
+  const canvas = document.createElement("canvas");
+  let ctx = canvas.getContext("2d");
+  ctx.font = font;
+  const maxPx = opts.maxWidth ? opts.maxWidth * S : Infinity;
+  let lines;
+  if (opts.ellipsis && isFinite(maxPx)) {
+    let t = String(text);
+    if (ctx.measureText(t).width > maxPx) {
+      while (t.length > 1 && ctx.measureText(t + "…").width > maxPx) t = t.slice(0, -1);
+      t += "…";
+    }
+    lines = [t];
+  } else if (isFinite(maxPx)) {
+    lines = wrapCanvasText(ctx, text, maxPx);
+  } else {
+    lines = [String(text)];
+  }
+  const lineH = fs * 1.55;
+  const widest = Math.max(1, ...lines.map(l => ctx.measureText(l).width));
+  canvas.width = Math.ceil(widest) + 4;
+  canvas.height = Math.ceil(lineH * S * lines.length) + 4;
+  ctx = canvas.getContext("2d");
+  ctx.font = font;
+  ctx.fillStyle = rgbToCss(opts.color);
+  ctx.textBaseline = "middle";
+  lines.forEach((l, i) => ctx.fillText(l, 2, 2 + (i + 0.5) * lineH * S));
+  return { url: canvas.toDataURL("image/png"), w: canvas.width / S, h: canvas.height / S, lines: lines.length };
+}
+
+// Draws one line of text at a baseline position. Bengali -> image, else real text.
+function drawPdfText(doc, text, x, baselineY, opts) {
+  opts = opts || {};
+  const fs = opts.fontSize || 9;
+  const align = opts.align || "left";
+  const color = opts.color || [33, 22, 19];
+  let t = String(text == null ? "" : text);
+  if (BENGALI_RANGE.test(t)) {
+    const img = renderTextImage(t, { fontSize: fs, bold: !!opts.bold, color, maxWidth: opts.maxWidth, ellipsis: opts.ellipsis });
+    let ix = x;
+    if (align === "right") ix = x - img.w;
+    else if (align === "center") ix = x - img.w / 2;
+    doc.addImage(img.url, "PNG", ix, baselineY - fs * 0.35 - img.h / 2, img.w, img.h);
+    return img.w;
+  }
+  doc.setFont("helvetica", opts.bold ? "bold" : "normal");
+  doc.setFontSize(fs);
+  doc.setTextColor(color[0], color[1], color[2]);
+  if (opts.maxWidth && opts.ellipsis && doc.getTextWidth(t) > opts.maxWidth) {
+    while (t.length > 1 && doc.getTextWidth(t + "...") > opts.maxWidth) t = t.slice(0, -1);
+    t += "...";
+  }
+  doc.text(t, x, baselineY, { align });
+  return doc.getTextWidth(t);
 }
 
 // Stamps a faint, repeated grid watermark (logo + site name) across the page.
-function drawWatermark(doc, text, logoBase64) {
+function drawWatermark(doc, text, logoBase64, bnTextImg) {
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
   doc.saveGraphicsState();
@@ -3006,11 +3037,14 @@ function drawWatermark(doc, text, logoBase64) {
       if (logoBase64) {
         try { doc.addImage(logoBase64, "PNG", x, y, logoSize, logoSize); } catch (err) { /* skip bad image in watermark */ }
       }
-      const wmFont = (doc.__bengaliFontLoaded && /[\u0980-\u09FF]/.test(text)) ? BENGALI_FONT_NAME : "helvetica";
-      doc.setFont(wmFont, "bold");
-      doc.setFontSize(9);
-      doc.setTextColor(158, 27, 50);
-      doc.text(text, x + logoSize / 2, y + logoSize + 11, { align: "center" });
+      if (bnTextImg) {
+        doc.addImage(bnTextImg.url, "PNG", x + logoSize / 2 - bnTextImg.w / 2, y + logoSize + 3, bnTextImg.w, bnTextImg.h);
+      } else {
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(9);
+        doc.setTextColor(158, 27, 50);
+        doc.text(text, x + logoSize / 2, y + logoSize + 11, { align: "center" });
+      }
     }
     row++;
   }
@@ -3048,26 +3082,35 @@ downloadStatementBtn.addEventListener("click", async () => {
 
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ unit: "pt", format: "a4" });
+    const pageW = doc.internal.pageSize.getWidth();
+    const pageH = doc.internal.pageSize.getHeight();
+    const MARGIN = 40;
     const siteName = (appConfigData.siteName && appConfigData.siteName.trim()) ? appConfigData.siteName.trim() : DEFAULT_SITE_NAME;
     const textX = logoBase64 ? 92 : 40;
 
-    // Load a Bangla-capable font so hospital names, donor names, or a Bangla
-    // site name don't come out as garbled symbols — falls back to helvetica
-    // (Latin-only) if the font can't be fetched (e.g. offline). We only
-    // switch a given piece of text to this font when it actually contains
-    // Bangla characters; everything else keeps using helvetica exactly as
-    // before, so plain English/numeric cells are never affected.
-    const hasBengaliFont = await ensureBengaliFont(doc);
-    const BENGALI_RANGE = /[\u0980-\u09FF]/;
-    const bodyFont = (hasBengaliFont && BENGALI_RANGE.test(siteName)) ? BENGALI_FONT_NAME : "helvetica";
+    // One record per donor in the range (same as the table rows below).
+    const records = donors.map(d => {
+      const history = Array.isArray(d.donationHistory) ? d.donationHistory : [];
+      const targetDate = (d.lastDonateDate || "").slice(0, 10);
+      const matchEntry = history.find(entry => historyDate(entry).slice(0, 10) === targetDate);
+      return {
+        name: d.name || "",
+        group: String(d.bloodGroup || "").trim().toUpperCase(),
+        address: (d.address || "").trim(),
+        hospital: matchEntry ? (historyLocation(matchEntry) || "").trim() : "",
+        date: d.lastDonateDate || ""
+      };
+    });
 
+    // Make sure the Bengali web font is ready before drawing to canvas.
+    const allText = [siteName].concat(records.flatMap(r => [r.name, r.address, r.hospital])).join(" ");
+    await ensureBengaliCanvasFont(allText);
+
+    /* ---------- Header ---------- */
     if (logoBase64) {
       try { doc.addImage(logoBase64, "PNG", 40, 26, 42, 42); } catch (err) { console.log("Skipping logo in PDF:", err); }
     }
-    doc.setFont(bodyFont, "bold");
-    doc.setFontSize(16);
-    doc.setTextColor(33, 22, 19);
-    doc.text(siteName, textX, 46);
+    drawPdfText(doc, siteName, textX, 46, { fontSize: 16, bold: true, color: [33, 22, 19] });
     doc.setFont("helvetica", "normal");
     doc.setFontSize(11);
     doc.setTextColor(124, 111, 104);
@@ -3075,46 +3118,180 @@ downloadStatementBtn.addEventListener("click", async () => {
     doc.setFontSize(9.5);
     doc.text(`Range: ${from} to ${to}  |  Generated: ${new Date().toLocaleString()}`, textX, 80);
 
-    const rows = donors.map((d, i) => {
-      const history = Array.isArray(d.donationHistory) ? d.donationHistory : [];
-      const targetDate = (d.lastDonateDate || "").slice(0, 10);
-      const matchEntry = history.find(entry => {
-        const entryDate = typeof entry === "string" ? entry : (entry && entry.date) || "";
-        return entryDate.slice(0, 10) === targetDate;
+    /* ---------- Table: No. | Name | Address | Group | Hospital | Donate Date ----------
+       Column widths are auto-fitted to the longest text in each column, so
+       names, addresses and hospital names stay on ONE line. If everything
+       cannot fit at 9pt, the whole table's font shrinks a little (down to
+       6.5pt) before any wrapping is allowed. Spare width is shared out to
+       the text-heavy columns. */
+    const bnCells = new Map();
+    const CELL_PAD = 4;
+    const AVAIL = pageW - MARGIN * 2;
+    const headers = ["No.", "Name", "Address", "Group", "Hospital", "Donate Date"];
+    const tableRows = records.map((r, i) => [String(i + 1), r.name, r.address || "-", r.group, r.hospital || "-", r.date]);
+
+    const measureCtx = document.createElement("canvas").getContext("2d");
+    function measureText(t, fs, bold) {
+      t = String(t == null ? "" : t);
+      if (BENGALI_RANGE.test(t)) {
+        measureCtx.font = `${bold ? 600 : 400} ${fs * BN_CANVAS_SCALE}px ${BN_FONT_STACK}`;
+        return measureCtx.measureText(t).width / BN_CANVAS_SCALE;
+      }
+      doc.setFont("helvetica", bold ? "bold" : "normal");
+      doc.setFontSize(fs);
+      return doc.getTextWidth(t);
+    }
+    function naturalWidths(fs) {
+      return headers.map((h, c) => {
+        let w = measureText(h, fs, true);
+        tableRows.forEach(row => { w = Math.max(w, measureText(row[c], fs, false)); });
+        return Math.ceil(w + CELL_PAD * 2 + 3);
       });
-      const hospital = matchEntry ? historyLocation(matchEntry) : "";
-      return [
-        String(i + 1),
-        d.name || "",
-        maskMobileNumber(d.mobile),
-        d.bloodGroup || "",
-        hospital || "-",
-        d.lastDonateDate || ""
-      ];
-    });
+    }
+
+    const FLEX_COLS = [1, 2, 4]; // Name, Address, Hospital
+    let tableFont = 9;
+    let colW = naturalWidths(tableFont);
+    while (colW.reduce((x, y) => x + y, 0) > AVAIL && tableFont > 6.5) {
+      tableFont -= 0.5;
+      colW = naturalWidths(tableFont);
+    }
+    let totalW = colW.reduce((x, y) => x + y, 0);
+    if (totalW < AVAIL) {
+      const flexSum = FLEX_COLS.reduce((x, c) => x + colW[c], 0);
+      const extra = AVAIL - totalW;
+      FLEX_COLS.forEach(c => { colW[c] += extra * (colW[c] / flexSum); });
+    } else if (totalW > AVAIL) {
+      // Still too wide at the smallest font: only now let the text-heavy columns wrap.
+      const flexSum = FLEX_COLS.reduce((x, c) => x + colW[c], 0);
+      const excess = totalW - AVAIL;
+      FLEX_COLS.forEach(c => { colW[c] -= excess * (colW[c] / flexSum); });
+    }
+
+    const columnStyles = {};
+    colW.forEach((w, c) => { columnStyles[c] = { cellWidth: w }; });
 
     doc.autoTable({
       startY: 100,
-      head: [["No.", "Name", "Mobile", "Group", "Hospital", "Donate Date"]],
-      body: rows,
-      styles: { fontSize: 9, cellPadding: 5 },
+      margin: { left: MARGIN, right: MARGIN },
+      tableWidth: AVAIL,
+      head: [headers],
+      body: tableRows,
+      styles: { fontSize: tableFont, cellPadding: CELL_PAD, valign: "middle", overflow: "linebreak" },
       headStyles: { fillColor: [158, 27, 50] },
-      // Per-cell font switch: only cells that actually contain Bangla text
-      // use the embedded Bengali font; every other cell keeps the default
-      // helvetica exactly as before, so nothing else is affected.
+      columnStyles,
+      // Cells that contain Bengali are blanked here and painted as canvas
+      // images in didDrawCell, so the shaping is correct.
       didParseCell: (data) => {
-        if (!hasBengaliFont) return;
+        if (data.section !== "body") return;
+        // Same minimum row height for every row, so rows with Bangla and rows
+        // without it look equally tall.
+        data.cell.styles.minCellHeight = tableFont * 1.55 + CELL_PAD * 2;
         const text = Array.isArray(data.cell.text) ? data.cell.text.join(" ") : String(data.cell.text || "");
-        if (BENGALI_RANGE.test(text)) {
-          data.cell.styles.font = BENGALI_FONT_NAME;
-        }
+        if (!BENGALI_RANGE.test(text)) return;
+        const img = renderTextImage(text, { fontSize: tableFont, color: [33, 22, 19], maxWidth: colW[data.column.index] - CELL_PAD * 2 });
+        bnCells.set(data.row.index + "-" + data.column.index, img);
+        data.cell.text = [""];
+        data.cell.styles.minCellHeight = Math.max(data.cell.styles.minCellHeight, img.h + CELL_PAD * 2);
+      },
+      didDrawCell: (data) => {
+        if (data.section !== "body") return;
+        const img = bnCells.get(data.row.index + "-" + data.column.index);
+        if (!img) return;
+        doc.addImage(img.url, "PNG", data.cell.x + CELL_PAD, data.cell.y + (data.cell.height - img.h) / 2, img.w, img.h);
       }
     });
 
+    /* ---------- Summary + charts below the table ---------- */
+    let y = doc.lastAutoTable.finalY + 30;
+    const ensureSpace = (h) => {
+      if (y + h > pageH - 50) { doc.addPage(); y = 56; }
+    };
+    const total = records.length;
+    const pct = (v) => (total ? Math.round((v / total) * 100) : 0);
+
+    // Counts per blood group (fixed order, plus any unexpected value)
+    const GROUP_ORDER = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+    const groupCounts = {};
+    GROUP_ORDER.forEach(g => { groupCounts[g] = 0; });
+    records.forEach(r => {
+      const g = r.group || "Unknown";
+      groupCounts[g] = (groupCounts[g] || 0) + 1;
+    });
+    const groupItems = Object.keys(groupCounts)
+      .filter(g => GROUP_ORDER.includes(g) || groupCounts[g] > 0)
+      .map(g => ({ label: g, value: groupCounts[g] }));
+
+    // Counts per hospital / location
+    const locCounts = {};
+    records.forEach(r => {
+      const l = r.hospital || "Not specified";
+      locCounts[l] = (locCounts[l] || 0) + 1;
+    });
+    let locItems = Object.keys(locCounts).map(l => ({ label: l, value: locCounts[l] }))
+      .sort((a, b) => b.value - a.value);
+    if (locItems.length > 8) {
+      const others = locItems.slice(7).reduce((s, it) => s + it.value, 0);
+      locItems = locItems.slice(0, 7).concat([{ label: "Others", value: others }]);
+    }
+
+    const topGroup = groupItems.slice().sort((a, b) => b.value - a.value)[0];
+    const topLoc = locItems.filter(it => it.label !== "Not specified" && it.label !== "Others")[0];
+
+    ensureSpace(90);
+    drawPdfText(doc, "Summary", MARGIN, y, { fontSize: 14, bold: true, color: [158, 27, 50] });
+    y += 8;
+    doc.setDrawColor(231, 220, 212);
+    doc.line(MARGIN, y, pageW - MARGIN, y);
+    y += 18;
+    drawPdfText(doc, `Total donations in range: ${total}`, MARGIN, y, { fontSize: 10.5, bold: true });
+    y += 16;
+    if (topGroup && topGroup.value > 0) {
+      drawPdfText(doc, `Most frequent blood group: ${topGroup.label} (${topGroup.value} times, ${pct(topGroup.value)}%)`, MARGIN, y, { fontSize: 10 });
+      y += 15;
+    }
+    if (topLoc) {
+      drawPdfText(doc, `Most frequent hospital / location: ${topLoc.label} (${topLoc.value} times)`, MARGIN, y, { fontSize: 10, maxWidth: pageW - MARGIN * 2, ellipsis: true });
+      y += 15;
+    }
+    y += 12;
+
+    function drawBarChart(title, items, labelW) {
+      ensureSpace(34 + items.length * 20 + 10);
+      drawPdfText(doc, title, MARGIN, y, { fontSize: 12, bold: true, color: [33, 22, 19] });
+      y += 18;
+      const max = Math.max(1, ...items.map(it => it.value));
+      const barX = MARGIN + labelW + 8;
+      const barMaxW = pageW - MARGIN - barX - 78;
+      items.forEach(it => {
+        drawPdfText(doc, it.label, MARGIN, y + 9, { fontSize: 9, maxWidth: labelW, ellipsis: true });
+        doc.setFillColor(247, 227, 230);
+        doc.roundedRect(barX, y, barMaxW, 12, 2, 2, "F");
+        if (it.value > 0) {
+          doc.setFillColor(158, 27, 50);
+          doc.roundedRect(barX, y, Math.max((it.value / max) * barMaxW, 3), 12, 2, 2, "F");
+        }
+        drawPdfText(doc, `${it.value} (${pct(it.value)}%)`, barX + barMaxW + 8, y + 9, { fontSize: 9, color: [124, 111, 104] });
+        y += 20;
+      });
+      y += 14;
+    }
+
+    drawBarChart("Donations by Blood Group", groupItems, 44);
+    drawBarChart("Donations by Hospital / Location", locItems, 150);
+
+    /* ---------- Watermark + page numbers on every page ---------- */
+    const bnWatermark = BENGALI_RANGE.test(siteName)
+      ? renderTextImage(siteName, { fontSize: 9, bold: true, color: [158, 27, 50] })
+      : null;
     const totalPages = doc.internal.getNumberOfPages();
     for (let p = 1; p <= totalPages; p++) {
       doc.setPage(p);
-      drawWatermark(doc, siteName, logoBase64);
+      drawWatermark(doc, siteName, logoBase64, bnWatermark);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8.5);
+      doc.setTextColor(124, 111, 104);
+      doc.text(`Page ${p} of ${totalPages}`, pageW / 2, pageH - 22, { align: "center" });
     }
 
     doc.save(`donation-statement-${from}_to_${to}.pdf`);
@@ -4071,7 +4248,6 @@ function saveDonationEntry() {
   }
   closeModal(deOverlay);
 }
-document.getElementById("fabAddDonation").addEventListener("click", openDonationEntry);
 document.getElementById("donationEntryCloseBtn").addEventListener("click", () => closeModal(deOverlay));
 document.getElementById("donationEntryCancelBtn").addEventListener("click", () => closeModal(deOverlay));
 document.getElementById("donationEntrySaveBtn").addEventListener("click", saveDonationEntry);

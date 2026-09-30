@@ -1198,6 +1198,17 @@
     cursor: pointer; transition: transform 0.15s ease, background 0.15s ease;
   }
   .fab:hover { background: var(--crimson-dark); transform: translateY(-2px); }
+  /* second FAB: "Add Donation" (sits just above the + Add Donor button) */
+  .fab.fabDonation { bottom: calc(88px + env(safe-area-inset-bottom)); background: var(--sage); box-shadow: 0 10px 24px rgba(63,122,93,0.4); }
+  .fab.fabDonation:hover { filter: brightness(0.92); background: var(--sage); }
+  .donorNoTag { display: inline-block; margin-left: 6px; padding: 1px 6px; border-radius: 4px; font-family: var(--font-mono); font-size: 10px; font-weight: 700; color: var(--muted); background: var(--cream); border: 1px solid var(--line); vertical-align: middle; }
+  .donationEntryHint { font-size: 12.5px; line-height: 1.45; padding: 8px 10px; border-radius: var(--radius-sm); margin: 0 0 12px; border: 1px solid var(--line); background: var(--cream); color: var(--muted); }
+  .donationEntryHint.isExisting { border-color: var(--sage); background: var(--sage-tint); color: var(--ink); }
+  .donationEntryHint.isError { border-color: var(--crimson); background: var(--crimson-tint); color: var(--crimson-dark); }
+  .donationEntryForm .profileAddField { margin-bottom: 10px; }
+  .donationEntryForm .profileAddInput:disabled { background: var(--cream); color: var(--muted); cursor: not-allowed; }
+  .donationEntryRow2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media (max-width: 380px) { .donationEntryRow2 { grid-template-columns: 1fr; } }
   .fab svg { width: 24px; height: 24px; }
 
   /* ---------- Modals ---------- */
@@ -1299,6 +1310,7 @@
     .pulseDivider { max-width: 1100px; }
     #donorTable { font-size: 13.5px; }
     .fab { right: 32px; bottom: 32px; }
+    .fab.fabDonation { bottom: 104px; }
     .tableWrapper:hover { box-shadow: 0 10px 28px rgba(33,22,19,0.12); }
   }
 </style>
@@ -1662,6 +1674,49 @@
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
 </button>
 
+<button type="button" class="fab fabDonation" id="fabAddDonation" aria-label="Add donation record" title="Add donation record">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c-3 4.5-6 7.5-6 11a6 6 0 0 0 12 0c0-3.5-3-6.5-6-11z"/><line x1="12" y1="10" x2="12" y2="16"/><line x1="9" y1="13" x2="15" y2="13"/></svg>
+</button>
+
+<!-- ================= ADD DONATION (checks Donor ID / phone first) ================= -->
+<div class="modalOverlay" id="donationEntryOverlay">
+  <div class="modal profileModal" role="dialog" aria-modal="true" aria-labelledby="donationEntryTitle">
+    <div class="modalHeader">
+      <h2 id="donationEntryTitle">Add Donation Record</h2>
+      <button type="button" class="modalClose" id="donationEntryCloseBtn" aria-label="Close">✕</button>
+    </div>
+    <div class="donationEntryForm">
+      <div class="donationEntryRow2">
+        <div class="profileAddField"><label class="profileAddLabel" for="deDonorId">Donor ID (optional)</label>
+          <input type="text" id="deDonorId" class="profileAddInput" placeholder="ABN-0001" autocomplete="off"></div>
+        <div class="profileAddField"><label class="profileAddLabel" for="dePhone">Phone</label>
+          <input type="tel" id="dePhone" class="profileAddInput" placeholder="01XXXXXXXXX" autocomplete="off"></div>
+      </div>
+      <div class="donationEntryHint" id="deHint">Enter the Donor ID, or the phone number if the ID is not known. Existing donors are matched automatically.</div>
+      <div class="profileAddField"><label class="profileAddLabel" for="deName">Name</label>
+        <input type="text" id="deName" class="profileAddInput"></div>
+      <div class="donationEntryRow2">
+        <div class="profileAddField"><label class="profileAddLabel" for="deBloodGroup">Blood Group</label>
+          <select id="deBloodGroup" class="profileAddInput"><option value="">-- Select --</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div>
+        <div class="profileAddField"><label class="profileAddLabel" for="deGender">Gender</label>
+          <select id="deGender" class="profileAddInput"><option value="">-- Select --</option><option value="Male">Male</option><option value="Female">Female</option><option value="Other">Other</option></select></div>
+      </div>
+      <div class="profileAddField"><label class="profileAddLabel" for="deAddress">Address</label>
+        <input type="text" id="deAddress" class="profileAddInput" placeholder="e.g. Baraikhali"></div>
+      <div class="donationEntryRow2">
+        <div class="profileAddField"><label class="profileAddLabel" for="deDate">Donation Date</label>
+          <input type="date" id="deDate" class="profileAddInput"></div>
+        <div class="profileAddField"><label class="profileAddLabel" for="deLocation">Location</label>
+          <input type="text" id="deLocation" class="profileAddInput" placeholder="e.g. City Hospital"></div>
+      </div>
+      <div class="profileAddBtnRow">
+        <button type="button" id="donationEntryCancelBtn" class="profileCancelAddBtn">Cancel</button>
+        <button type="button" id="donationEntrySaveBtn" class="profileAddSubmitBtn">Save Donation</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ================= DONOR MODAL ================= -->
 <div class="modalOverlay" id="donorModalOverlay">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="donorModalTitle">
@@ -1785,6 +1840,14 @@
     </div>
 
     <div class="profileInfoGrid">
+      <div class="profileInfoItem">
+        <div class="profileInfoLabel">Donor ID</div>
+        <div class="profileInfoValue" id="donorProfileNo">-</div>
+      </div>
+      <div class="profileInfoItem">
+        <div class="profileInfoLabel">Last Donation</div>
+        <div class="profileInfoValue" id="donorProfileLastDate">-</div>
+      </div>
       <div class="profileInfoItem">
         <div class="profileInfoLabel">Mobile</div>
         <div class="profileInfoValue" id="donorProfileMobile">-</div>
@@ -2130,6 +2193,10 @@ function genQueueId() {
 }
 
 function queueDonorAction(type, donor) {
+  // Permanent Donor ID: assigned once (first save), never changed afterwards.
+  const prevDonor = getMergedDonors().find(d => d.id === donor.id);
+  if (prevDonor && prevDonor.donorNo) donor.donorNo = prevDonor.donorNo;
+  else if (!donor.donorNo) donor.donorNo = nextDonorNo();
   const queue = getQueue().filter(a => !(a.donor && a.donor.id === donor.id));
   queue.push({ type, donor, timestamp: Date.now(), _qid: genQueueId() });
   setQueue(queue);
@@ -2281,7 +2348,10 @@ function acceptDonorRequest(reqId, donorType) {
     showToast("ইন্টারনেট সংযোগ প্রয়োজন");
     return;
   }
+  const dupReq = findExistingDonor("", req.mobile).donor;
+  if (dupReq && !confirm(`${dupReq.name} (${dupReq.donorNo || "no ID"}) already has this phone number. Add as a new donor anyway?`)) return;
   const donor = {
+    donorNo: nextDonorNo(),
     name: (req.name || "").trim(),
     address: (req.address || "").trim(),
     mobile: (req.mobile || "").trim(),
@@ -3710,6 +3780,10 @@ function renderDonorProfile() {
   donorProfileAgeGenderEl.textContent = `${donor.age || "-"} / ${donor.gender || "-"}`;
   donorProfileTypeEl.textContent = donor.donorType || "Regular";
   donorProfileCountEl.textContent = donor.donationCount || 0;
+  const _noEl = document.getElementById("donorProfileNo");
+  if (_noEl) _noEl.textContent = donor.donorNo || "-";
+  const _lastEl = document.getElementById("donorProfileLastDate");
+  if (_lastEl) _lastEl.textContent = donor.lastDonateDate ? formatDate(new Date(donor.lastDonateDate)) : "-";
   donorProfileNextEligibleEl.textContent = nextEligible ? formatDate(nextEligible) : "-";
 
   if (!sortedHistory.length) {
@@ -3758,80 +3832,252 @@ function renderDonorProfile() {
    are filled in — the photo is left blank for the admin to add
    later from index.html's record manager.
    ============================================================ */
+/* ============================================================
+   PERMANENT DONOR ID  (ABN-0001, ABN-0002 ...)
+   Assigned once when a donor is first saved, never changed, never
+   re-used (the highest number ever issued is remembered, even if
+   that donor is deleted later).
+   ============================================================ */
+const DONOR_ID_PREFIX = "ABN-";
+const DONOR_COUNTER_KEY = "bnb_donor_id_counter";
+var lastIssuedDonorNo = 0;
+try { lastIssuedDonorNo = parseInt(localStorage.getItem(DONOR_COUNTER_KEY), 10) || 0; } catch (err) { /* ignore */ }
+
+function donorNoNum(no) { const m = String(no || "").match(/(\d+)\s*$/); return m ? parseInt(m[1], 10) : 0; }
+function fmtDonorNo(n) { return DONOR_ID_PREFIX + String(n).padStart(4, "0"); }
+function persistDonorCounter(n) {
+  try { localStorage.setItem(DONOR_COUNTER_KEY, String(n)); } catch (err) { /* ignore */ }
+  try {
+    if (firebaseAvailable && typeof siteStatsRef !== "undefined" && siteStatsRef) {
+      siteStatsRef.child("donorIdCounter").transaction(c => Math.max(c || 0, n));
+    }
+  } catch (err) { /* best effort */ }
+}
+function nextDonorNo() {
+  let max = lastIssuedDonorNo;
+  getMergedDonors().forEach(d => { const n = donorNoNum(d.donorNo); if (n > max) max = n; });
+  lastIssuedDonorNo = max + 1;
+  persistDonorCounter(lastIssuedDonorNo);
+  return fmtDonorNo(lastIssuedDonorNo);
+}
+
+/* One-time, automatic: donors saved before this update get their ID in the
+   order they were created. Deterministic + transaction-guarded, so running it
+   from two devices can never give one donor two different IDs. */
+function backfillDonorNos() {
+  if (!firebaseAvailable || !donorsRef) return Promise.resolve();
+  const missing = firebaseDonors.filter(d => d && d.id && !d.donorNo)
+    .sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0) || String(a.id).localeCompare(String(b.id)));
+  if (!missing.length) return Promise.resolve();
+  const jobs = missing.map(d => {
+    const no = nextDonorNo();
+    return donorsRef.child(d.id).child("donorNo").transaction(cur => cur || no);
+  });
+  return Promise.all(jobs).then(() => showToast(missing.length + " donor(s) received a permanent Donor ID"))
+    .catch(err => console.log("Donor ID backfill failed:", err));
+}
+
+/* ---------- finding an existing donor: by Donor ID, else by phone ---------- */
+function normPhone(p) { const d = String(p || "").replace(/\D/g, ""); return d.length > 10 ? d.slice(-10) : d; }
+function findExistingDonor(idText, phoneText) {
+  const donors = getMergedDonors();
+  const idTxt = String(idText || "").trim();
+  const ph = normPhone(phoneText);
+  let byId = null, byPhone = null;
+  if (idTxt) {
+    const n = donorNoNum(idTxt);
+    byId = n ? donors.find(d => donorNoNum(d.donorNo) === n) || null : null;
+    if (!byId) return { error: `No donor found with ID "${idTxt}". Check the ID, or clear it to match by phone.` };
+  }
+  if (ph.length >= 10) byPhone = donors.find(d => normPhone(d.mobile) === ph) || null;
+  if (byId && byPhone && byId.id !== byPhone.id) {
+    return { error: `This phone belongs to ${byPhone.name} (${byPhone.donorNo || "no ID"}), not ${byId.name} (${byId.donorNo}). Please check.` };
+  }
+  return { donor: byId || byPhone || null };
+}
+
+/* ============================================================
+   ONE DONATION CARD PER DONOR  (landingPage/donationRecords)
+   The public card list holds exactly one card per donor (linked by
+   donorId). Adding / editing / deleting a donation only UPDATES that
+   card: total donations, last donation date, last location and the
+   list of dates. Photo, hide-photo and display name are kept as the
+   admin set them. A card disappears only when 0 donations remain.
+   ============================================================ */
 function genLandingId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
-
-function pushDonationCertificateRecord(donor, hospitalName, visitCount, donationDate) {
-  if (!firebaseAvailable || !landingPageRef) return;
-  landingPageRef.child("donationRecords").once("value").then(snap => {
-    const val = snap.val();
-    let list = [];
-    if (Array.isArray(val)) list = val.filter(Boolean);
-    else if (val && typeof val === "object" && !val._empty) list = Object.values(val).filter(Boolean);
-
-    let maxNo = 0;
-    list.forEach(r => {
-      const n = parseInt(r.donationNo, 10);
-      if (!isNaN(n) && n > maxNo) maxNo = n;
+function toCardList(val) {
+  if (Array.isArray(val)) return val.filter(Boolean);
+  if (val && typeof val === "object" && !val._empty) return Object.values(val).filter(Boolean);
+  return [];
+}
+function donorCardFields(donor) {
+  const entries = (Array.isArray(donor.donationHistory) ? donor.donationHistory : []).filter(e => historyDate(e));
+  const sorted = [...entries].sort((a, b) => historyDate(b).localeCompare(historyDate(a)));
+  return {
+    total: sorted.length || (parseInt(donor.donationCount, 10) || 0),
+    lastDate: sorted.length ? historyDate(sorted[0]) : (donor.lastDonateDate || "").slice(0, 10),
+    lastLoc: sorted.length ? historyLocation(sorted[0]) : "",
+    dates: sorted.map(historyDate)
+  };
+}
+function upsertCardInList(list, donor) {
+  const f = donorCardFields(donor);
+  const mine = list.filter(r => r.donorId === donor.id);
+  const others = list.filter(r => r.donorId !== donor.id);
+  if (!f.total) return { list: others, existed: mine.length > 0 };
+  const keep = mine.find(r => r.image) || mine.slice().sort((a, b) => (b.date || "").localeCompare(a.date || ""))[0] || null;
+  const legacy = [];
+  mine.forEach(r => {
+    if (r.donationNo && r.donationNo !== donor.donorNo) legacy.push(r.donationNo); // old numbers keep working for old QR links
+    (r.legacyNos || []).forEach(x => legacy.push(x));
+  });
+  const card = Object.assign(
+    { id: genLandingId(), image: "", hidePhoto: false, name: donor.name || "",
+      gender: String(donor.gender || "").toLowerCase() === "female" ? "বোন" : "ভাই" },
+    keep || {},
+    { donationNo: donor.donorNo || "", donorId: donor.id, bloodGroup: donor.bloodGroup || (keep && keep.bloodGroup) || "",
+      visitCount: f.total, date: f.lastDate, donationDate: f.lastDate,
+      hospitalName: f.lastLoc || (keep && keep.hospitalName) || "", donationDates: f.dates,
+      legacyNos: Array.from(new Set(legacy)) }
+  );
+  if (!card.legacyNos.length) delete card.legacyNos;
+  if (!card.donationDates.length) delete card.donationDates;
+  return { list: others.concat([card]), existed: mine.length > 0 };
+}
+function syncDonorCard(donor) {
+  if (!firebaseAvailable || !landingPageRef || !donor) return Promise.resolve(false);
+  let existed = false;
+  return landingPageRef.child("donationRecords").transaction(cur => {
+    const res = upsertCardInList(toCardList(cur), donor);
+    existed = res.existed;
+    return res.list.length ? res.list : { _empty: true };
+  }).then(() => existed).catch(err => {
+    console.log("Donor card sync failed:", err);
+    showToast("Donor saved, but the card sync failed: " + (err && err.message ? err.message : "unknown error"));
+    return false;
+  });
+}
+/* One-time, automatic, idempotent: merges older per-donation certificates that
+   already belong to the same donor into a single card, and switches them to the
+   donor's permanent ID. Cards that were never linked to a donor are left alone. */
+function consolidateDonorCards() {
+  if (!firebaseAvailable || !landingPageRef) return Promise.resolve();
+  return landingPageRef.child("donationRecords").once("value").then(snap => {
+    const list = toCardList(snap.val());
+    const byId = {}; firebaseDonors.forEach(d => { byId[d.id] = d; });
+    const ids = Array.from(new Set(list.filter(r => r.donorId).map(r => r.donorId)));
+    const needs = ids.some(id => {
+      const d = byId[id]; if (!d || !d.donorNo) return false;
+      const cards = list.filter(r => r.donorId === id);
+      return cards.length > 1 || cards[0].donationNo !== d.donorNo;
     });
+    if (!needs) return;
+    return landingPageRef.child("donationRecords").transaction(cur => {
+      let l = toCardList(cur);
+      ids.forEach(id => { const d = byId[id]; if (d && d.donorNo) l = upsertCardInList(l, d).list; });
+      return l.length ? l : { _empty: true };
+    }).then(() => showToast("Donation cards merged: one card per donor"));
+  }).catch(err => console.log("Card consolidation failed:", err));
+}
 
-    const rec = {
-      id: genLandingId(),
-      donationNo: String(maxNo + 1).padStart(4, "0"),
-      name: donor.name || "",
-      visitCount: visitCount || 1,
-      bloodGroup: donor.bloodGroup || "",
-      hospitalName: hospitalName || "",
-      image: "",
-      hidePhoto: false,
-      // Links this certificate back to the exact donor + donation date it
-      // was created for, so removeDonationCertificateRecord (below) can
-      // find and delete it again if the matching donation record is ever
-      // removed from the donor's profile.
-      donorId: donor.id,
-      donationDate: donationDate || "",
-      // Also stored under "date" — this is the field name index.html's
-      // "LAST 28 DAYS DONATIONS" counter and admin.html's record editor
-      // actually read, so certificates synced from here count/edit
-      // correctly there too.
-      date: donationDate || ""
+/* ============================================================
+   "ADD DONATION" FORM — checks the donor first
+   Donor ID entered  -> match by ID (unknown ID = error, nothing created)
+   No ID, phone entered -> match by phone
+   Match found  -> existing donor + existing card are UPDATED
+   No match     -> NEW donor (new permanent ID) + NEW card
+   ============================================================ */
+const deOverlay = document.getElementById("donationEntryOverlay");
+const deEls = {
+  id: document.getElementById("deDonorId"), phone: document.getElementById("dePhone"),
+  name: document.getElementById("deName"), group: document.getElementById("deBloodGroup"),
+  gender: document.getElementById("deGender"), address: document.getElementById("deAddress"),
+  date: document.getElementById("deDate"), loc: document.getElementById("deLocation"),
+  hint: document.getElementById("deHint")
+};
+let deAutofilled = false;
+
+function setDeLocked(locked) {
+  [deEls.name, deEls.group, deEls.gender, deEls.address].forEach(el => { el.disabled = locked; });
+}
+function updateDonationEntryHint() {
+  const idTxt = deEls.id.value.trim(), phoneTxt = deEls.phone.value.trim();
+  const m = (idTxt || normPhone(phoneTxt).length >= 10) ? findExistingDonor(idTxt, phoneTxt) : { donor: null };
+  deEls.hint.className = "donationEntryHint";
+  if (m.error) {
+    deEls.hint.classList.add("isError");
+    deEls.hint.textContent = m.error;
+    if (deAutofilled) { setDeLocked(false); deAutofilled = false; }
+  } else if (m.donor) {
+    const d = m.donor;
+    deEls.hint.classList.add("isExisting");
+    deEls.hint.textContent = `Existing donor: ${d.name} (${d.donorNo || "no ID yet"}) — ${d.donationCount || 0} donation(s) so far. Saving will update this donor's card.`;
+    deEls.name.value = d.name || ""; deEls.group.value = d.bloodGroup || "";
+    deEls.gender.value = d.gender || ""; deEls.address.value = d.address || "";
+    setDeLocked(true); deAutofilled = true;
+  } else {
+    if (deAutofilled) {
+      [deEls.name, deEls.group, deEls.gender, deEls.address].forEach(el => { el.value = ""; });
+      setDeLocked(false); deAutofilled = false;
+    }
+    deEls.hint.textContent = (idTxt || phoneTxt)
+      ? "No donor found — saving will create a NEW donor with a new ID."
+      : "Enter the Donor ID, or the phone number if the ID is not known. Existing donors are matched automatically.";
+  }
+}
+function openDonationEntry() {
+  [deEls.id, deEls.phone, deEls.name, deEls.group, deEls.gender, deEls.address, deEls.date, deEls.loc].forEach(el => { el.value = ""; });
+  setDeLocked(false); deAutofilled = false;
+  deEls.date.value = new Date().toISOString().slice(0, 10);
+  updateDonationEntryHint();
+  openModal(deOverlay);
+}
+function saveDonationEntry() {
+  const dateVal = deEls.date.value;
+  const loc = deEls.loc.value.trim();
+  if (!dateVal) { showToast("Pick a donation date"); return; }
+  const m = findExistingDonor(deEls.id.value, deEls.phone.value);
+  if (m.error) { showToast(m.error); return; }
+  const cooldownDays = settingsData.cooldownDays || 90;
+
+  if (m.donor) {                                   // ---- EXISTING donor: update, never duplicate ----
+    const donor = m.donor;
+    const history = Array.isArray(donor.donationHistory) ? [...donor.donationHistory] : [];
+    if (history.some(e => historyDate(e) === dateVal)) { showToast("That date is already logged for " + donor.name); return; }
+    if (getStatus(donor.lastDonateDate, cooldownDays) !== "Available") {
+      const ne = getNextEligibleDate(donor.lastDonateDate, cooldownDays);
+      showToast("Not available yet — in cooldown until " + (ne ? formatDate(ne) : "-"));
+      return;
+    }
+    const newHistory = [...history, { date: dateVal, location: loc }];
+    const sorted = [...newHistory].sort((a, b) => historyDate(b).localeCompare(historyDate(a)));
+    const updatedDonor = { ...donor, donationHistory: newHistory, donationCount: newHistory.length, lastDonateDate: historyDate(sorted[0]) };
+    queueDonorAction("update", updatedDonor);
+    syncDonorCard(updatedDonor);
+    showToast("Existing donor updated — " + updatedDonor.donorNo + " · total donations: " + newHistory.length);
+  } else {                                         // ---- NEW donor: new ID + new card ----
+    const name = deEls.name.value.trim(), phone = deEls.phone.value.trim(), group = deEls.group.value;
+    if (!name || !group) { showToast("Name and blood group are required for a new donor"); return; }
+    if (normPhone(phone).length < 10) { showToast("A valid phone number is required for a new donor"); return; }
+    const donor = {
+      id: "d_" + Date.now().toString(), name, mobile: phone, bloodGroup: group,
+      address: deEls.address.value.trim(), age: "", gender: deEls.gender.value,
+      donorType: "Regular", donationCount: 1, donationHistory: [{ date: dateVal, location: loc }],
+      lastDonateDate: dateVal, createdAt: Date.now()
     };
-    list.push(rec);
-    landingPageRef.child("donationRecords").set(list)
-      .catch(err => {
-        console.log("Donation certificate sync failed:", err);
-        showToast("Saved donor, but certificate sync to site failed: " + (err && err.message ? err.message : "unknown error"));
-      });
-  }).catch(err => {
-    console.log("Donation certificate sync failed:", err);
-    showToast("Saved donor, but certificate sync to site failed: " + (err && err.message ? err.message : "unknown error"));
-  });
+    queueDonorAction("add", donor);               // assigns the permanent Donor ID
+    syncDonorCard(donor);
+    showToast("New donor added — ID " + donor.donorNo);
+  }
+  closeModal(deOverlay);
 }
-
-/* Removes the landingPage/donationRecords certificate entry that was
-   created for one specific donation record, so deleting a donation from
-   a donor's profile also removes the matching public "thank you" card
-   instead of leaving an orphaned certificate behind forever. Matches by
-   donorId + donationDate (stamped on creation above) — certificate
-   entries saved before this linkage existed can't be traced back to a
-   specific donation and are left untouched. */
-function removeDonationCertificateRecord(donorId, donationDate) {
-  if (!firebaseAvailable || !landingPageRef || !donationDate) return;
-  landingPageRef.child("donationRecords").once("value").then(snap => {
-    const val = snap.val();
-    let list = [];
-    if (Array.isArray(val)) list = val.filter(Boolean);
-    else if (val && typeof val === "object" && !val._empty) list = Object.values(val).filter(Boolean);
-
-    const filtered = list.filter(r => !(r.donorId === donorId && r.donationDate === donationDate));
-    if (filtered.length === list.length) return; // nothing matched — nothing to write back
-
-    landingPageRef.child("donationRecords").set(filtered).catch(err => {
-      console.log("Failed to remove matching certificate record:", err);
-    });
-  }).catch(err => {
-    console.log("Failed to check certificate records for removal:", err);
-  });
-}
+document.getElementById("fabAddDonation").addEventListener("click", openDonationEntry);
+document.getElementById("donationEntryCloseBtn").addEventListener("click", () => closeModal(deOverlay));
+document.getElementById("donationEntryCancelBtn").addEventListener("click", () => closeModal(deOverlay));
+document.getElementById("donationEntrySaveBtn").addEventListener("click", saveDonationEntry);
+deOverlay.addEventListener("click", e => { if (e.target === deOverlay) closeModal(deOverlay); });
+deEls.id.addEventListener("input", updateDonationEntryHint);
+deEls.phone.addEventListener("input", updateDonationEntryHint);
 
 donorProfileToggleAddBtn.addEventListener("click", () => {
   const id = donorProfileIdInput.value;
@@ -3899,10 +4145,8 @@ donorProfileAddRecordBtn.addEventListener("click", () => {
   };
 
   queueDonorAction("update", updatedDonor);
-  if (!isEditing) {
-    pushDonationCertificateRecord(donor, donorProfileLocationInput.value.trim(), newHistory.length, dateVal);
-  }
-  showToast(isConnected ? (isEditing ? "Donation record updated" : "Donation record added") : "Saved offline — will sync when online");
+  syncDonorCard(updatedDonor); // updates the donor's ONE card (never creates a second one)
+  showToast(isConnected ? ("Existing donor updated — " + (updatedDonor.donorNo || "") + " · total donations: " + newHistory.length) : "Saved offline — will sync when online");
   closeAddRecordForm();
   renderDonorProfile();
 });
@@ -3942,8 +4186,8 @@ donorProfileTimelineEl.addEventListener("click", e => {
   // Also remove the matching public "donation certificate" entry (if
   // any) so nothing is left behind in landingPage/donationRecords —
   // this donation's record no longer exists anywhere.
-  removeDonationCertificateRecord(donor.id, dateVal);
-  showToast("Donation record removed");
+  syncDonorCard(updatedDonor); // total goes down; the card is removed only when 0 donations remain
+  showToast("Donation record removed — total donations: " + history.length);
   renderDonorProfile();
 });
 
@@ -4301,6 +4545,7 @@ function renderDonors() {
     const q = searchQuery.toLowerCase();
     donors = donors.filter(d =>
       (d.name || "").toLowerCase().includes(q) ||
+      (d.donorNo || "").toLowerCase().includes(q) ||
       (d.mobile || "").includes(q) ||
       (d.address || "").toLowerCase().includes(q)
     );
@@ -4351,7 +4596,7 @@ function renderDonors() {
       <td class="checkboxCol"><input type="checkbox" class="rowSelectCheckbox" data-id="${escapeHtml(donor.id)}" ${isChecked ? "checked" : ""} aria-label="Select ${escapeHtml(donor.name)}"></td>
       <td class="noCell">${index + 1}</td>
       <td class="groupCell"><div class="bloodBadge"><span class="bloodDropShape"></span><span class="bloodBadgeText">${escapeHtml(donor.bloodGroup)}</span>${availTag}</div></td>
-      <td class="nameCell">${escapeHtml(donor.name)}${vipTag}${donationBadge}${newBadge}${pendingBadge}</td>
+      <td class="nameCell">${escapeHtml(donor.name)}${donor.donorNo ? `<span class="donorNoTag">${escapeHtml(donor.donorNo)}</span>` : ""}${vipTag}${donationBadge}${newBadge}${pendingBadge}</td>
       <td class="addressCell">${escapeHtml(donor.address || "-")}</td>
       <td>
         <div class="contactCell">
@@ -4639,6 +4884,16 @@ function setupFirebase() {
       firebaseDonors = Object.values(donorsMap);
       scheduleDonorsUpdate();
     });
+
+    /* Donor IDs: keep the local counter in step with Firebase, then give every
+       pre-existing donor an ID and merge older duplicate cards (both idempotent). */
+    siteStatsRef.child("donorIdCounter").on("value", snap => {
+      const v = parseInt(snap.val(), 10) || 0;
+      if (v > lastIssuedDonorNo) { lastIssuedDonorNo = v; try { localStorage.setItem(DONOR_COUNTER_KEY, String(v)); } catch (err) { /* ignore */ } }
+    });
+    donorsRef.once("value").then(() => setTimeout(() => {
+      backfillDonorNos().then(() => setTimeout(consolidateDonorCards, 1500));
+    }, 1500)).catch(() => {});
 
     // One-time backfill: if siteStats/donorCount has never been written
     // (e.g. right after this update is deployed), compute it once from

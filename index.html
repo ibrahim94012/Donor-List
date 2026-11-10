@@ -1002,6 +1002,27 @@
 
   .contactCell { display: flex; align-items: center; gap: 6px; }
 
+  /* ---------- Admin login (first visit / signed-out) ---------- */
+  .loginOverlay { z-index: 60 !important; }
+  .loginForm { width: 100%; max-width: 300px; display: flex; flex-direction: column; gap: 6px; text-align: left; }
+  .loginForm label { font-size: 12.5px; font-weight: 600; color: #7C6F68; margin-top: 6px; }
+  .loginForm input {
+    width: 100%; padding: 12px 14px; border: 1px solid #E7DCD4; border-radius: 12px;
+    font-size: 15px; background: #fff; color: #211613; box-sizing: border-box;
+  }
+  .loginForm input:focus { outline: none; border-color: #9E1B32; box-shadow: 0 0 0 3px rgba(158,27,50,0.12); }
+  .loginForm button {
+    margin-top: 14px; padding: 13px; border: 0; border-radius: 12px; cursor: pointer;
+    background: linear-gradient(150deg, #9E1B32, #6E1220); color: #fff; font-size: 15px; font-weight: 700;
+  }
+  .loginForm button:disabled { opacity: 0.6; cursor: default; }
+  .loginErrorMsg { color: #B3261E; font-size: 13px; display: none; text-align: center; margin-top: 10px; line-height: 1.5; }
+  .logoutBtn {
+    padding: 10px 16px; border-radius: 10px; border: 1px solid var(--crimson);
+    background: transparent; color: var(--crimson); font-weight: 600; cursor: pointer;
+  }
+  .logoutBtn:hover { background: var(--crimson-tint); }
+
   /* ---------- PIN modal: full-screen premium lock-screen style (light) ---------- */
   .pinFullscreenOverlay {
     align-items: stretch !important;
@@ -1319,7 +1340,7 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
     <div class="appTitleBlock">
-      <div class="appTitle"><span id="appTitleText">Blood Network Baraikhali</span> <span class="appVersionBadge" id="appVersionBadge">v2.7.2</span></div>
+      <div class="appTitle"><span id="appTitleText">Blood Network Baraikhali</span> <span class="appVersionBadge" id="appVersionBadge">v2.8.3</span></div>
       <div class="appTagline">BNB</div>
     </div>
   </div>
@@ -1365,7 +1386,7 @@
   </div>
 </nav>
 
-<p class="credit">Development by <u>IBRAHIM KHALIL</u> | <u>SAMIN KHAN</u></p>
+<p class="credit">Development by <u>IBRAHIM KHALIL</u> | <u>v-2.8.3</u></p>
 
 <svg class="pulseDivider" viewBox="0 0 600 26" preserveAspectRatio="none" aria-hidden="true">
   <path d="M0,13 L200,13 L215,2 L230,23 L245,7 L258,18 L270,13 L600,13"/>
@@ -1590,6 +1611,13 @@
         <button type="submit">Save Settings</button>
       </div>
     </form>
+
+    <hr class="settingsDivider">
+    <div class="settingsSectionLabel">Account</div>
+    <div class="settingsFieldHint" id="authAccountInfo">Signed in as admin.</div>
+    <div class="modalActions">
+      <button type="button" class="logoutBtn" id="logoutBtn">Log out</button>
+    </div>
 
     <hr class="settingsDivider">
     <div class="settingsSectionLabel">Backup</div>
@@ -1912,6 +1940,30 @@
      before the site can be used at all. Verified with the same local,
      salted-hash PIN check used before (see verifyPin), so it works
      completely offline; no login/network account involved anymore. -->
+<!-- ================= ADMIN LOGIN (first visit / when signed out) =================
+     Shown instead of the PIN screen until this device has been signed in
+     once with the Firebase admin email + password. After that, every
+     visit only asks for the PIN (the Firebase session is kept on the device). -->
+<div class="modalOverlay pinFullscreenOverlay loginOverlay" id="loginOverlay">
+  <div class="modal pinModal" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+    <div class="pinModalBody">
+      <div class="pinLockBadge">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg>
+      </div>
+      <h2 id="loginTitle">Admin Login</h2>
+      <p class="pinModalHint">প্রথমবার প্রবেশের জন্য admin ইমেইল ও পাসওয়ার্ড দিয়ে লগইন করুন। এরপর থেকে শুধু PIN লাগবে।</p>
+      <form class="loginForm" id="loginForm" autocomplete="on">
+        <label for="loginEmail">Email</label>
+        <input type="email" id="loginEmail" autocomplete="username" required>
+        <label for="loginPass">Password</label>
+        <input type="password" id="loginPass" autocomplete="current-password" required>
+        <button type="submit" id="loginBtn">Login</button>
+        <span id="loginError" class="loginErrorMsg"></span>
+      </form>
+    </div>
+  </div>
+</div>
+
 <div class="modalOverlay pinFullscreenOverlay open" id="pinModalOverlay">
   <div class="modal pinModal" role="dialog" aria-modal="true" aria-labelledby="pinModalTitle">
     <div class="pinModalBody">
@@ -1968,7 +2020,7 @@ const _cfgB64 = "eyJhcGlLZXkiOiJBSXphU3lDSDVvSEZ6dUM2cWJBalY3Y2dIV1FvcEh0R0ExODB
 const firebaseConfig = JSON.parse(atob(_cfgB64));
 
 let firebaseAvailable = false;
-let db, donorsRef, settingsRef, appConfigRef, siteStatsRef, landingPageRef, donorRequestsRef, emergencyRequestsRef;
+let db, auth, donorsRef, settingsRef, appConfigRef, siteStatsRef, landingPageRef, donorRequestsRef, emergencyRequestsRef;
 
 /* ============================================================
    LOCAL CACHE + OFFLINE QUEUE
@@ -2215,6 +2267,7 @@ function queueDeleteAction(id) {
 function trySyncQueue() {
   updateSyncStatus();
   if (!firebaseAvailable || !isConnected || syncing) return;
+  if (!auth || !auth.currentUser) return; // writes need a signed-in admin (database rules)
   const queue = getQueue();
   if (queue.length === 0) return;
 
@@ -3535,6 +3588,7 @@ pinBackspaceBtn.addEventListener("click", () => {
 
 document.addEventListener("keydown", e => {
   if (!pinModalOverlay.classList.contains("open")) return;
+  if (loginOverlay.classList.contains("open")) return; // typing in the login form
   if (/^[0-9]$/.test(e.key)) {
     const keyBtn = pinKeypad.querySelector(`.pinKey[data-digit="${e.key}"]`);
     if (keyBtn) keyBtn.click();
@@ -3545,9 +3599,93 @@ document.addEventListener("keydown", e => {
   // the correct PIN.
 });
 
-// Show the gate every time the app opens (no "remember me" — a fresh PIN
-// entry is required on every visit, matching a lock-screen).
-openEntryGate();
+/* ============================================================
+   ADMIN LOGIN (Firebase Auth) — first visit only
+   - No saved login on this device  -> email + password screen.
+   - Already logged in before       -> only the PIN screen (as before).
+   The Firebase session lives in the browser (IndexedDB) so the PIN
+   screen keeps working offline. If the session ever expires, is
+   revoked, or the user logs out, the login screen comes back.
+   The real protection is the database rules: without a valid admin
+   login the server refuses every read/write of donor data.
+   ============================================================ */
+const AUTH_FLAG_KEY = "blood_donor_admin_authed";
+const loginOverlay = document.getElementById("loginOverlay");
+const loginForm = document.getElementById("loginForm");
+const loginEmail = document.getElementById("loginEmail");
+const loginPass = document.getElementById("loginPass");
+const loginBtn = document.getElementById("loginBtn");
+const loginError = document.getElementById("loginError");
+
+function hasAuthFlag() { try { return localStorage.getItem(AUTH_FLAG_KEY) === "1"; } catch (err) { return false; } }
+function setAuthFlag(on) {
+  try { if (on) localStorage.setItem(AUTH_FLAG_KEY, "1"); else localStorage.removeItem(AUTH_FLAG_KEY); } catch (err) { /* ignore */ }
+}
+function showLoginError(msg) {
+  loginError.textContent = msg;
+  loginError.style.display = msg ? "block" : "none";
+}
+function showLogin(msg) {
+  pinModalOverlay.classList.remove("open"); // login replaces the PIN screen
+  loginOverlay.classList.add("open");
+  document.body.style.overflow = "hidden";
+  if (msg) showLoginError(msg);
+}
+function hideLogin() {
+  loginOverlay.classList.remove("open");
+  showLoginError("");
+  if (!pinModalOverlay.classList.contains("open")) document.body.style.overflow = "";
+}
+function loginErrorText(err) {
+  const code = err && err.code ? err.code : "";
+  if (code === "auth/invalid-credential" || code === "auth/wrong-password" || code === "auth/user-not-found" || code === "auth/invalid-email")
+    return "ইমেইল বা পাসওয়ার্ড ভুল।";
+  if (code === "auth/too-many-requests") return "অনেকবার ভুল চেষ্টা হয়েছে। কিছুক্ষণ পরে আবার চেষ্টা করুন।";
+  if (code === "auth/network-request-failed") return "ইন্টারনেট সংযোগ নেই। প্রথমবার লগইনের জন্য ইন্টারনেট লাগবে।";
+  if (code === "auth/user-disabled") return "এই অ্যাকাউন্টটি বন্ধ করা হয়েছে।";
+  return "লগইন করা যায়নি, আবার চেষ্টা করুন।";
+}
+
+loginForm.addEventListener("submit", async e => {
+  e.preventDefault();
+  const email = loginEmail.value.trim();
+  const password = loginPass.value;
+  if (!email || !password) return;
+  if (!auth) { showLoginError("সার্ভিস প্রস্তুত নয়। ইন্টারনেট সংযোগ দিয়ে কয়েক সেকেন্ড পর আবার চেষ্টা করুন।"); return; }
+  showLoginError("");
+  loginBtn.disabled = true;
+  loginBtn.textContent = "Logging in...";
+  try {
+    // onAuthStateChanged (in setupFirebase) takes over from here: it checks
+    // the admin permission, opens the app and starts the live data.
+    await auth.signInWithEmailAndPassword(email, password);
+  } catch (err) {
+    showLoginError(loginErrorText(err));
+  } finally {
+    loginBtn.disabled = false;
+    loginBtn.textContent = "Login";
+  }
+});
+loginEmail.addEventListener("input", () => showLoginError(""));
+loginPass.addEventListener("input", () => showLoginError(""));
+
+const logoutBtn = document.getElementById("logoutBtn");
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", () => {
+    if (getQueue().length > 0 && !confirm("কিছু পরিবর্তন এখনো সার্ভারে সিঙ্ক হয়নি। লগআউট করলে সেগুলো আর সিঙ্ক হবে না। তবুও লগআউট করবেন?")) return;
+    if (!confirm("লগআউট করবেন? পরের বার আবার ইমেইল ও পাসওয়ার্ড লাগবে।")) return;
+    setAuthFlag(false);
+    [CACHE_DONORS_KEY, CACHE_SETTINGS_KEY, CACHE_APPCONFIG_KEY, QUEUE_KEY, ACTIVITY_LOG_KEY].forEach(k => {
+      try { localStorage.removeItem(k); } catch (err) { /* ignore */ }
+    });
+    const done = () => window.location.reload();
+    if (auth) auth.signOut().then(done, done); else done();
+  });
+}
+
+// Every visit: no login saved on this device -> login screen, otherwise the
+// PIN screen (no "remember me" for the PIN — it is asked on every visit).
+if (hasAuthFlag()) openEntryGate(); else showLogin();
 
 /* ============================================================
    DONOR FORM (Add / Edit)
@@ -5001,6 +5139,10 @@ function setupFirebase() {
     emergencyRequestsRef = db.ref("emergencyRequests");
     firebaseAvailable = true;
 
+    let listenersStarted = false;
+    function startDataListeners() {
+      if (listenersStarted) return;
+      listenersStarted = true;
     /* Donor join requests submitted from the public website — kept as a
        live map so the "Donor Requests" panel and its sidebar badge
        update instantly as new requests come in or get resolved. */
@@ -5115,11 +5257,47 @@ function setupFirebase() {
         }
       }
     });
+    }
 
     db.ref(".info/connected").on("value", snap => {
       isConnected = snap.val() === true;
       updateSyncStatus();
       if (isConnected) trySyncQueue();
+    });
+
+
+    /* ---- Auth: live data only starts once an admin is signed in ---- */
+    auth = firebase.auth();
+    try { auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL); } catch (err) { /* ignore */ }
+    auth.onAuthStateChanged(async user => {
+      if (!user) {                       // never logged in, logged out, or session revoked
+        setAuthFlag(false);
+        showLogin();
+        return;
+      }
+      if (!hasAuthFlag()) {              // fresh login: confirm this account is in /admins
+        try {
+          const snap = await Promise.race([
+            db.ref("admins/" + user.uid).once("value"),
+            new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), 12000))
+          ]);
+          if (snap.val() !== true) throw new Error("not-admin");
+        } catch (err) {
+          const timedOut = err && err.message === "timeout";
+          showLogin(timedOut ? "সার্ভারের সাথে সংযোগ হয়নি, আবার চেষ্টা করুন।" : "এই অ্যাকাউন্টের admin অনুমতি নেই।");
+          auth.signOut().catch(() => {});
+          return;
+        }
+        setAuthFlag(true);
+        hideLogin();
+        closeEntryGate();                // they just proved identity: no PIN right after login
+      } else {
+        hideLogin();
+      }
+      const info = document.getElementById("authAccountInfo");
+      if (info) info.textContent = "Signed in as " + (user.email || "admin") + ".";
+      startDataListeners();
+      trySyncQueue();
     });
 
     updateSyncStatus();
@@ -5132,9 +5310,11 @@ function setupFirebase() {
 
 loadScript("https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js")
   .then(() => loadScript("https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"))
+  .then(() => loadScript("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"))
   .then(setupFirebase)
   .catch(err => {
     console.log("Could not load Firebase SDK (likely offline):", err);
+    if (!hasAuthFlag()) showLoginError("ইন্টারনেট সংযোগ নেই। প্রথমবার লগইনের জন্য ইন্টারনেট লাগবে।");
     firebaseAvailable = false;
     updateSyncStatus();
   });

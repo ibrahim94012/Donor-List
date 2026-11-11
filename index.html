@@ -1340,7 +1340,7 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
     <div class="appTitleBlock">
-      <div class="appTitle"><span id="appTitleText">Blood Network Baraikhali</span> <span class="appVersionBadge" id="appVersionBadge">v2.8.3</span></div>
+      <div class="appTitle"><span id="appTitleText">Blood Network Baraikhali</span> <span class="appVersionBadge" id="appVersionBadge">v2.8.4 · 11-Nov-2026</span></div>
       <div class="appTagline">BNB</div>
     </div>
   </div>
@@ -2574,12 +2574,17 @@ function computeAggregateStats(list) {
   const bloodGroups = {};
   BLOOD_GROUPS_FOR_STATS.forEach(g => { bloodGroups[g] = 0; });
   let totalDonations = 0;
+  const lastDonateDates = {};
   list.forEach(d => {
     totalDonations += parseInt(d.donationCount, 10) || 0;
     const g = (d.bloodGroup || "").toString().trim().toUpperCase();
     if (bloodGroups.hasOwnProperty(g)) bloodGroups[g]++;
+    // Landing page "Last 28 days donations": count donors by their latest donation date.
+    // Only valid YYYY-MM-DD keys are kept (database rules reject anything else).
+    const ld = (d.lastDonateDate || "").toString().slice(0, 10);
+    if (/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(ld)) lastDonateDates[ld] = (lastDonateDates[ld] || 0) + 1;
   });
-  return { donorCount: list.length, totalDonations, bloodGroups };
+  return { donorCount: list.length, totalDonations, bloodGroups, lastDonateDates };
 }
 let siteStatsSyncTimeout = null;
 function syncSiteStats() {

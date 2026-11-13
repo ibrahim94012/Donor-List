@@ -1330,6 +1330,109 @@
     .fab { right: 32px; bottom: 32px; }
     .tableWrapper:hover { box-shadow: 0 10px 28px rgba(33,22,19,0.12); }
   }
+  /* ---------- v2.9: Admin team (live), blood requests ---------- */
+  .adminTeamList { display: flex; flex-direction: column; max-height: 300px; overflow-y: auto; }
+  .adminRow { display: flex; align-items: center; gap: 10px; padding: 9px 2px; border-bottom: 1px solid var(--line); }
+  .adminRow:last-child { border-bottom: none; }
+  .adminAvatar {
+    position: relative; width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-weight: 700; font-size: 14px;
+    background: var(--crimson-tint); color: var(--crimson);
+  }
+  .adminAvatar::after {
+    content: ""; position: absolute; right: -1px; bottom: -1px; width: 11px; height: 11px;
+    border-radius: 50%; border: 2px solid var(--paper); background: #B7ADA7;
+  }
+  .adminRow.is-online .adminAvatar::after { background: #2FA66A; }
+  .adminRow.is-away .adminAvatar::after { background: var(--amber); }
+  .adminInfo { min-width: 0; flex: 1; }
+  .adminName { font-size: 13.5px; font-weight: 700; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .adminMe {
+    font-family: var(--font-mono); font-size: 9.5px; font-weight: 700; color: var(--crimson);
+    background: var(--crimson-tint); border-radius: 999px; padding: 1px 7px; margin-left: 6px; vertical-align: middle;
+  }
+  .adminSub { font-size: 11.5px; color: var(--muted); line-height: 1.45; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .adminStatus { font-family: var(--font-mono); font-size: 10.5px; font-weight: 700; white-space: nowrap; flex-shrink: 0; color: var(--muted); }
+  .adminRow.is-online .adminStatus { color: var(--sage); }
+  .adminRow.is-away .adminStatus { color: var(--amber); }
+
+  .reqStatGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .reqStat { background: var(--cream); border: 1px solid var(--line); border-radius: var(--radius-md); padding: 10px 4px; text-align: center; min-width: 0; }
+  .reqStat b { display: block; font-family: var(--font-display); font-size: 22px; line-height: 1.1; color: var(--ink); }
+  .reqStat span { display: block; margin-top: 4px; font-size: 10.5px; color: var(--muted); font-weight: 600; }
+  .reqStat.is-active b { color: var(--amber); }
+  .reqStat.is-done b { color: var(--sage); }
+  .reqStat.is-cancel b { color: #B23A3A; }
+
+  .reqToolbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+  .reqNewBtn {
+    height: 38px; padding: 0 16px; border-radius: 999px; border: none; cursor: pointer; white-space: nowrap;
+    background: var(--crimson); color: #fff; font-family: var(--font-body); font-size: 13px; font-weight: 700;
+  }
+  .reqNewBtn:hover { background: var(--crimson-dark); }
+  .reqTabs { display: flex; gap: 6px; flex-wrap: wrap; margin: 14px 0 12px; }
+  .reqTab {
+    height: 32px; padding: 0 13px; border-radius: 999px; border: 1px solid var(--line);
+    background: var(--cream); color: var(--ink); font-family: var(--font-body); font-size: 12px; font-weight: 700; cursor: pointer;
+  }
+  .reqTab.active { background: var(--crimson); border-color: var(--crimson); color: #fff; }
+  .reqStatusPill {
+    display: inline-flex; align-items: center; font-family: var(--font-mono); font-size: 10px; font-weight: 700;
+    border-radius: 999px; padding: 3px 9px; letter-spacing: 0.02em;
+  }
+  .reqStatusPill.st-active { background: var(--amber-tint); color: var(--amber); }
+  .reqStatusPill.st-completed { background: var(--sage-tint); color: var(--sage); }
+  .reqStatusPill.st-cancelled { background: var(--crimson-tint); color: var(--crimson); }
+  .reqLbl {
+    font-family: var(--font-mono); font-size: 10px; font-weight: 700; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.04em; min-width: 64px; padding-top: 2px; flex-shrink: 0;
+  }
+  .reqCallBtn {
+    flex: 1 1 auto; min-width: 108px; padding: 8px 12px; border-radius: 999px; text-decoration: none;
+    display: inline-flex; align-items: center; justify-content: center; white-space: nowrap;
+    font-family: var(--font-body); font-size: 12px; font-weight: 700;
+    background: var(--cream); color: var(--ink); border: 1.5px solid var(--line);
+  }
+  .reqCallBtn:hover { border-color: var(--crimson); color: var(--crimson); }
+  textarea.profileAddInput { height: auto; min-height: 72px; padding: 10px 14px; resize: vertical; }
+  .reqSettingsNote { font-size: 12px; color: var(--muted); margin-top: 10px; line-height: 1.5; }
+  #emergencyRequestsListContainer { gap: 8px; }
+  .reqRow {
+    display: flex; align-items: center; gap: 10px; padding: 9px 10px 9px 10px;
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-md);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .reqRow:hover { border-color: var(--crimson-tint); box-shadow: var(--shadow); }
+  .reqRowGroup {
+    flex-shrink: 0; min-width: 44px; height: 38px; padding: 0 6px; border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    background: var(--crimson-tint); color: var(--crimson);
+    font-family: var(--font-display); font-weight: 700; font-size: 15px;
+  }
+  .reqRowMain { min-width: 0; flex: 1; }
+  .reqRowTitle { font-size: 13.5px; font-weight: 700; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .reqRowSub { margin-top: 2px; font-size: 11.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .reqRowEnd { flex-shrink: 0; display: flex; align-items: center; gap: 8px; }
+  .reqEditBtn {
+    width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 50%; border: 1px solid var(--line); background: var(--cream); color: var(--ink); cursor: pointer; padding: 0;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+  .reqEditBtn:hover { border-color: var(--crimson); color: var(--crimson); }
+  .reqEditBtn svg { width: 16px; height: 16px; }
+  .reqEditSection { border-top: 1px dashed var(--line); margin-top: 4px; padding-top: 12px; display: flex; flex-direction: column; gap: 0; }
+  @media (max-width: 480px) {
+    .reqRow { padding: 8px; gap: 8px; }
+    .reqRowGroup { min-width: 38px; height: 34px; font-size: 13.5px; }
+    .reqRowEnd { gap: 6px; }
+    .reqRowEnd .reqStatusPill { padding: 3px 7px; font-size: 9.5px; }
+  }
+  @media (max-width: 480px) {
+    .reqStat b { font-size: 19px; }
+    .reqStat span { font-size: 10px; }
+    .reqCallBtn { min-width: 0; font-size: 11.5px; padding: 8px 8px; }
+  }
 </style>
 </head>
 <body>
@@ -1340,7 +1443,7 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
     <div class="appTitleBlock">
-      <div class="appTitle"><span id="appTitleText">Blood Network Baraikhali</span> <span class="appVersionBadge" id="appVersionBadge">v2.8.4 · 11-Nov-2026</span></div>
+      <div class="appTitle"><span id="appTitleText">Blood Network Baraikhali</span> <span class="appVersionBadge" id="appVersionBadge">v2.9.0 · 13-Nov-2026</span></div>
       <div class="appTagline">BNB</div>
     </div>
   </div>
@@ -1380,13 +1483,13 @@
     </button>
     <button type="button" class="drawerNavItem" data-view="emergencyRequests">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
-      <span>Emergency Requests</span>
+      <span>Blood Requests</span>
       <span class="drawerReqBadge" id="emergencyRequestsNavBadge" style="display:none;">0</span>
     </button>
   </div>
 </nav>
 
-<p class="credit">Development by <u>IBRAHIM KHALIL</u> | <u>v-2.8.3</u></p>
+<p class="credit">Development by <u>IBRAHIM KHALIL</u> | <u>v-2.9.0</u></p>
 
 <svg class="pulseDivider" viewBox="0 0 600 26" preserveAspectRatio="none" aria-hidden="true">
   <path d="M0,13 L200,13 L215,2 L230,23 L245,7 L258,18 L270,13 L600,13"/>
@@ -1394,6 +1497,28 @@
 
 <main>
   <section class="pageView" id="dashboardView">
+  <div class="overviewGrid">
+  <div class="groupChartCard">
+    <div class="pieChartHeader">
+      <div class="groupChartTitle">Admin Team · Live</div>
+      <span class="pieChartBadge"><span class="liveDot"></span><span id="adminOnlineBadgeText">0 online</span></span>
+    </div>
+    <div id="adminTeamList" class="adminTeamList"><div class="leaderEmpty">Loading team…</div></div>
+  </div>
+  <div class="groupChartCard">
+    <div class="pieChartHeader">
+      <div class="groupChartTitle">Blood Requests</div>
+      <span class="pieChartBadge"><span class="liveDot"></span><span>Live</span></span>
+    </div>
+    <div class="reqStatGrid">
+      <div class="reqStat"><b id="dashReqTotal">0</b><span>Total</span></div>
+      <div class="reqStat is-active"><b id="dashReqActive">0</b><span>Active</span></div>
+      <div class="reqStat is-done"><b id="dashReqDone">0</b><span>Donated</span></div>
+      <div class="reqStat is-cancel"><b id="dashReqCancel">0</b><span>Cancelled</span></div>
+    </div>
+    <div class="reqSettingsNote">Donation Statement PDF-এর উপরে Total Request, Donation ও Cancel দেখানো হয়।</div>
+  </div>
+  </div>
   <div class="overviewGrid">
   <div class="groupChartCard pieChartCard">
     <div class="pieChartHeader">
@@ -1465,7 +1590,7 @@
     <div id="leaderList" class="leaderList"><!-- rows inserted by JS --></div>
   </div>
   <div class="groupChartCard">
-    <div class="groupChartTitle">Recent Activity</div>
+    <div class="groupChartTitle">Recent Activity · Live</div>
     <div id="activityList" class="activityList"><!-- rows inserted by JS --></div>
   </div>
   </div>
@@ -1615,6 +1740,14 @@
     <hr class="settingsDivider">
     <div class="settingsSectionLabel">Account</div>
     <div class="settingsFieldHint" id="authAccountInfo">Signed in as admin.</div>
+    <div class="profileAddField" style="margin-top:12px;">
+      <label class="profileAddLabel" for="adminNameInput">Your Admin Name</label>
+      <input type="text" id="adminNameInput" class="profileAddInput" maxlength="30" placeholder="e.g. Rahim" autocomplete="off">
+    </div>
+    <div class="modalActions" style="margin-top:10px;">
+      <button type="button" class="ghostBtn" id="saveAdminNameBtn" style="margin-left:0;">Save Name</button>
+    </div>
+    <div class="settingsFieldHint" style="margin-top:8px;">এই নামটি অন্য admin-দের কাছে Live Team ও Activity-তে দেখাবে।</div>
     <div class="modalActions">
       <button type="button" class="logoutBtn" id="logoutBtn">Log out</button>
     </div>
@@ -1658,6 +1791,8 @@
     </div>
     <div class="settingsFieldHint" style="margin-top:8px;">Downloads a PDF statement — with your logo, site name, and a faint watermark — of donors whose last donation date falls within the selected range. Each row shows Name, Blood Group, Address, Hospital and Donate Date (no mobile numbers), followed by a summary with blood-group and hospital charts. Bangla text is rendered correctly.</div>
 
+    <div class="settingsFieldHint" style="margin-top:6px;">PDF ক্লাসিক ফরম্যাটে হবে: উপরে Total Request, Total Donation ও Total Cancel, মাঝে ডোনেশন টেবিল এবং নিচে Analytics-এ দুটি গ্রাফ — (১) হাসপাতাল ও ব্লাড গ্রুপ অনুযায়ী ডোনেশন, (২) তারিখ অনুযায়ী ডোনেশন সংখ্যা।</div>
+
     <hr class="settingsDivider">
     <div class="settingsSectionLabel">Bulk Import</div>
     <div class="importRow">
@@ -1684,12 +1819,27 @@
 
   <section class="pageView" id="emergencyRequestsView">
   <div class="groupChartCard">
-    <div class="groupChartTitle">Emergency Blood Requests</div>
-    <div class="requestsIntro">ওয়েবসাইটের হিরো সেকশনের "জরুরি রক্তের প্রয়োজন?" বাটন থেকে জমা হওয়া রিকোয়েস্ট। ফোন নম্বরে ট্যাপ করে সরাসরি কল করুন, ব্যবস্থা হয়ে গেলে "সম্পন্ন" চেপে তালিকা থেকে সরিয়ে ফেলুন।</div>
+    <div class="reqToolbar">
+      <div class="groupChartTitle" style="margin:0;">Blood Requests</div>
+      <button type="button" class="reqNewBtn" id="newBloodRequestBtn">+ New Request</button>
+    </div>
+    <div class="requestsIntro">ওয়েবসাইট ও admin-এর জমা দেওয়া রিকোয়েস্ট এখানে এক সারিতে থাকে। পেন্সিল আইকন চেপে তথ্য এডিট করুন এবং Status (Active / Donated / Cancelled) পরিবর্তন করুন। শুধু Blood Group ও Hospital আবশ্যক।</div>
+    <div class="reqStatGrid">
+      <div class="reqStat"><b id="reqTotal">0</b><span>Total</span></div>
+      <div class="reqStat is-active"><b id="reqActive">0</b><span>Active</span></div>
+      <div class="reqStat is-done"><b id="reqDone">0</b><span>Donated</span></div>
+      <div class="reqStat is-cancel"><b id="reqCancel">0</b><span>Cancelled</span></div>
+    </div>
+    <div class="reqTabs" id="reqTabs">
+      <button type="button" class="reqTab active" data-filter="active">Active</button>
+      <button type="button" class="reqTab" data-filter="completed">Donated</button>
+      <button type="button" class="reqTab" data-filter="cancelled">Cancelled</button>
+      <button type="button" class="reqTab" data-filter="all">All</button>
+    </div>
     <div id="emergencyRequestsTableWrapper" style="display:none;">
       <div id="emergencyRequestsListContainer" class="requestsCardList"><!-- cards inserted by JS --></div>
     </div>
-    <div id="emergencyRequestsEmptyMsg" class="requestsEmptyState">এখন পর্যন্ত কোনো জরুরি অনুরোধ নেই।</div>
+    <div id="emergencyRequestsEmptyMsg" class="requestsEmptyState">এখন পর্যন্ত কোনো অনুরোধ নেই।</div>
   </div>
   </section>
 </main>
@@ -1732,6 +1882,76 @@
       <div class="profileAddBtnRow">
         <button type="button" id="donationEntryCancelBtn" class="profileCancelAddBtn">Cancel</button>
         <button type="button" id="donationEntrySaveBtn" class="profileAddSubmitBtn">Save Donation</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= NEW / EDIT BLOOD REQUEST ================= -->
+<div class="modalOverlay" id="bloodRequestOverlay">
+  <div class="modal profileModal" role="dialog" aria-modal="true" aria-labelledby="bloodRequestTitle">
+    <div class="modalHeader">
+      <h2 id="bloodRequestTitle">New Blood Request</h2>
+      <button type="button" class="modalClose" id="bloodRequestCloseBtn" aria-label="Close">✕</button>
+    </div>
+    <div class="donationEntryForm">
+      <div class="donationEntryRow2">
+        <div class="profileAddField"><label class="profileAddLabel" for="brGroup">Blood Group *</label>
+          <select id="brGroup" class="profileAddInput"><option value="">-- Select --</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div>
+        <div class="profileAddField"><label class="profileAddLabel" for="brUnits">Bags Needed</label>
+          <input type="number" id="brUnits" class="profileAddInput" min="1" max="20" placeholder="1" inputmode="numeric"></div>
+      </div>
+      <div class="profileAddField"><label class="profileAddLabel" for="brHospital">Hospital / Location *</label>
+        <input type="text" id="brHospital" class="profileAddInput" maxlength="120" autocomplete="off"></div>
+      <div class="profileAddField"><label class="profileAddLabel" for="brName">Patient Name</label>
+        <input type="text" id="brName" class="profileAddInput" maxlength="80" placeholder="N/A" autocomplete="off"></div>
+      <div class="profileAddField"><label class="profileAddLabel" for="brPhone">Contact Phone</label>
+        <input type="tel" id="brPhone" class="profileAddInput" placeholder="01XXXXXXXXX" autocomplete="off"></div>
+      <div class="donationEntryRow2">
+        <div class="profileAddField"><label class="profileAddLabel" for="brNeedDate">Needed By</label>
+          <input type="date" id="brNeedDate" class="profileAddInput"></div>
+        <div class="profileAddField"><label class="profileAddLabel" for="brHemoglobin">Hemoglobin</label>
+          <input type="text" id="brHemoglobin" class="profileAddInput" maxlength="20" placeholder="e.g. 7.5"></div>
+      </div>
+      <div class="profileAddField"><label class="profileAddLabel" for="brProblem">Patient Problem</label>
+        <input type="text" id="brProblem" class="profileAddInput" maxlength="120" placeholder="e.g. Operation, Thalassemia"></div>
+      <div class="profileAddField"><label class="profileAddLabel" for="brNote">Note</label>
+        <textarea id="brNote" class="profileAddInput" maxlength="300"></textarea></div>
+
+      <!-- Edit mode only: change status -->
+      <div class="reqEditSection" id="brStatusSection" style="display:none;">
+        <div class="donationEntryHint" id="brMetaInfo" style="margin-bottom:10px;"></div>
+        <div class="profileAddField"><label class="profileAddLabel" for="brStatus">Status</label>
+          <select id="brStatus" class="profileAddInput">
+            <option value="active">Active</option>
+            <option value="completed">Donated</option>
+            <option value="cancelled">Cancelled</option>
+          </select></div>
+        <div id="brDonatedBlock" style="display:none;">
+          <div class="profileAddField"><label class="profileAddLabel" for="brDonDate">Donation Date</label>
+            <input type="date" id="brDonDate" class="profileAddInput"></div>
+        </div>
+        <div id="brCancelBlock" style="display:none;">
+          <div class="profileAddField"><label class="profileAddLabel" for="brReason">Cancel Reason</label>
+            <select id="brReason" class="profileAddInput">
+              <option value="">-- Select --</option>
+              <option>Patient recovered / no longer needed</option>
+              <option>Blood arranged elsewhere</option>
+              <option>No donor available</option>
+              <option>Duplicate or wrong request</option>
+              <option>Other</option>
+            </select></div>
+        </div>
+        <div id="brCloseNoteBlock" style="display:none;">
+          <div class="profileAddField"><label class="profileAddLabel" for="brCloseNote">Close Note</label>
+            <textarea id="brCloseNote" class="profileAddInput" maxlength="200"></textarea></div>
+        </div>
+      </div>
+
+      <div class="profileAddBtnRow">
+        <a id="brCallBtn" class="reqCallBtn" href="#" style="display:none; flex:0 0 auto;">Call</a>
+        <button type="button" id="bloodRequestCancelBtn" class="profileCancelAddBtn">Cancel</button>
+        <button type="button" id="bloodRequestSaveBtn" class="profileAddSubmitBtn">Save Request</button>
       </div>
     </div>
   </div>
@@ -2021,6 +2241,7 @@ const firebaseConfig = JSON.parse(atob(_cfgB64));
 
 let firebaseAvailable = false;
 let db, auth, donorsRef, settingsRef, appConfigRef, siteStatsRef, landingPageRef, donorRequestsRef, emergencyRequestsRef;
+let bloodRequestsRef = null, adminPresenceRef = null, adminActivityRef = null;
 
 /* ============================================================
    LOCAL CACHE + OFFLINE QUEUE
@@ -2194,13 +2415,59 @@ function getActivityLog() {
     return [];
   }
 }
-function logActivity(type, donorName) {
+/* ---- Admin identity (each admin logs in with their own Firebase account) ---- */
+const ADMIN_NAME_KEY = "bnb_admin_display_name";
+const BLOOD_REQ_CACHE_KEY = "bnb_blood_requests_cache";
+let currentViewName = "list";
+let presenceMap = {};
+let presenceError = false;
+let liveActivityMap = {};
+let liveActivity = [];
+
+function getAdminIdentity() {
+  const u = (typeof auth !== "undefined" && auth) ? auth.currentUser : null;
+  if (!u) return null;
+  let custom = "";
+  try { custom = (localStorage.getItem(ADMIN_NAME_KEY) || "").trim(); } catch (err) { /* ignore */ }
+  const email = u.email || "";
+  return { uid: u.uid, email, name: custom || (email ? email.split("@")[0] : "Admin") };
+}
+
+const VIEW_LABELS = { dashboard: "Dashboard", list: "Donor List", settings: "Settings", requests: "Donor Requests", emergencyRequests: "Blood Requests" };
+// [wording, dot colour class]
+const ACTIVITY_TEXT = {
+  add: ["added donor", "add"], update: ["updated donor", "update"], delete: ["deleted donor", "delete"],
+  donor_accept: ["accepted join request of", "add"], donor_deny: ["denied join request of", "delete"],
+  req_new: ["created blood request for", "add"], req_done: ["marked donated for", "add"], req_cancel: ["cancelled blood request of", "delete"], req_edit: ["edited blood request of", "update"]
+};
+
+function logActivity(type, name, detail) {
+  const me = getAdminIdentity();
   try {
     const log = getActivityLog();
-    log.unshift({ type, name: donorName || "Unknown", time: Date.now() });
+    log.unshift({ type, name: name || "Unknown", time: Date.now(), by: me ? me.name : "" });
     localStorage.setItem(ACTIVITY_LOG_KEY, JSON.stringify(log.slice(0, 30)));
   } catch (err) { /* ignore */ }
+  pushAdminActivity(type, name, detail);
 }
+
+// Shared (all admins) activity log in Firebase: who did what, and when.
+function pushAdminActivity(type, target, detail) {
+  try {
+    const me = getAdminIdentity();
+    if (!firebaseAvailable || !adminActivityRef || !me || typeof firebase === "undefined") return;
+    const TS = firebase.database.ServerValue.TIMESTAMP;
+    adminActivityRef.push({
+      type, target: String(target || "Unknown").slice(0, 80), detail: String(detail || "").slice(0, 120),
+      adminUid: me.uid, adminName: me.name, time: TS
+    }).catch(err => console.log("Activity log failed:", err));
+    if (adminPresenceRef) {
+      const verb = (ACTIVITY_TEXT[type] || [type])[0];
+      adminPresenceRef.update({ lastAction: (verb + " " + (target || "")).slice(0, 100), lastActionAt: TS }).catch(() => {});
+    }
+  } catch (err) { /* ignore */ }
+}
+
 function timeAgo(ts) {
   const diff = Math.max(0, Date.now() - ts);
   const mins = Math.floor(diff / 60000);
@@ -2211,23 +2478,166 @@ function timeAgo(ts) {
   const days = Math.floor(hrs / 24);
   return days + "d ago";
 }
+
 function renderActivityList() {
   const activityListEl = document.getElementById("activityList");
   if (!activityListEl) return;
-  const log = getActivityLog();
-  if (!log.length) {
+  const items = liveActivity.length
+    ? liveActivity
+    : getActivityLog().map(a => ({ type: a.type, target: a.name, adminName: a.by || "", time: a.time }));
+  if (!items.length) {
     activityListEl.innerHTML = `<div class="leaderEmpty">No activity yet.</div>`;
     return;
   }
-  const verbs = { add: "added", update: "updated", delete: "deleted" };
-  activityListEl.innerHTML = log.map(item => `
+  const oldVerbs = { add: "added", update: "updated", delete: "deleted" };
+  activityListEl.innerHTML = items.slice(0, 40).map(item => {
+    const t = ACTIVITY_TEXT[item.type] || [item.type, "update"];
+    const detail = item.detail ? ` <span style="color:var(--muted)">(${escapeHtml(item.detail)})</span>` : "";
+    const text = item.adminName
+      ? `<b>${escapeHtml(item.adminName)}</b> ${escapeHtml(t[0])} <b>${escapeHtml(item.target)}</b>${detail}`
+      : `<b>${escapeHtml(item.target)}</b> was ${oldVerbs[item.type] || item.type}`;
+    return `
     <div class="activityRow">
-      <span class="activityDot act-${item.type}"></span>
-      <span class="activityText"><b>${escapeHtml(item.name)}</b> was ${verbs[item.type] || item.type}</span>
-      <span class="activityTime">${timeAgo(item.time)}</span>
-    </div>
-  `).join("");
+      <span class="activityDot act-${t[1]}"></span>
+      <span class="activityText">${text}</span>
+      <span class="activityTime">${item.time ? timeAgo(item.time) : ""}</span>
+    </div>`;
+  }).join("");
 }
+
+function rebuildLiveActivity() {
+  liveActivity = Object.values(liveActivityMap).sort((a, b) => (b.time || 0) - (a.time || 0));
+  renderActivityList();
+}
+
+/* ---- Live admin team (who is online right now, what they are viewing / did last) ---- */
+function renderAdminTeam() {
+  const el = document.getElementById("adminTeamList");
+  const badge = document.getElementById("adminOnlineBadgeText");
+  if (!el) return;
+  if (presenceError) {
+    el.innerHTML = `<div class="leaderEmpty">Live team চালু করতে Firebase Rules-এ <b>adminPresence</b> যোগ করুন।</div>`;
+    if (badge) badge.textContent = "setup needed";
+    return;
+  }
+  const list = Object.values(presenceMap).filter(p => p && p.uid);
+  const myUid = (auth && auth.currentUser) ? auth.currentUser.uid : "";
+  const rank = p => (p.online ? (p.state === "away" ? 1 : 0) : 2);
+  list.sort((a, b) => rank(a) - rank(b) || (b.lastSeen || 0) - (a.lastSeen || 0));
+  const onlineCount = list.filter(p => p.online).length;
+  if (badge) badge.textContent = onlineCount + " online · " + list.length + " admin" + (list.length === 1 ? "" : "s");
+  if (!list.length) {
+    el.innerHTML = `<div class="leaderEmpty">এখনো কোনো admin দেখা যায়নি।</div>`;
+    return;
+  }
+  el.innerHTML = list.map(p => {
+    const cls = p.online ? (p.state === "away" ? "is-away" : "is-online") : "";
+    const status = p.online ? (p.state === "away" ? "Away" : "Online") : "Offline";
+    const initial = (p.name || "?").trim().charAt(0).toUpperCase() || "?";
+    const line1 = p.online
+      ? "Viewing: " + (VIEW_LABELS[p.view] || "-")
+      : "Last seen " + (p.lastSeen ? timeAgo(p.lastSeen) : "-");
+    const line2 = p.lastAction ? "Last: " + p.lastAction + (p.lastActionAt ? " · " + timeAgo(p.lastActionAt) : "") : "";
+    return `
+    <div class="adminRow ${cls}">
+      <div class="adminAvatar">${escapeHtml(initial)}</div>
+      <div class="adminInfo">
+        <div class="adminName">${escapeHtml(p.name || "Admin")}${p.uid === myUid ? '<span class="adminMe">YOU</span>' : ""}</div>
+        <div class="adminSub">${escapeHtml(line1)}</div>
+        ${line2 ? `<div class="adminSub">${escapeHtml(line2)}</div>` : ""}
+      </div>
+      <div class="adminStatus">${status}</div>
+    </div>`;
+  }).join("");
+}
+
+let presenceStarted = false;
+function presenceFields(online) {
+  const me = getAdminIdentity() || { name: "Admin", email: "" };
+  return {
+    uid: auth.currentUser.uid, email: me.email, name: me.name, online: online,
+    state: online ? (document.visibilityState === "visible" ? "active" : "away") : "offline",
+    view: currentViewName, lastSeen: firebase.database.ServerValue.TIMESTAMP
+  };
+}
+function pushPresenceState() {
+  if (!adminPresenceRef || !isConnected || !auth || !auth.currentUser) return;
+  adminPresenceRef.update(presenceFields(true)).catch(() => {});
+}
+function onViewChanged(view) {
+  currentViewName = view;
+  if (adminPresenceRef && isConnected) {
+    adminPresenceRef.update({ view: view, lastSeen: firebase.database.ServerValue.TIMESTAMP }).catch(() => {});
+  }
+}
+function refreshAdminNameInput() {
+  const inp = document.getElementById("adminNameInput");
+  if (!inp) return;
+  let custom = "";
+  try { custom = localStorage.getItem(ADMIN_NAME_KEY) || ""; } catch (err) { /* ignore */ }
+  inp.value = custom;
+  const me = getAdminIdentity();
+  inp.placeholder = me ? me.name : "Your name";
+}
+function startAdminPresence(user) {
+  if (presenceStarted || !db) return;
+  presenceStarted = true;
+  adminPresenceRef = db.ref("adminPresence/" + user.uid);
+  const TS = firebase.database.ServerValue.TIMESTAMP;
+
+  // Team list (everyone's presence) — live.
+  db.ref("adminPresence").on("value", snap => {
+    presenceError = false;
+    presenceMap = snap.val() || {};
+    renderAdminTeam();
+  }, err => {
+    console.log("Presence read failed:", err);
+    presenceError = true;
+    renderAdminTeam();
+  });
+
+  // Shared activity feed — latest 50 entries, live.
+  adminActivityRef.limitToLast(50).on("child_added", snap => {
+    liveActivityMap[snap.key] = snap.val();
+    rebuildLiveActivity();
+  }, err => console.log("Activity read failed:", err));
+
+  // Restore the saved display name on a new device, then go online.
+  adminPresenceRef.child("customName").once("value").then(snap => {
+    const remote = snap.val();
+    try { if (remote && !(localStorage.getItem(ADMIN_NAME_KEY) || "").trim()) localStorage.setItem(ADMIN_NAME_KEY, remote); } catch (err) { /* ignore */ }
+  }).catch(() => {}).then(() => {
+    refreshAdminNameInput();
+    db.ref(".info/connected").on("value", snap => {
+      if (snap.val() !== true || !adminPresenceRef) return;
+      adminPresenceRef.onDisconnect().update({ online: false, state: "offline", lastSeen: TS })
+        .then(() => adminPresenceRef.update(presenceFields(true)))
+        .catch(err => console.log("Presence failed:", err));
+    });
+  });
+
+  document.addEventListener("visibilitychange", pushPresenceState);
+  window.addEventListener("pagehide", () => {
+    try { adminPresenceRef.update({ online: false, state: "offline", lastSeen: TS }); } catch (err) { /* ignore */ }
+  });
+  window.addEventListener("pageshow", e => { if (e.persisted) pushPresenceState(); });
+}
+
+const saveAdminNameBtn = document.getElementById("saveAdminNameBtn");
+if (saveAdminNameBtn) {
+  saveAdminNameBtn.addEventListener("click", () => {
+    const val = (document.getElementById("adminNameInput").value || "").trim().slice(0, 30);
+    try { if (val) localStorage.setItem(ADMIN_NAME_KEY, val); else localStorage.removeItem(ADMIN_NAME_KEY); } catch (err) { /* ignore */ }
+    const me = getAdminIdentity();
+    if (adminPresenceRef && me) {
+      adminPresenceRef.update({ customName: val || null, name: me.name }).catch(() => {});
+    }
+    refreshAdminNameInput();
+    showToast(val ? "Admin name saved" : "Name cleared");
+  });
+}
+renderAdminTeam();
+setInterval(() => { renderAdminTeam(); renderActivityList(); }, 30000);
 
 // Unique id stamped on every queued action so a finished sync can remove
 // the exact action it just wrote — never "whatever happens to be first"
@@ -2413,7 +2823,7 @@ function acceptDonorRequest(reqId, donorType) {
   donorsRef.child(donor.id).set(donor).then(() => {
     return donorRequestsRef.child(reqId).remove();
   }).then(() => {
-    logActivity("add", donor.name);
+    logActivity("donor_accept", donor.name, donor.donorType);
     showToast(`${donor.name} কে ${donor.donorType} ডোনার হিসেবে যোগ করা হয়েছে`);
   }).catch(err => {
     console.log("Failed to accept donor request:", err);
@@ -2430,6 +2840,7 @@ function denyDonorRequest(reqId) {
   }
   if (!confirm(`"${req.name}" এর রিকোয়েস্টটি বাতিল করতে চান?`)) return;
   donorRequestsRef.child(reqId).remove().then(() => {
+    logActivity("donor_deny", req.name);
     showToast("রিকোয়েস্ট বাতিল করা হয়েছে");
   }).catch(err => {
     console.log("Failed to deny donor request:", err);
@@ -2458,106 +2869,292 @@ renderRequests(); // show the empty state immediately, before Firebase connects
    it's a patient/recipient asking for blood, so the admin just calls
    them and marks it done (which removes the request) once handled.
    ============================================================ */
-let emergencyRequests = {}; // keyed by request id
+let emergencyRequests = {}; // website submissions still waiting (emergencyRequests/{id})
+let bloodRequests = {};     // ledger: admin-created + every closed request (bloodRequests/{id})
+try {
+  const cachedReq = JSON.parse(localStorage.getItem(BLOOD_REQ_CACHE_KEY) || "{}");
+  if (cachedReq && typeof cachedReq === "object") bloodRequests = cachedReq;
+} catch (err) { /* ignore */ }
+let reqFilter = "active";
 const emergencyRequestsListContainer = document.getElementById("emergencyRequestsListContainer");
 const emergencyRequestsNavBadge = document.getElementById("emergencyRequestsNavBadge");
 const emergencyRequestsTableWrapper = document.getElementById("emergencyRequestsTableWrapper");
 const emergencyRequestsEmptyMsg = document.getElementById("emergencyRequestsEmptyMsg");
 
-function updateEmergencyRequestsBadge() {
-  const count = Object.keys(emergencyRequests).length;
-  if (!emergencyRequestsNavBadge) return;
-  if (count > 0) {
-    emergencyRequestsNavBadge.textContent = count > 99 ? "99+" : String(count);
-    emergencyRequestsNavBadge.style.display = "inline-flex";
-  } else {
-    emergencyRequestsNavBadge.style.display = "none";
+/* Every request in one list. A request that was closed lives in bloodRequests
+   (and is removed from emergencyRequests), so the ledger entry always wins. */
+function normalizeReq(r, src) {
+  return Object.assign({}, r, { status: r.status || "active", source: r.source || src || "admin" });
+}
+function getAllBloodRequests() {
+  const map = {};
+  Object.values(emergencyRequests).forEach(r => { map[r.id] = normalizeReq(r, "website"); });
+  Object.values(bloodRequests).forEach(r => { map[r.id] = normalizeReq(r); });
+  return Object.values(map).sort((a, b) => (b.requestedAt || 0) - (a.requestedAt || 0));
+}
+function countRequests(list) {
+  const c = { total: list.length, active: 0, completed: 0, cancelled: 0, bagsTotal: 0, bagsDone: 0 };
+  list.forEach(r => {
+    const bags = parseInt(r.units, 10) || 0;
+    c.bagsTotal += bags;
+    if (r.status === "completed") { c.completed++; c.bagsDone += bags; }
+    else if (r.status === "cancelled") c.cancelled++;
+    else c.active++;
+  });
+  return c;
+}
+function localDateStr(ts) {
+  const d = new Date(ts);
+  const p = n => String(n).padStart(2, "0");
+  return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate());
+}
+function setText(id, val) { const el = document.getElementById(id); if (el) el.textContent = String(val); }
+
+function updateRequestStats(all) {
+  const c = countRequests(all || getAllBloodRequests());
+  setText("reqTotal", c.total); setText("reqActive", c.active); setText("reqDone", c.completed); setText("reqCancel", c.cancelled);
+  setText("dashReqTotal", c.total); setText("dashReqActive", c.active); setText("dashReqDone", c.completed); setText("dashReqCancel", c.cancelled);
+  if (emergencyRequestsNavBadge) {
+    if (c.active > 0) {
+      emergencyRequestsNavBadge.textContent = c.active > 99 ? "99+" : String(c.active);
+      emergencyRequestsNavBadge.style.display = "inline-flex";
+    } else {
+      emergencyRequestsNavBadge.style.display = "none";
+    }
   }
+}
+function updateEmergencyRequestsBadge() { updateRequestStats(); }
+
+const REQ_EMPTY_TEXT = {
+  active: "এখন কোনো সক্রিয় রক্তের অনুরোধ নেই।",
+  completed: "এখনো কোনো অনুরোধ সম্পন্ন (Donated) হয়নি।",
+  cancelled: "কোনো বাতিল অনুরোধ নেই।",
+  all: "এখন পর্যন্ত কোনো অনুরোধ নেই।"
+};
+const REQ_STATUS_LABEL = { active: "Active", completed: "Donated", cancelled: "Cancelled" };
+
+function reqRow(label, value) {
+  if (value === undefined || value === null || String(value).trim() === "") return "";
+  return `<div class="requestDetailRow"><span class="reqLbl">${escapeHtml(label)}</span><span>${escapeHtml(String(value))}</span></div>`;
+}
+function fmtDateTime(ts) {
+  if (!ts) return "";
+  return localDateStr(ts) + " " + new Date(ts).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+
+const PENCIL_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>`;
+
+/* One compact row per request: blood group, hospital, a short sub-line, status and a pencil to edit. */
+function requestCardHtml(r) {
+  const subParts = [patientIdOf(r), r.patientName || "N/A"];
+  if (r.units) subParts.push(r.units + " ব্যাগ");
+  if (r.phone) subParts.push(r.phone);
+  if (r.requestedAt) subParts.push(timeAgo(r.requestedAt));
+  return `
+    <div class="reqRow" data-request-id="${escapeHtml(r.id)}">
+      <div class="reqRowGroup">${escapeHtml(r.bloodGroup || "-")}</div>
+      <div class="reqRowMain">
+        <div class="reqRowTitle">${escapeHtml(r.hospital || "—")}</div>
+        <div class="reqRowSub">${escapeHtml(subParts.join(" · ") || "-")}</div>
+      </div>
+      <div class="reqRowEnd">
+        <span class="reqStatusPill st-${escapeHtml(r.status)}">${REQ_STATUS_LABEL[r.status] || escapeHtml(r.status)}</span>
+        <button type="button" class="reqEditBtn" data-action="edit" data-id="${escapeHtml(r.id)}" aria-label="Edit request" title="Edit">${PENCIL_SVG}</button>
+      </div>
+    </div>`;
 }
 
 function renderEmergencyRequests() {
   if (!emergencyRequestsListContainer) return;
-  const list = Object.values(emergencyRequests).sort((a, b) => (b.requestedAt || 0) - (a.requestedAt || 0));
-  updateEmergencyRequestsBadge();
+  const all = getAllBloodRequests();
+  updateRequestStats(all);
+  document.querySelectorAll("#reqTabs .reqTab").forEach(t => t.classList.toggle("active", t.getAttribute("data-filter") === reqFilter));
 
+  let list = reqFilter === "all" ? all.slice() : all.filter(r => r.status === reqFilter);
+  if (reqFilter === "completed" || reqFilter === "cancelled") {
+    list.sort((a, b) => (b.closedAt || b.requestedAt || 0) - (a.closedAt || a.requestedAt || 0));
+  }
   if (list.length === 0) {
     emergencyRequestsListContainer.innerHTML = "";
     if (emergencyRequestsTableWrapper) emergencyRequestsTableWrapper.style.display = "none";
-    if (emergencyRequestsEmptyMsg) emergencyRequestsEmptyMsg.style.display = "block";
+    if (emergencyRequestsEmptyMsg) {
+      emergencyRequestsEmptyMsg.textContent = REQ_EMPTY_TEXT[reqFilter] || REQ_EMPTY_TEXT.all;
+      emergencyRequestsEmptyMsg.style.display = "block";
+    }
     return;
   }
   if (emergencyRequestsTableWrapper) emergencyRequestsTableWrapper.style.display = "block";
   if (emergencyRequestsEmptyMsg) emergencyRequestsEmptyMsg.style.display = "none";
-
-  emergencyRequestsListContainer.innerHTML = list.map(r => {
-    const initial = (r.patientName || "?").trim().charAt(0).toUpperCase() || "?";
-    const isFresh = r.requestedAt && (Date.now() - r.requestedAt) < 24 * 60 * 60 * 1000;
-    return `
-    <div class="requestCard" data-request-id="${escapeHtml(r.id)}">
-      <div class="requestCardTop">
-        <div class="requestAvatar">${escapeHtml(initial)}</div>
-        <div class="requestCardIdentity">
-          <div class="requestCardName">${escapeHtml(r.patientName)}</div>
-          <div class="requestCardMeta">
-            <span class="requestGroupBadge">${escapeHtml(r.bloodGroup || "-")}</span>
-            <span class="requestMetaDot">•</span>
-            <span>${escapeHtml(r.units ? r.units + " ব্যাগ" : "-")}</span>
-          </div>
-        </div>
-        <div class="requestCardTimeCol">
-          ${isFresh ? `<span class="requestNewPill">New</span>` : ""}
-          <span class="requestTimeCell">${r.requestedAt ? timeAgo(r.requestedAt) : "-"}</span>
-        </div>
-      </div>
-      <div class="requestCardDivider"></div>
-      <div class="requestCardDetails">
-        <div class="requestDetailRow">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-          <span>${escapeHtml(r.phone || "-")}</span>
-        </div>
-        <div class="requestDetailRow">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          <span>${escapeHtml(r.hospital || "-")}</span>
-        </div>
-        ${r.problem ? `<div class="requestDetailRow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><span>${escapeHtml(r.problem)}</span></div>` : ""}
-        ${r.hemoglobin ? `<div class="requestDetailRow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2s6 7.5 6 12a6 6 0 0 1-12 0c0-4.5 6-12 6-12z"/></svg><span>হিমোগ্লোবিন: ${escapeHtml(r.hemoglobin)} g/dL</span></div>` : ""}
-        ${r.note ? `<div class="requestDetailRow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><span>${escapeHtml(r.note)}</span></div>` : ""}
-      </div>
-      <div class="requestActionsCell">
-        <a class="requestAcceptRegularBtn" href="tel:${escapeHtml(r.phone || "")}" data-action="call" data-id="${escapeHtml(r.id)}" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">কল করুন</a>
-        <button type="button" class="requestDenyBtn" data-action="resolve" data-id="${escapeHtml(r.id)}">সম্পন্ন</button>
-      </div>
-    </div>
-  `;
-  }).join("");
+  emergencyRequestsListContainer.innerHTML = list.map(requestCardHtml).join("");
 }
 
-function resolveEmergencyRequest(reqId) {
-  const req = emergencyRequests[reqId];
-  if (!req) return;
-  if (!firebaseAvailable || !emergencyRequestsRef) {
-    showToast("ইন্টারনেট সংযোগ প্রয়োজন");
+function reqWriteError(err, fallbackMsg) {
+  console.log("Blood request write failed:", err);
+  if (err && (err.code === "PERMISSION_DENIED" || /permission/i.test(err.message || ""))) {
+    showToast("Permission নেই — Firebase Rules-এ bloodRequests যোগ করুন");
+  } else {
+    showToast(fallbackMsg);
+  }
+}
+function cleanObj(o) {
+  const out = {};
+  Object.keys(o).forEach(k => { if (o[k] !== undefined && o[k] !== null) out[k] = o[k]; });
+  return out;
+}
+
+/* ---- New / Edit request. Only Blood Group and Hospital are required. ---- */
+const bloodRequestOverlay = document.getElementById("bloodRequestOverlay");
+let editingReqId = null; // null = creating a new request
+const BR_CLOSE_FIELDS = ["closedAt", "closedBy", "closedByUid", "closedByEmail", "closeNote", "donorName", "donorNo", "donorId", "donationDate", "cancelReason"];
+function brEl(id) { return document.getElementById(id); }
+function patientIdOf(r) {
+  if (r && r.patientId) return r.patientId;
+  return r && r.id ? "P-" + String(r.id).slice(-4).toUpperCase() : "-";
+}
+function nextPatientId() {
+  let max = 0;
+  getAllBloodRequests().forEach(r => {
+    const m = /^P-(\d+)$/.exec(r.patientId || "");
+    if (m) max = Math.max(max, parseInt(m[1], 10));
+  });
+  return "P-" + String(max + 1).padStart(4, "0");
+}
+function optStr(v) { v = (v || "").trim(); return v === "" ? undefined : v; }
+
+function updateBrStatusBlocks() {
+  const st = brEl("brStatus").value;
+  brEl("brDonatedBlock").style.display = st === "completed" ? "" : "none";
+  brEl("brCancelBlock").style.display = st === "cancelled" ? "" : "none";
+  brEl("brCloseNoteBlock").style.display = st === "active" ? "none" : "";
+}
+
+function openBloodRequestForm(id) {
+  const req = id ? getAllBloodRequests().find(r => r.id === id) : null;
+  if (id && !req) return;
+  editingReqId = req ? req.id : null;
+  const set = (k, val) => { brEl(k).value = (val === undefined || val === null) ? "" : String(val); };
+  set("brName", req && req.patientName && req.patientName !== "N/A" ? req.patientName : ""); set("brGroup", req && req.bloodGroup); set("brUnits", req && req.units);
+  set("brPhone", req && req.phone); set("brHospital", req && req.hospital); set("brNeedDate", req && req.needDate);
+  set("brHemoglobin", req && req.hemoglobin); set("brProblem", req && req.problem); set("brNote", req && req.note);
+
+  const isEdit = !!req;
+  brEl("bloodRequestTitle").textContent = isEdit ? "Edit Blood Request" : "New Blood Request";
+  brEl("bloodRequestSaveBtn").textContent = isEdit ? "Save Changes" : "Save Request";
+  brEl("brStatusSection").style.display = isEdit ? "" : "none";
+
+  const callBtn = brEl("brCallBtn");
+  if (isEdit && req.phone) { callBtn.href = "tel:" + req.phone; callBtn.style.display = "inline-flex"; }
+  else { callBtn.style.display = "none"; }
+
+  if (isEdit) {
+    const source = req.source === "website" ? "Website visitor" : "Admin: " + (req.createdBy || "-");
+    brEl("brMetaInfo").textContent = "Patient ID: " + patientIdOf(req) + " · Added " + (fmtDateTime(req.requestedAt) || "-") + " · " + source;
+    brEl("brStatus").value = req.status || "active";
+    set("brDonDate", req.donationDate || localDateStr(Date.now()));
+    set("brReason", req.cancelReason); set("brCloseNote", req.closeNote);
+    updateBrStatusBlocks();
+  }
+  openModal(bloodRequestOverlay);
+}
+function closeBloodRequestForm() { closeModal(bloodRequestOverlay); editingReqId = null; }
+
+function saveBloodRequest() {
+  const v = id => (brEl(id).value || "").trim();
+  const bloodGroup = v("brGroup"), hospital = v("brHospital");
+  if (!bloodGroup) { showToast("Blood group বেছে নিন"); return; }
+  if (!hospital) { showToast("Hospital / location দিন"); return; }
+  let units;
+  if (v("brUnits") !== "") {
+    units = parseInt(v("brUnits"), 10);
+    if (!units || units < 1 || units > 20) { showToast("ব্যাগের সংখ্যা ১–২০ এর মধ্যে দিন"); return; }
+  }
+  const me = getAdminIdentity();
+  if (!firebaseAvailable || !db || !me) { showToast("ইন্টারনেট সংযোগ প্রয়োজন"); return; }
+
+  const fields = {
+    bloodGroup, hospital, units,
+    patientName: v("brName") || "N/A", phone: optStr(v("brPhone")), needDate: optStr(v("brNeedDate")),
+    hemoglobin: optStr(v("brHemoglobin")), problem: optStr(v("brProblem")), note: optStr(v("brNote"))
+  };
+  const btn = brEl("bloodRequestSaveBtn");
+
+  /* ----- Edit an existing request ----- */
+  if (editingReqId) {
+    const req = getAllBloodRequests().find(r => r.id === editingReqId);
+    if (!req) { closeBloodRequestForm(); return; }
+    const status = brEl("brStatus").value;
+    const updated = Object.assign({}, req, fields, { status });
+    updated.patientId = patientIdOf(req);
+    if (status === "active") {
+      BR_CLOSE_FIELDS.forEach(k => { delete updated[k]; });
+    } else {
+      if (req.status !== status || !req.closedAt) {
+        updated.closedAt = Date.now(); updated.closedBy = me.name; updated.closedByUid = me.uid; updated.closedByEmail = me.email;
+      }
+      updated.closeNote = optStr(v("brCloseNote"));
+      if (status === "completed") {
+        ["donorName", "donorNo", "donorId"].forEach(k => { delete updated[k]; });
+        updated.donationDate = v("brDonDate") || localDateStr(Date.now());
+        delete updated.cancelReason;
+      } else {
+        updated.cancelReason = optStr(brEl("brReason").value);
+        ["donorName", "donorNo", "donorId", "donationDate"].forEach(k => { delete updated[k]; });
+      }
+    }
+    btn.disabled = true;
+    const updates = {};
+    updates["bloodRequests/" + req.id] = cleanObj(updated);
+    if (emergencyRequests[req.id]) updates["emergencyRequests/" + req.id] = null; // website request moves into the ledger
+    db.ref().update(updates).then(() => {
+      const label = updated.patientName || updated.hospital || "request";
+      const type = (status !== req.status && status === "completed") ? "req_done"
+        : (status !== req.status && status === "cancelled") ? "req_cancel" : "req_edit";
+      logActivity(type, label, updated.bloodGroup || "");
+      closeBloodRequestForm();
+      showToast("পরিবর্তন সংরক্ষিত হয়েছে");
+    }).catch(err => reqWriteError(err, "সংরক্ষণ করা যায়নি, আবার চেষ্টা করুন"))
+      .then(() => { btn.disabled = false; });
     return;
   }
-  if (!confirm(`"${req.patientName}" এর অনুরোধটি সম্পন্ন হিসেবে চিহ্নিত করে তালিকা থেকে সরাতে চান?`)) return;
-  emergencyRequestsRef.child(reqId).remove().then(() => {
-    showToast("অনুরোধটি সম্পন্ন হিসেবে চিহ্নিত হয়েছে");
-  }).catch(err => {
-    console.log("Failed to resolve emergency request:", err);
-    showToast("সম্পন্ন করা যায়নি, আবার চেষ্টা করুন");
-  });
+
+  /* ----- Create a new request ----- */
+  if (!bloodRequestsRef) { showToast("ইন্টারনেট সংযোগ প্রয়োজন"); return; }
+  btn.disabled = true;
+  const ref = bloodRequestsRef.push();
+  const rec = cleanObj(Object.assign({
+    id: ref.key, patientId: nextPatientId(), source: "admin", status: "active",
+    requestedAt: Date.now(), createdBy: me.name, createdByUid: me.uid, createdByEmail: me.email
+  }, fields));
+  ref.set(rec).then(() => {
+    logActivity("req_new", fields.patientName || hospital, bloodGroup + (units ? " · " + units + " bag" + (units > 1 ? "s" : "") : ""));
+    closeBloodRequestForm();
+    reqFilter = "active";
+    renderEmergencyRequests();
+    showToast("রক্তের অনুরোধ জমা হয়েছে");
+  }).catch(err => reqWriteError(err, "জমা দেওয়া যায়নি, আবার চেষ্টা করুন"))
+    .then(() => { btn.disabled = false; });
 }
 
 if (emergencyRequestsListContainer) {
   emergencyRequestsListContainer.addEventListener("click", e => {
     const btn = e.target.closest("[data-action]");
     if (!btn) return;
-    const id = btn.getAttribute("data-id");
-    const action = btn.getAttribute("data-action");
-    if (action === "resolve") { e.preventDefault(); resolveEmergencyRequest(id); }
-    // action === "call" is a plain tel: link, no JS needed
+    if (btn.getAttribute("data-action") === "edit") openBloodRequestForm(btn.getAttribute("data-id"));
   });
 }
+document.getElementById("reqTabs").addEventListener("click", e => {
+  const tab = e.target.closest(".reqTab");
+  if (!tab) return;
+  reqFilter = tab.getAttribute("data-filter") || "active";
+  renderEmergencyRequests();
+});
+document.getElementById("newBloodRequestBtn").addEventListener("click", () => openBloodRequestForm());
+document.getElementById("brStatus").addEventListener("change", updateBrStatusBlocks);
+document.getElementById("bloodRequestCloseBtn").addEventListener("click", closeBloodRequestForm);
+document.getElementById("bloodRequestCancelBtn").addEventListener("click", closeBloodRequestForm);
+document.getElementById("bloodRequestSaveBtn").addEventListener("click", saveBloodRequest);
+bloodRequestOverlay.addEventListener("click", e => { if (e.target === bloodRequestOverlay) closeBloodRequestForm(); });
+
 renderEmergencyRequests(); // show the empty state immediately, before Firebase connects
 
 /* ============================================================
@@ -2686,6 +3283,7 @@ function switchView(view) {
   drawerNavItems.forEach(item => item.classList.toggle("active", item.getAttribute("data-view") === view));
   fabAddDonor.style.display = (view === "settings" || view === "requests" || view === "emergencyRequests") ? "none" : "flex";
   closeDrawer();
+  onViewChanged(view);
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -3129,8 +3727,13 @@ downloadStatementBtn.addEventListener("click", async () => {
       const dateB = (b.lastDonateDate || "").slice(0, 10);
       return dateA < dateB ? -1 : dateA > dateB ? 1 : 0;
     });
-    if (!donors.length) {
-      showToast("No donations found in that range");
+    // Blood requests created inside the selected range (by the day they were requested).
+    const reqList = getAllBloodRequests().filter(r => {
+      const d = r.requestedAt ? localDateStr(r.requestedAt) : "";
+      return d && d >= from && d <= to;
+    }).sort((a, b) => (a.requestedAt || 0) - (b.requestedAt || 0));
+    if (!donors.length && !reqList.length) {
+      showToast("Nothing found in that range");
       return;
     }
 
@@ -3161,20 +3764,47 @@ downloadStatementBtn.addEventListener("click", async () => {
     });
 
     // Make sure the Bengali web font is ready before drawing to canvas.
-    const allText = [siteName].concat(records.flatMap(r => [r.name, r.address, r.hospital])).join(" ");
+    const allText = [siteName].concat(records.flatMap(r => [r.name, r.address, r.hospital]))
+      .join(" ");
     await ensureBengaliCanvasFont(allText);
 
-    /* ---------- Header ---------- */
+    /* ---------- Header (classic) ---------- */
+    const rc = countRequests(reqList);
     if (logoBase64) {
-      try { doc.addImage(logoBase64, "PNG", 40, 26, 42, 42); } catch (err) { console.log("Skipping logo in PDF:", err); }
+      try { doc.addImage(logoBase64, "PNG", 40, 24, 40, 40); } catch (err) { console.log("Skipping logo in PDF:", err); }
     }
-    drawPdfText(doc, siteName, textX, 46, { fontSize: 16, bold: true, color: [33, 22, 19] });
+    drawPdfText(doc, siteName, textX - (logoBase64 ? 4 : 0), 42, { fontSize: 16, bold: true, color: [0, 0, 0], maxWidth: 300, ellipsis: true });
+    drawPdfText(doc, "Donation Statement", textX - (logoBase64 ? 4 : 0), 59, { fontSize: 11, color: [70, 70, 70] });
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(9);
+    doc.setTextColor(0, 0, 0);
+    doc.text(`Period: ${from} to ${to}`, pageW - MARGIN, 42, { align: "right" });
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(11);
-    doc.setTextColor(124, 111, 104);
-    doc.text("Donation Statement", textX, 64);
-    doc.setFontSize(9.5);
-    doc.text(`Range: ${from} to ${to}  |  Generated: ${new Date().toLocaleString()}`, textX, 80);
+    doc.setTextColor(90, 90, 90);
+    doc.text(`Generated: ${new Date().toLocaleString()}`, pageW - MARGIN, 57, { align: "right" });
+    doc.setDrawColor(0, 0, 0);
+    doc.setLineWidth(1.4);
+    doc.line(MARGIN, 76, pageW - MARGIN, 76);
+    doc.setLineWidth(0.4);
+    doc.line(MARGIN, 79.5, pageW - MARGIN, 79.5);
+
+    /* ---------- Summary box: Total request / donation / cancel ---------- */
+    {
+      const bx = MARGIN, by = 96, bw = pageW - MARGIN * 2, bh = 46, cw = bw / 3;
+      doc.setDrawColor(0, 0, 0);
+      doc.setLineWidth(0.7);
+      doc.rect(bx, by, bw, bh);
+      doc.setLineWidth(0.4);
+      doc.line(bx + cw, by, bx + cw, by + bh);
+      doc.line(bx + cw * 2, by, bx + cw * 2, by + bh);
+      [["Total Request", rc.total], ["Total Donation", rc.completed], ["Total Cancel", rc.cancelled]].forEach((c, i) => {
+        const cx = bx + cw * i + cw / 2;
+        drawPdfText(doc, c[0], cx, by + 16, { fontSize: 9, color: [70, 70, 70], align: "center" });
+        drawPdfText(doc, String(c[1]), cx, by + 37, { fontSize: 18, bold: true, color: [0, 0, 0], align: "center" });
+      });
+    }
+    const tableTop = 176;
+    drawPdfText(doc, "Donation Records", MARGIN, 164, { fontSize: 11, bold: true, color: [0, 0, 0] });
 
     /* ---------- Table: No. | Name | Address | Group | Hospital | Donate Date ----------
        Column widths are auto-fitted to the longest text in each column, so
@@ -3229,14 +3859,19 @@ downloadStatementBtn.addEventListener("click", async () => {
     const columnStyles = {};
     colW.forEach((w, c) => { columnStyles[c] = { cellWidth: w }; });
 
-    doc.autoTable({
-      startY: 100,
-      margin: { left: MARGIN, right: MARGIN },
+    if (!records.length) {
+      drawPdfText(doc, "No donor donation records in this range.", MARGIN, tableTop + 14, { fontSize: 10, color: [124, 111, 104] });
+      doc.lastAutoTable = { finalY: tableTop + 24 };
+    } else doc.autoTable({
+      startY: tableTop,
+      margin: { left: MARGIN, right: MARGIN, top: 56 },
       tableWidth: AVAIL,
       head: [headers],
       body: tableRows,
-      styles: { fontSize: tableFont, cellPadding: CELL_PAD, valign: "middle", overflow: "linebreak" },
-      headStyles: { fillColor: [158, 27, 50] },
+      styles: { fontSize: tableFont, cellPadding: CELL_PAD, valign: "middle", overflow: "linebreak", lineColor: [150, 150, 150], lineWidth: 0.3 },
+      theme: "grid",
+      headStyles: { fillColor: [230, 230, 230], textColor: [0, 0, 0], fontStyle: "bold", lineColor: [90, 90, 90], lineWidth: 0.4 },
+      bodyStyles: { textColor: [20, 20, 20], lineColor: [150, 150, 150], lineWidth: 0.3 },
       columnStyles,
       // Cells that contain Bengali are blanked here and painted as canvas
       // images in didDrawCell, so the shaping is correct.
@@ -3260,83 +3895,225 @@ downloadStatementBtn.addEventListener("click", async () => {
       }
     });
 
-    /* ---------- Summary + charts below the table ---------- */
-    let y = doc.lastAutoTable.finalY + 30;
+    /* ---------- Analytics: one combined chart ---------- */
+    let y = doc.lastAutoTable.finalY + 28;
     const ensureSpace = (h) => {
       if (y + h > pageH - 50) { doc.addPage(); y = 56; }
     };
     const total = records.length;
-    const pct = (v) => (total ? Math.round((v / total) * 100) : 0);
 
-    // Counts per blood group (fixed order, plus any unexpected value)
-    const GROUP_ORDER = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
-    const groupCounts = {};
-    GROUP_ORDER.forEach(g => { groupCounts[g] = 0; });
-    records.forEach(r => {
-      const g = r.group || "Unknown";
-      groupCounts[g] = (groupCounts[g] || 0) + 1;
-    });
-    const groupItems = Object.keys(groupCounts)
-      .filter(g => GROUP_ORDER.includes(g) || groupCounts[g] > 0)
-      .map(g => ({ label: g, value: groupCounts[g] }));
-
-    // Counts per hospital / location
-    const locCounts = {};
-    records.forEach(r => {
-      const l = r.hospital || "Not specified";
-      locCounts[l] = (locCounts[l] || 0) + 1;
-    });
-    let locItems = Object.keys(locCounts).map(l => ({ label: l, value: locCounts[l] }))
-      .sort((a, b) => b.value - a.value);
-    if (locItems.length > 8) {
-      const others = locItems.slice(7).reduce((s, it) => s + it.value, 0);
-      locItems = locItems.slice(0, 7).concat([{ label: "Others", value: others }]);
-    }
-
-    const topGroup = groupItems.slice().sort((a, b) => b.value - a.value)[0];
-    const topLoc = locItems.filter(it => it.label !== "Not specified" && it.label !== "Others")[0];
-
-    ensureSpace(90);
-    drawPdfText(doc, "Summary", MARGIN, y, { fontSize: 14, bold: true, color: [158, 27, 50] });
-    y += 8;
-    doc.setDrawColor(231, 220, 212);
-    doc.line(MARGIN, y, pageW - MARGIN, y);
-    y += 18;
-    drawPdfText(doc, `Total donations in range: ${total}`, MARGIN, y, { fontSize: 10.5, bold: true });
-    y += 16;
-    if (topGroup && topGroup.value > 0) {
-      drawPdfText(doc, `Most frequent blood group: ${topGroup.label} (${topGroup.value} times, ${pct(topGroup.value)}%)`, MARGIN, y, { fontSize: 10 });
-      y += 15;
-    }
-    if (topLoc) {
-      drawPdfText(doc, `Most frequent hospital / location: ${topLoc.label} (${topLoc.value} times)`, MARGIN, y, { fontSize: 10, maxWidth: pageW - MARGIN * 2, ellipsis: true });
-      y += 15;
-    }
-    y += 12;
-
-    function drawBarChart(title, items, labelW) {
-      ensureSpace(34 + items.length * 20 + 10);
-      drawPdfText(doc, title, MARGIN, y, { fontSize: 12, bold: true, color: [33, 22, 19] });
-      y += 18;
-      const max = Math.max(1, ...items.map(it => it.value));
-      const barX = MARGIN + labelW + 8;
-      const barMaxW = pageW - MARGIN - barX - 78;
-      items.forEach(it => {
-        drawPdfText(doc, it.label, MARGIN, y + 9, { fontSize: 9, maxWidth: labelW, ellipsis: true });
-        doc.setFillColor(247, 227, 230);
-        doc.roundedRect(barX, y, barMaxW, 12, 2, 2, "F");
-        if (it.value > 0) {
-          doc.setFillColor(158, 27, 50);
-          doc.roundedRect(barX, y, Math.max((it.value / max) * barMaxW, 3), 12, 2, 2, "F");
-        }
-        drawPdfText(doc, `${it.value} (${pct(it.value)}%)`, barX + barMaxW + 8, y + 9, { fontSize: 9, color: [124, 111, 104] });
-        y += 20;
+    if (total > 0) {
+      // Hospital -> { total, per blood group }
+      const GROUP_ORDER = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+      const PALETTE = {
+        "A+": ["#1F4E79", false], "A-": ["#8DB4E2", true], "B+": ["#C55A11", false], "B-": ["#F4B183", true],
+        "AB+": ["#548235", false], "AB-": ["#A9D18E", true], "O+": ["#7F1D1D", false], "O-": ["#E6A5A5", true], "Unknown": ["#7F7F7F", false]
+      };
+      const hosp = {};
+      records.forEach(r => {
+        const h = r.hospital || "Not specified";
+        const g = PALETTE[r.group] ? r.group : "Unknown";
+        if (!hosp[h]) hosp[h] = { label: h, total: 0, g: {} };
+        hosp[h].total++;
+        hosp[h].g[g] = (hosp[h].g[g] || 0) + 1;
       });
-      y += 14;
-    }
+      let rows = Object.values(hosp).sort((a, b) => b.total - a.total);
+      if (rows.length > 8) {
+        const others = { label: "Others", total: 0, g: {} };
+        rows.slice(7).forEach(r => {
+          others.total += r.total;
+          Object.keys(r.g).forEach(k => { others.g[k] = (others.g[k] || 0) + r.g[k]; });
+        });
+        rows = rows.slice(0, 7).concat([others]);
+      }
+      const usedGroups = GROUP_ORDER.concat(["Unknown"]).filter(g => records.some(r => (PALETTE[r.group] ? r.group : "Unknown") === g));
 
-    drawBarChart("Donations by Blood Group", groupItems, 44);
-    drawBarChart("Donations by Hospital / Location", locItems, 150);
+      drawPdfText(doc, "Analytics", MARGIN, y, { fontSize: 11, bold: true, color: [0, 0, 0] });
+      y += 7;
+      doc.setDrawColor(0, 0, 0);
+      doc.setLineWidth(0.7);
+      doc.line(MARGIN, y, pageW - MARGIN, y);
+      y += 14;
+
+      const S = 3, W = AVAIL, rowH = 26, top = 78, bottom = 34;
+      const H = top + rows.length * rowH + bottom;
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(W * S); canvas.height = Math.round(H * S);
+      const ctx = canvas.getContext("2d");
+      ctx.scale(S, S);
+      ctx.fillStyle = "#FFFFFF"; ctx.fillRect(0, 0, W, H);
+      ctx.strokeStyle = "#000000"; ctx.lineWidth = 0.8; ctx.strokeRect(0.5, 0.5, W - 1, H - 1);
+
+      ctx.textBaseline = "alphabetic"; ctx.textAlign = "left";
+      ctx.fillStyle = "#000000"; ctx.font = `700 11px ${BN_FONT_STACK}`;
+      ctx.fillText("Donations by Hospital and Blood Group", 16, 24);
+      ctx.fillStyle = "#555555"; ctx.font = `400 8.5px ${BN_FONT_STACK}`;
+      ctx.textAlign = "right";
+      ctx.fillText(`Period: ${from} to ${to}   |   Total donations: ${total}`, W - 16, 24);
+      ctx.textAlign = "left";
+
+      // Legend
+      let lx = 16; const ly = 46;
+      ctx.font = `500 8.5px ${BN_FONT_STACK}`;
+      usedGroups.forEach(g => {
+        ctx.fillStyle = PALETTE[g][0];
+        ctx.fillRect(lx, ly - 7, 9, 9);
+        ctx.strokeStyle = "#444444"; ctx.lineWidth = 0.4; ctx.strokeRect(lx, ly - 7, 9, 9);
+        ctx.fillStyle = "#000000";
+        ctx.fillText(g, lx + 13, ly + 1);
+        lx += 13 + ctx.measureText(g).width + 16;
+      });
+
+      // Plot area
+      const labelW = 150, barX = 16 + labelW + 8, barW = W - barX - 44;
+      const maxV = Math.max(1, ...rows.map(r => r.total));
+      const step = Math.max(1, Math.ceil(maxV / 5));
+      const xMax = Math.ceil(maxV / step) * step;
+      const plotTop = top - 10, plotBot = top + rows.length * rowH;
+      const XV = v => barX + (v / xMax) * barW;
+
+      // vertical grid + x axis labels
+      ctx.font = `400 8px ${BN_FONT_STACK}`; ctx.textAlign = "center";
+      for (let v = 0; v <= xMax; v += step) {
+        ctx.strokeStyle = v === 0 ? "#000000" : "#D0D0D0";
+        ctx.lineWidth = v === 0 ? 0.9 : 0.5;
+        ctx.setLineDash(v === 0 ? [] : [2, 2]);
+        ctx.beginPath(); ctx.moveTo(XV(v), plotTop); ctx.lineTo(XV(v), plotBot); ctx.stroke();
+        ctx.fillStyle = "#333333";
+        ctx.fillText(String(v), XV(v), plotBot + 13);
+      }
+      ctx.setLineDash([]);
+      ctx.fillStyle = "#555555";
+      ctx.fillText("Number of donations", barX + barW / 2, plotBot + 26);
+
+      // bars
+      rows.forEach((r, i) => {
+        const cy = top + i * rowH + rowH / 2;
+        ctx.textAlign = "left"; ctx.textBaseline = "middle";
+        ctx.fillStyle = "#000000"; ctx.font = `500 9px ${BN_FONT_STACK}`;
+        let lab = r.label;
+        if (ctx.measureText(lab).width > labelW) {
+          while (lab.length > 1 && ctx.measureText(lab + "…").width > labelW) lab = lab.slice(0, -1);
+          lab += "…";
+        }
+        ctx.fillText(lab, 16, cy);
+        let cum = 0;
+        usedGroups.forEach(g => {
+          const c = r.g[g] || 0;
+          if (!c) return;
+          const x0 = XV(cum), x1 = XV(cum + c);
+          ctx.fillStyle = PALETTE[g][0];
+          ctx.fillRect(x0, cy - 7, x1 - x0, 14);
+          ctx.strokeStyle = "#FFFFFF"; ctx.lineWidth = 0.8; ctx.strokeRect(x0, cy - 7, x1 - x0, 14);
+          if (x1 - x0 >= 12) {
+            ctx.fillStyle = PALETTE[g][1] ? "#000000" : "#FFFFFF";
+            ctx.font = `700 7.5px ${BN_FONT_STACK}`; ctx.textAlign = "center";
+            ctx.fillText(String(c), (x0 + x1) / 2, cy + 0.5);
+          }
+          cum += c;
+        });
+        ctx.textAlign = "left"; ctx.fillStyle = "#000000"; ctx.font = `700 9px ${BN_FONT_STACK}`;
+        ctx.fillText(String(r.total), XV(r.total) + 6, cy);
+      });
+
+      ensureSpace(H + 10);
+      doc.addImage(canvas.toDataURL("image/png"), "PNG", MARGIN, y, W, H);
+      y += H + 18;
+
+      /* ---------- Second chart: donations by date ---------- */
+      {
+        const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const p2 = n => String(n).padStart(2, "0");
+        const parseYMD = str => { const q = str.split("-").map(Number); return Date.UTC(q[0], q[1] - 1, q[2]); };
+        const dayLabel = key => p2(Number(key.slice(8, 10))) + " " + MON[Number(key.slice(5, 7)) - 1];
+        const byDay = {};
+        records.forEach(r => { const k = (r.date || "").slice(0, 10); if (k) byDay[k] = (byDay[k] || 0) + 1; });
+        const t0 = parseYMD(from), t1 = parseYMD(to);
+        const days = Math.round((t1 - t0) / 86400000) + 1;
+        const donationDates = Object.keys(byDay).sort();
+        let bars = [], mode = "date";
+        if (days <= 31) {
+          for (let i = 0; i < days; i++) {
+            const dt = new Date(t0 + i * 86400000);
+            const key = dt.getUTCFullYear() + "-" + p2(dt.getUTCMonth() + 1) + "-" + p2(dt.getUTCDate());
+            bars.push({ label: dayLabel(key), value: byDay[key] || 0 });
+          }
+        } else if (donationDates.length <= 31) {
+          bars = donationDates.map(k => ({ label: dayLabel(k), value: byDay[k] }));
+        } else {
+          mode = "month";
+          const sd = new Date(t0), ed = new Date(t1);
+          for (let ym = sd.getUTCFullYear() * 12 + sd.getUTCMonth(); ym <= ed.getUTCFullYear() * 12 + ed.getUTCMonth(); ym++) {
+            const yr = Math.floor(ym / 12), mo = ym % 12, prefix = yr + "-" + p2(mo + 1);
+            let v = 0;
+            donationDates.forEach(k => { if (k.slice(0, 7) === prefix) v += byDay[k]; });
+            bars.push({ label: MON[mo] + " " + yr, value: v });
+          }
+        }
+        const n = bars.length;
+        const maxV = Math.max(1, ...bars.map(b => b.value));
+        const step = Math.max(1, Math.ceil(maxV / 5));
+        const yTop = Math.ceil(maxV / step) * step;
+        const W2 = AVAIL, H2 = 250;
+        const cv = document.createElement("canvas");
+        cv.width = Math.round(W2 * 3); cv.height = Math.round(H2 * 3);
+        const cx = cv.getContext("2d");
+        cx.scale(3, 3);
+        cx.fillStyle = "#FFFFFF"; cx.fillRect(0, 0, W2, H2);
+        cx.strokeStyle = "#000000"; cx.lineWidth = 0.8; cx.strokeRect(0.5, 0.5, W2 - 1, H2 - 1);
+        cx.textBaseline = "alphabetic"; cx.textAlign = "left";
+        cx.fillStyle = "#000000"; cx.font = `700 11px ${BN_FONT_STACK}`;
+        cx.fillText(mode === "date" ? "Donations by Date" : "Donations by Month", 16, 24);
+        cx.fillStyle = "#555555"; cx.font = `400 8.5px ${BN_FONT_STACK}`;
+        cx.textAlign = "right";
+        cx.fillText(`Period: ${from} to ${to}   |   Total donations: ${total}`, W2 - 16, 24);
+
+        const pl = 44, pr = 20, pt = 48, pb = 62;
+        const iw = W2 - pl - pr, ih = H2 - pt - pb;
+        const Y = v => pt + ih - (v / yTop) * ih;
+        cx.font = `400 8px ${BN_FONT_STACK}`;
+        for (let v = 0; v <= yTop; v += step) {
+          cx.strokeStyle = v === 0 ? "#000000" : "#D0D0D0";
+          cx.lineWidth = v === 0 ? 0.9 : 0.5;
+          cx.setLineDash(v === 0 ? [] : [2, 2]);
+          cx.beginPath(); cx.moveTo(pl, Y(v)); cx.lineTo(W2 - pr, Y(v)); cx.stroke();
+          cx.fillStyle = "#333333"; cx.textAlign = "right";
+          cx.fillText(String(v), pl - 7, Y(v) + 3);
+        }
+        cx.setLineDash([]);
+        cx.save();
+        cx.translate(13, pt + ih / 2); cx.rotate(-Math.PI / 2);
+        cx.textAlign = "center"; cx.fillStyle = "#555555";
+        cx.fillText("Number of donations", 0, 0);
+        cx.restore();
+
+        const slot = iw / n, bw = Math.min(26, slot * 0.62);
+        const rotate = slot < 34;
+        bars.forEach((b, i) => {
+          const bx = pl + slot * i + slot / 2;
+          if (b.value > 0) {
+            cx.fillStyle = "#1F4E79";
+            cx.fillRect(bx - bw / 2, Y(b.value), bw, Y(0) - Y(b.value));
+            cx.fillStyle = "#000000"; cx.font = `700 8.5px ${BN_FONT_STACK}`; cx.textAlign = "center";
+            cx.fillText(String(b.value), bx, Y(b.value) - 5);
+          }
+          cx.fillStyle = "#333333"; cx.font = `400 7.5px ${BN_FONT_STACK}`;
+          if (rotate) {
+            cx.save();
+            cx.translate(bx + 3, Y(0) + 10); cx.rotate(-Math.PI / 3);
+            cx.textAlign = "right";
+            cx.fillText(b.label, 0, 0);
+            cx.restore();
+          } else {
+            cx.textAlign = "center";
+            cx.fillText(b.label, bx, Y(0) + 13);
+          }
+        });
+        ensureSpace(H2 + 10);
+        doc.addImage(cv.toDataURL("image/png"), "PNG", MARGIN, y, W2, H2);
+        y += H2 + 10;
+      }
+    }
 
     /* ---------- Watermark + page numbers on every page ---------- */
     const bnWatermark = BENGALI_RANGE.test(siteName)
@@ -3680,11 +4457,16 @@ if (logoutBtn) {
     if (getQueue().length > 0 && !confirm("কিছু পরিবর্তন এখনো সার্ভারে সিঙ্ক হয়নি। লগআউট করলে সেগুলো আর সিঙ্ক হবে না। তবুও লগআউট করবেন?")) return;
     if (!confirm("লগআউট করবেন? পরের বার আবার ইমেইল ও পাসওয়ার্ড লাগবে।")) return;
     setAuthFlag(false);
-    [CACHE_DONORS_KEY, CACHE_SETTINGS_KEY, CACHE_APPCONFIG_KEY, QUEUE_KEY, ACTIVITY_LOG_KEY].forEach(k => {
+    [CACHE_DONORS_KEY, CACHE_SETTINGS_KEY, CACHE_APPCONFIG_KEY, QUEUE_KEY, ACTIVITY_LOG_KEY, ADMIN_NAME_KEY, BLOOD_REQ_CACHE_KEY].forEach(k => {
       try { localStorage.removeItem(k); } catch (err) { /* ignore */ }
     });
     const done = () => window.location.reload();
-    if (auth) auth.signOut().then(done, done); else done();
+    if (auth) {
+      const goOffline = adminPresenceRef
+        ? adminPresenceRef.update({ online: false, state: "offline", lastSeen: firebase.database.ServerValue.TIMESTAMP }).catch(() => {})
+        : Promise.resolve();
+      goOffline.then(() => auth.signOut()).then(done, done);
+    } else done();
   });
 }
 
@@ -5142,6 +5924,8 @@ function setupFirebase() {
     landingPageRef = db.ref("landingPage");
     donorRequestsRef = db.ref("donorRequests");
     emergencyRequestsRef = db.ref("emergencyRequests");
+    bloodRequestsRef = db.ref("bloodRequests");
+    adminActivityRef = db.ref("adminActivity");
     firebaseAvailable = true;
 
     let listenersStarted = false;
@@ -5178,6 +5962,32 @@ function setupFirebase() {
     emergencyRequestsRef.on("child_removed", snapshot => {
       delete emergencyRequests[snapshot.key];
       renderEmergencyRequests();
+    });
+
+    /* Blood request ledger (admin-created + every closed request). Cached locally
+       so the Donation Statement still has its numbers when the phone is offline. */
+    let bloodReqCacheTimer = null;
+    let bloodReqErrorShown = false;
+    function onBloodRequestsChanged() {
+      clearTimeout(bloodReqCacheTimer);
+      bloodReqCacheTimer = setTimeout(() => {
+        try { localStorage.setItem(BLOOD_REQ_CACHE_KEY, JSON.stringify(bloodRequests)); } catch (err) { /* ignore */ }
+      }, 400);
+      renderEmergencyRequests();
+    }
+    function bloodReqListenError(err) {
+      console.log("bloodRequests read failed:", err);
+      if (!bloodReqErrorShown) { bloodReqErrorShown = true; showToast("bloodRequests পড়া যাচ্ছে না — Firebase Rules দেখুন"); }
+    }
+    ["child_added", "child_changed"].forEach(evt => {
+      bloodRequestsRef.on(evt, snapshot => {
+        bloodRequests[snapshot.key] = { ...snapshot.val(), id: snapshot.key };
+        onBloodRequestsChanged();
+      }, bloodReqListenError);
+    });
+    bloodRequestsRef.on("child_removed", snapshot => {
+      delete bloodRequests[snapshot.key];
+      onBloodRequestsChanged();
     });
 
     /* child_* listeners instead of a single "value" listener: on the
@@ -5302,6 +6112,8 @@ function setupFirebase() {
       const info = document.getElementById("authAccountInfo");
       if (info) info.textContent = "Signed in as " + (user.email || "admin") + ".";
       startDataListeners();
+      startAdminPresence(user);
+      refreshAdminNameInput();
       trySyncQueue();
     });
 

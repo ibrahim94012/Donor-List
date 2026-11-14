@@ -1,27 +1,4 @@
-/* ============================================================
-   SERVICE WORKER — makes the site load even with no internet.
-   Strategy: cache the app shell (HTML/JS/icon) on install, then
-   serve from cache first and update the cache in the background
-   whenever the network is available. Donor data itself is handled
-   separately by Firebase + localStorage inside index.html.
-
-   FIX (v4): previously, if a device's cache ever ended up without
-   a working copy of the app shell (e.g. a re-install happened while
-   the network was flaky), "activate" would still delete the old
-   cache — leaving that device with NOTHING to fall back on, so it
-   could never open the app offline again. Also, navigation requests
-   (actually opening the page) were matched against the cache by
-   exact URL, so small URL differences (trailing slash, query string,
-   "Add to Home Screen" launches, etc.) could miss the cache entirely
-   and fail outright when offline.
-   Fix: (1) activate now verifies the new cache truly has the app
-   shell before removing any old cache — if it can't confirm that,
-   it keeps the old cache so the device is never left empty-handed.
-   (2) navigation requests always fall back to the cached shell
-   ("./index.html"), not just an exact URL match.
-   ============================================================ */
-
-const CACHE_NAME = "blood-donor-app-v5";
+const CACHE_NAME = "blood-donor-app-v7";
 const APP_SHELL = "./index.html";
 
 const ASSETS_TO_CACHE = [

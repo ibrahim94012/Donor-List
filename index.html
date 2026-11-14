@@ -402,7 +402,8 @@
     font-family: var(--font-mono); font-size: 10.5px; font-weight: 600; color: var(--muted);
     text-transform: uppercase; letter-spacing: 0.05em;
   }
-  .statementRangeField input[type="date"] {
+  .statementRangeField input[type="date"],
+  .statementRangeField select {
     padding: 8px 10px; border-radius: var(--radius-sm); border: 1px solid var(--line);
     background: var(--cream); color: var(--ink); font-family: var(--font-body); font-size: 13px;
   }
@@ -1252,6 +1253,11 @@
   @keyframes slideUp { from { transform: translateY(24px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
   @media (prefers-reduced-motion: reduce) { .modal { animation: none; } }
 
+  .statementPreviewOverlay { z-index: 50; } /* above Settings (40), below toast (60) */
+  .statementPreviewModal { max-width: 760px; max-height: 94vh; display: flex; flex-direction: column; }
+  .statementPreviewFrame { width: 100%; height: 68vh; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+  .statementPreviewActions { align-items: stretch; }
+  .statementPreviewActions > * { flex: 1; }
   .modalHeader { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
   .modalClose {
     width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--line);
@@ -1357,13 +1363,14 @@
   .adminRow.is-online .adminStatus { color: var(--sage); }
   .adminRow.is-away .adminStatus { color: var(--amber); }
 
-  .reqStatGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .reqStatGrid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
   .reqStat { background: var(--cream); border: 1px solid var(--line); border-radius: var(--radius-md); padding: 10px 4px; text-align: center; min-width: 0; }
   .reqStat b { display: block; font-family: var(--font-display); font-size: 22px; line-height: 1.1; color: var(--ink); }
   .reqStat span { display: block; margin-top: 4px; font-size: 10.5px; color: var(--muted); font-weight: 600; }
   .reqStat.is-active b { color: var(--amber); }
   .reqStat.is-done b { color: var(--sage); }
   .reqStat.is-cancel b { color: #B23A3A; }
+  .reqStat.is-return b { color: #3A6EA5; }
 
   .reqToolbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
   .reqNewBtn {
@@ -1384,6 +1391,7 @@
   .reqStatusPill.st-active { background: var(--amber-tint); color: var(--amber); }
   .reqStatusPill.st-completed { background: var(--sage-tint); color: var(--sage); }
   .reqStatusPill.st-cancelled { background: var(--crimson-tint); color: var(--crimson); }
+  .reqStatusPill.st-returned { background: #E3ECF6; color: #3A6EA5; }
   .reqLbl {
     font-family: var(--font-mono); font-size: 10px; font-weight: 700; color: var(--muted);
     text-transform: uppercase; letter-spacing: 0.04em; min-width: 64px; padding-top: 2px; flex-shrink: 0;
@@ -1421,6 +1429,16 @@
   }
   .reqEditBtn:hover { border-color: var(--crimson); color: var(--crimson); }
   .reqEditBtn svg { width: 16px; height: 16px; }
+  .brHospitalRow { display: flex; gap: 8px; }
+  .brHospitalRow input { flex: 1.4; min-width: 0; }
+  .brHospitalRow select { flex: 1; min-width: 0; }
+  .reqDeleteBtn {
+    width: 100%; margin: 4px 0 2px; padding: 10px 12px; font-size: 13px; font-weight: 600;
+    background: transparent; color: var(--crimson); border: 1px solid var(--crimson-tint);
+    border-radius: var(--radius-sm); cursor: pointer; font-family: inherit;
+  }
+  .reqDeleteBtn:hover { background: var(--crimson-tint); }
+  .reqDeleteBtn:disabled { opacity: 0.6; cursor: default; }
   .reqEditSection { border-top: 1px dashed var(--line); margin-top: 4px; padding-top: 12px; display: flex; flex-direction: column; gap: 0; }
   @media (max-width: 480px) {
     .reqRow { padding: 8px; gap: 8px; }
@@ -1443,7 +1461,7 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
     <div class="appTitleBlock">
-      <div class="appTitle"><span id="appTitleText">Blood Network Baraikhali</span> <span class="appVersionBadge" id="appVersionBadge">v2.9.0 · 13-Nov-2026</span></div>
+      <div class="appTitle"><span id="appTitleText">Blood Network Baraikhali</span> <span class="appVersionBadge" id="appVersionBadge">v3.0.0 · 14-Nov-2026</span></div>
       <div class="appTagline">BNB</div>
     </div>
   </div>
@@ -1489,7 +1507,7 @@
   </div>
 </nav>
 
-<p class="credit">Development by <u>IBRAHIM KHALIL</u> | <u>v-2.9.0</u></p>
+<p class="credit">Development by <u>IBRAHIM KHALIL</u> | <u>v-3.0.0</u></p>
 
 <svg class="pulseDivider" viewBox="0 0 600 26" preserveAspectRatio="none" aria-hidden="true">
   <path d="M0,13 L200,13 L215,2 L230,23 L245,7 L258,18 L270,13 L600,13"/>
@@ -1515,8 +1533,9 @@
       <div class="reqStat is-active"><b id="dashReqActive">0</b><span>Active</span></div>
       <div class="reqStat is-done"><b id="dashReqDone">0</b><span>Donated</span></div>
       <div class="reqStat is-cancel"><b id="dashReqCancel">0</b><span>Cancelled</span></div>
+      <div class="reqStat is-return"><b id="dashReqReturn">0</b><span>Donor Return</span></div>
     </div>
-    <div class="reqSettingsNote">Donation Statement PDF-এর উপরে Total Request, Donation ও Cancel দেখানো হয়।</div>
+    <div class="reqSettingsNote">Donation Statement PDF-এর উপরে Total Request, Donation, Cancel ও Return দেখানো হয়।</div>
   </div>
   </div>
   <div class="overviewGrid">
@@ -1777,6 +1796,19 @@
         <label for="statementToDate">To</label>
         <input type="date" id="statementToDate">
       </div>
+      <div class="statementRangeField">
+        <label for="statementMonthSelect">Month</label>
+        <select id="statementMonthSelect" class="monthSelect"></select>
+      </div>
+    </div>
+    <div class="statementRangeRow">
+      <div class="statementRangeField">
+        <label for="statementTypeSelect">Statement type</label>
+        <select id="statementTypeSelect">
+          <option value="classic">Classic</option>
+          <option value="full">Full Details</option>
+        </select>
+      </div>
     </div>
     <div class="zoomShortcuts" style="margin-top:10px;">
       <button type="button" class="zoomChip statementPresetBtn" data-days="28">Last 28 Days</button>
@@ -1786,12 +1818,13 @@
     <div class="backupBtnRow" style="margin-top:12px;">
       <button type="button" class="ghostBtn exportBtn" id="downloadStatementBtn" style="margin-left:0;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Download Statement (.pdf)
+        Preview &amp; Download Statement (.pdf)
       </button>
     </div>
     <div class="settingsFieldHint" style="margin-top:8px;">Downloads a PDF statement — with your logo, site name, and a faint watermark — of donors whose last donation date falls within the selected range. Each row shows Name, Blood Group, Address, Hospital and Donate Date (no mobile numbers), followed by a summary with blood-group and hospital charts. Bangla text is rendered correctly.</div>
 
-    <div class="settingsFieldHint" style="margin-top:6px;">PDF ক্লাসিক ফরম্যাটে হবে: উপরে Total Request, Total Donation ও Total Cancel, মাঝে ডোনেশন টেবিল এবং নিচে Analytics-এ দুটি গ্রাফ — (১) হাসপাতাল ও ব্লাড গ্রুপ অনুযায়ী ডোনেশন, (২) তারিখ অনুযায়ী ডোনেশন সংখ্যা।</div>
+    <div class="settingsFieldHint" style="margin-top:6px;">Month বেছে নিলে ওই মাসের ১ তারিখ থেকে শেষ তারিখ পর্যন্ত রেঞ্জ নিজে থেকে বসে যাবে। <b>Full Details</b> স্টেটমেন্টে Classic-এর সবকিছুর সাথে অতিরিক্ত দুটি টেবিল থাকে: Donated ও Cancelled রিকোয়েস্টের সম্পূর্ণ তথ্য (Cancel Date ও Reason সহ)।</div>
+    <div class="settingsFieldHint" style="margin-top:6px;">Classic PDF ক্লাসিক ফরম্যাটে হবে: উপরে Total Request, Total Donation ও Total Cancel, মাঝে ডোনেশন টেবিল এবং নিচে Analytics-এ দুটি গ্রাফ — (১) হাসপাতাল ও ব্লাড গ্রুপ অনুযায়ী ডোনেশন, (২) তারিখ অনুযায়ী ডোনেশন সংখ্যা।</div>
 
     <hr class="settingsDivider">
     <div class="settingsSectionLabel">Bulk Import</div>
@@ -1821,20 +1854,41 @@
   <div class="groupChartCard">
     <div class="reqToolbar">
       <div class="groupChartTitle" style="margin:0;">Blood Requests</div>
-      <button type="button" class="reqNewBtn" id="newBloodRequestBtn">+ New Request</button>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;">
+        <button type="button" class="ghostBtn" id="brTemplateBtn" style="margin-left:0;">Template</button>
+        <button type="button" class="ghostBtn" id="brImportBtn" style="margin-left:0;">Import (.csv)</button>
+        <input type="file" id="brImportInput" accept=".csv,text/csv" style="display:none;">
+        <button type="button" class="reqNewBtn" id="newBloodRequestBtn">+ New Request</button>
+      </div>
     </div>
-    <div class="requestsIntro">ওয়েবসাইট ও admin-এর জমা দেওয়া রিকোয়েস্ট এখানে এক সারিতে থাকে। পেন্সিল আইকন চেপে তথ্য এডিট করুন এবং Status (Active / Donated / Cancelled) পরিবর্তন করুন। শুধু Blood Group ও Hospital আবশ্যক।</div>
     <div class="reqStatGrid">
       <div class="reqStat"><b id="reqTotal">0</b><span>Total</span></div>
       <div class="reqStat is-active"><b id="reqActive">0</b><span>Active</span></div>
       <div class="reqStat is-done"><b id="reqDone">0</b><span>Donated</span></div>
       <div class="reqStat is-cancel"><b id="reqCancel">0</b><span>Cancelled</span></div>
+      <div class="reqStat is-return"><b id="reqReturn">0</b><span>Donor Return</span></div>
     </div>
     <div class="reqTabs" id="reqTabs">
       <button type="button" class="reqTab active" data-filter="active">Active</button>
       <button type="button" class="reqTab" data-filter="completed">Donated</button>
       <button type="button" class="reqTab" data-filter="cancelled">Cancelled</button>
+      <button type="button" class="reqTab" data-filter="returned">Donor Return</button>
       <button type="button" class="reqTab" data-filter="all">All</button>
+    </div>
+    <div class="statementRangeRow" style="align-items:flex-end;margin:0 0 12px;">
+      <div class="statementRangeField">
+        <label for="reqFromDate">Start date</label>
+        <input type="date" id="reqFromDate">
+      </div>
+      <div class="statementRangeField">
+        <label for="reqToDate">End date</label>
+        <input type="date" id="reqToDate">
+      </div>
+      <div class="statementRangeField">
+        <label for="reqMonthSelect">Month</label>
+        <select id="reqMonthSelect" class="monthSelect"></select>
+      </div>
+      <button type="button" class="ghostBtn" id="reqDateClearBtn" style="margin-left:0;">Clear</button>
     </div>
     <div id="emergencyRequestsTableWrapper" style="display:none;">
       <div id="emergencyRequestsListContainer" class="requestsCardList"><!-- cards inserted by JS --></div>
@@ -1847,6 +1901,22 @@
 <button type="button" class="fab" id="fabAddDonor" aria-label="Add donor">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
 </button>
+
+<!-- ================= STATEMENT PREVIEW ================= -->
+<div class="modalOverlay statementPreviewOverlay" id="statementPreviewOverlay">
+  <div class="modal statementPreviewModal" role="dialog" aria-modal="true" aria-labelledby="statementPreviewTitle">
+    <div class="modalHeader">
+      <h2 id="statementPreviewTitle">Statement Preview</h2>
+      <button type="button" class="modalClose" id="statementPreviewCloseBtn" aria-label="Close">✕</button>
+    </div>
+    <iframe id="statementPreviewFrame" class="statementPreviewFrame" title="Donation statement preview"></iframe>
+    <div class="settingsFieldHint" style="margin-top:8px;">মোবাইলে প্রিভিউ না দেখা গেলে "Open in new tab" চাপুন।</div>
+    <div class="modalActions statementPreviewActions">
+      <button type="button" id="statementPreviewDownloadBtn">Download PDF</button>
+      <a id="statementPreviewOpenLink" class="ghostBtn" href="#" target="_blank" rel="noopener" style="margin-left:0;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">Open in new tab</a>
+    </div>
+  </div>
+</div>
 
 <!-- ================= ADD DONATION (checks Donor ID / phone first) ================= -->
 <div class="modalOverlay" id="donationEntryOverlay">
@@ -1902,7 +1972,11 @@
           <input type="number" id="brUnits" class="profileAddInput" min="1" max="20" placeholder="1" inputmode="numeric"></div>
       </div>
       <div class="profileAddField"><label class="profileAddLabel" for="brHospital">Hospital / Location *</label>
-        <input type="text" id="brHospital" class="profileAddInput" maxlength="120" autocomplete="off"></div>
+        <div class="brHospitalRow">
+          <input type="text" id="brHospital" class="profileAddInput" list="brHospitalList" maxlength="120" placeholder="Type name" autocomplete="off">
+          <select id="brHospitalSelect" class="profileAddInput" aria-label="Select a previous hospital"><option value="">Select</option></select>
+        </div>
+        <datalist id="brHospitalList"></datalist></div>
       <div class="profileAddField"><label class="profileAddLabel" for="brName">Patient Name</label>
         <input type="text" id="brName" class="profileAddInput" maxlength="80" placeholder="N/A" autocomplete="off"></div>
       <div class="profileAddField"><label class="profileAddLabel" for="brPhone">Contact Phone</label>
@@ -1914,7 +1988,8 @@
           <input type="text" id="brHemoglobin" class="profileAddInput" maxlength="20" placeholder="e.g. 7.5"></div>
       </div>
       <div class="profileAddField"><label class="profileAddLabel" for="brProblem">Patient Problem</label>
-        <input type="text" id="brProblem" class="profileAddInput" maxlength="120" placeholder="e.g. Operation, Thalassemia"></div>
+        <select id="brProblem" class="profileAddInput"></select>
+        <input type="text" id="brProblemOther" class="profileAddInput" maxlength="120" placeholder="Write the problem" style="display:none; margin-top:8px;"></div>
       <div class="profileAddField"><label class="profileAddLabel" for="brNote">Note</label>
         <textarea id="brNote" class="profileAddInput" maxlength="300"></textarea></div>
 
@@ -1926,12 +2001,25 @@
             <option value="active">Active</option>
             <option value="completed">Donated</option>
             <option value="cancelled">Cancelled</option>
+            <option value="returned">Donor Return</option>
           </select></div>
+        <div id="brReturnBlock" style="display:none;">
+          <div class="profileAddField"><label class="profileAddLabel" for="brReturnDate">Return Date</label>
+            <input type="date" id="brReturnDate" class="profileAddInput"></div>
+        </div>
         <div id="brDonatedBlock" style="display:none;">
+          <div class="profileAddField"><label class="profileAddLabel" for="brDonor">Donor (optional)</label>
+            <div class="brHospitalRow">
+              <input type="text" id="brDonor" class="profileAddInput" list="brDonorList" placeholder="Type donor name" autocomplete="off">
+              <select id="brDonorSelect" class="profileAddInput" aria-label="Select donor"><option value="">Select</option></select>
+            </div>
+            <datalist id="brDonorList"></datalist></div>
           <div class="profileAddField"><label class="profileAddLabel" for="brDonDate">Donation Date</label>
             <input type="date" id="brDonDate" class="profileAddInput"></div>
         </div>
         <div id="brCancelBlock" style="display:none;">
+          <div class="profileAddField"><label class="profileAddLabel" for="brCancelDate">Cancel Date</label>
+            <input type="date" id="brCancelDate" class="profileAddInput"></div>
           <div class="profileAddField"><label class="profileAddLabel" for="brReason">Cancel Reason</label>
             <select id="brReason" class="profileAddInput">
               <option value="">-- Select --</option>
@@ -1947,6 +2035,8 @@
             <textarea id="brCloseNote" class="profileAddInput" maxlength="200"></textarea></div>
         </div>
       </div>
+
+      <button type="button" id="bloodRequestDeleteBtn" class="reqDeleteBtn" style="display:none;">Delete this request</button>
 
       <div class="profileAddBtnRow">
         <a id="brCallBtn" class="reqCallBtn" href="#" style="display:none; flex:0 0 auto;">Call</a>
@@ -2438,7 +2528,7 @@ const VIEW_LABELS = { dashboard: "Dashboard", list: "Donor List", settings: "Set
 const ACTIVITY_TEXT = {
   add: ["added donor", "add"], update: ["updated donor", "update"], delete: ["deleted donor", "delete"],
   donor_accept: ["accepted join request of", "add"], donor_deny: ["denied join request of", "delete"],
-  req_new: ["created blood request for", "add"], req_done: ["marked donated for", "add"], req_cancel: ["cancelled blood request of", "delete"], req_edit: ["edited blood request of", "update"]
+  req_new: ["created blood request for", "add"], req_done: ["marked donated for", "add"], req_cancel: ["cancelled blood request of", "delete"], req_edit: ["edited blood request of", "update"], req_delete: ["deleted blood request of", "delete"]
 };
 
 function logActivity(type, name, detail) {
@@ -2893,12 +2983,13 @@ function getAllBloodRequests() {
   return Object.values(map).sort((a, b) => (b.requestedAt || 0) - (a.requestedAt || 0));
 }
 function countRequests(list) {
-  const c = { total: list.length, active: 0, completed: 0, cancelled: 0, bagsTotal: 0, bagsDone: 0 };
+  const c = { total: list.length, active: 0, completed: 0, cancelled: 0, returned: 0, bagsTotal: 0, bagsDone: 0 };
   list.forEach(r => {
     const bags = parseInt(r.units, 10) || 0;
     c.bagsTotal += bags;
     if (r.status === "completed") { c.completed++; c.bagsDone += bags; }
     else if (r.status === "cancelled") c.cancelled++;
+    else if (r.status === "returned") c.returned++;
     else c.active++;
   });
   return c;
@@ -2911,9 +3002,16 @@ function localDateStr(ts) {
 function setText(id, val) { const el = document.getElementById(id); if (el) el.textContent = String(val); }
 
 function updateRequestStats(all) {
-  const c = countRequests(all || getAllBloodRequests());
-  setText("reqTotal", c.total); setText("reqActive", c.active); setText("reqDone", c.completed); setText("reqCancel", c.cancelled);
-  setText("dashReqTotal", c.total); setText("dashReqActive", c.active); setText("dashReqDone", c.completed); setText("dashReqCancel", c.cancelled);
+  all = all || getAllBloodRequests();
+  const c = countRequests(all);
+  // On the Blood Requests page the four boxes follow the Start / End date (or month) filter;
+  // the dashboard and the nav badge always show the overall numbers.
+  const rf = (document.getElementById("reqFromDate") || {}).value || "", rt = (document.getElementById("reqToDate") || {}).value || "";
+  const cp = (rf || rt)
+    ? countRequests(all.filter(r => { const d = reqFilterDay(r); return !!d && (!rf || d >= rf) && (!rt || d <= rt); }))
+    : c;
+  setText("reqTotal", cp.total); setText("reqActive", cp.active); setText("reqDone", cp.completed); setText("reqCancel", cp.cancelled); setText("reqReturn", cp.returned);
+  setText("dashReqTotal", c.total); setText("dashReqActive", c.active); setText("dashReqDone", c.completed); setText("dashReqCancel", c.cancelled); setText("dashReqReturn", c.returned);
   if (emergencyRequestsNavBadge) {
     if (c.active > 0) {
       emergencyRequestsNavBadge.textContent = c.active > 99 ? "99+" : String(c.active);
@@ -2929,9 +3027,10 @@ const REQ_EMPTY_TEXT = {
   active: "এখন কোনো সক্রিয় রক্তের অনুরোধ নেই।",
   completed: "এখনো কোনো অনুরোধ সম্পন্ন (Donated) হয়নি।",
   cancelled: "কোনো বাতিল অনুরোধ নেই।",
+  returned: "কোনো Donor Return অনুরোধ নেই।",
   all: "এখন পর্যন্ত কোনো অনুরোধ নেই।"
 };
-const REQ_STATUS_LABEL = { active: "Active", completed: "Donated", cancelled: "Cancelled" };
+const REQ_STATUS_LABEL = { active: "Active", completed: "Donated", cancelled: "Cancelled", returned: "Donor Return" };
 
 function reqRow(label, value) {
   if (value === undefined || value === null || String(value).trim() === "") return "";
@@ -2948,8 +3047,11 @@ const PENCIL_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" s
 function requestCardHtml(r) {
   const subParts = [patientIdOf(r), r.patientName || "N/A"];
   if (r.units) subParts.push(r.units + " ব্যাগ");
+  if (r.status === "completed" && r.donorName) subParts.push("Donor: " + r.donorName);
   if (r.phone) subParts.push(r.phone);
   if (r.requestedAt) subParts.push(timeAgo(r.requestedAt));
+  if (r.status === "cancelled") subParts.push("Cancel: " + reqCancelDay(r));
+  if (r.status === "returned") subParts.push("Return: " + reqReturnDay(r));
   return `
     <div class="reqRow" data-request-id="${escapeHtml(r.id)}">
       <div class="reqRowGroup">${escapeHtml(r.bloodGroup || "-")}</div>
@@ -2964,6 +3066,24 @@ function requestCardHtml(r) {
     </div>`;
 }
 
+function reqCancelDay(r) {
+  return String(r.cancelDate || r.needDate || (r.closedAt ? localDateStr(r.closedAt) : (r.requestedAt ? localDateStr(r.requestedAt) : ""))).slice(0, 10);
+}
+function reqReturnDay(r) {
+  return String(r.returnDate || r.needDate || (r.closedAt ? localDateStr(r.closedAt) : (r.requestedAt ? localDateStr(r.requestedAt) : ""))).slice(0, 10);
+}
+function reqDonatedDay(r) {
+  return String(r.donationDate || (r.closedAt ? localDateStr(r.closedAt) : (r.requestedAt ? localDateStr(r.requestedAt) : ""))).slice(0, 10);
+}
+/* The date a request counts under: Cancel Date / Donation Date once closed, else the day it was requested.
+   The Blood Requests date filter and the statement totals use the same rule. */
+function reqFilterDay(r) {
+  if (r.status === "cancelled") return reqCancelDay(r);
+  if (r.status === "completed") return reqDonatedDay(r);
+  if (r.status === "returned") return reqReturnDay(r);
+  return r.requestedAt ? localDateStr(r.requestedAt) : "";
+}
+
 function renderEmergencyRequests() {
   if (!emergencyRequestsListContainer) return;
   const all = getAllBloodRequests();
@@ -2971,14 +3091,25 @@ function renderEmergencyRequests() {
   document.querySelectorAll("#reqTabs .reqTab").forEach(t => t.classList.toggle("active", t.getAttribute("data-filter") === reqFilter));
 
   let list = reqFilter === "all" ? all.slice() : all.filter(r => r.status === reqFilter);
-  if (reqFilter === "completed" || reqFilter === "cancelled") {
+  if (reqFilter === "completed" || reqFilter === "cancelled" || reqFilter === "returned") {
     list.sort((a, b) => (b.closedAt || b.requestedAt || 0) - (a.closedAt || a.requestedAt || 0));
+  }
+  // Optional Start / End date filter (or a chosen month). A cancelled request is matched by its
+  // Cancel Date, a donated one by its Donation Date, every other by the day it was requested.
+  const fromEl = document.getElementById("reqFromDate"), toEl = document.getElementById("reqToDate");
+  const rf = fromEl ? fromEl.value : "", rt = toEl ? toEl.value : "";
+  const inReqRange = r => {
+    const d = reqFilterDay(r);
+    return !!d && (!rf || d >= rf) && (!rt || d <= rt);
+  };
+  if (rf || rt) {
+    list = list.filter(inReqRange); // (the stat boxes follow the same range inside updateRequestStats)
   }
   if (list.length === 0) {
     emergencyRequestsListContainer.innerHTML = "";
     if (emergencyRequestsTableWrapper) emergencyRequestsTableWrapper.style.display = "none";
     if (emergencyRequestsEmptyMsg) {
-      emergencyRequestsEmptyMsg.textContent = REQ_EMPTY_TEXT[reqFilter] || REQ_EMPTY_TEXT.all;
+      emergencyRequestsEmptyMsg.textContent = (rf || rt) ? "এই তারিখ-রেঞ্জে কোনো অনুরোধ নেই।" : (REQ_EMPTY_TEXT[reqFilter] || REQ_EMPTY_TEXT.all);
       emergencyRequestsEmptyMsg.style.display = "block";
     }
     return;
@@ -3005,7 +3136,7 @@ function cleanObj(o) {
 /* ---- New / Edit request. Only Blood Group and Hospital are required. ---- */
 const bloodRequestOverlay = document.getElementById("bloodRequestOverlay");
 let editingReqId = null; // null = creating a new request
-const BR_CLOSE_FIELDS = ["closedAt", "closedBy", "closedByUid", "closedByEmail", "closeNote", "donorName", "donorNo", "donorId", "donationDate", "cancelReason"];
+const BR_CLOSE_FIELDS = ["closedAt", "closedBy", "closedByUid", "closedByEmail", "closeNote", "donorName", "donorNo", "donorId", "donationDate", "cancelReason", "cancelDate", "returnDate"];
 function brEl(id) { return document.getElementById(id); }
 function patientIdOf(r) {
   if (r && r.patientId) return r.patientId;
@@ -3025,7 +3156,65 @@ function updateBrStatusBlocks() {
   const st = brEl("brStatus").value;
   brEl("brDonatedBlock").style.display = st === "completed" ? "" : "none";
   brEl("brCancelBlock").style.display = st === "cancelled" ? "" : "none";
+  brEl("brReturnBlock").style.display = st === "returned" ? "" : "none";
   brEl("brCloseNoteBlock").style.display = st === "active" ? "none" : "";
+}
+
+const BR_PROBLEMS = ["Operation / Surgery", "Thalassemia", "Accident / Trauma", "Anemia", "Pregnancy / Delivery", "Cancer", "Dengue", "Kidney / Dialysis"];
+(function buildProblemSelect() {
+  const sel = document.getElementById("brProblem");
+  if (!sel) return;
+  sel.innerHTML = `<option value="">-- Select --</option>` +
+    BR_PROBLEMS.map(x => `<option value="${x}">${x}</option>`).join("") + `<option value="__other">Other</option>`;
+  sel.addEventListener("change", () => {
+    const other = document.getElementById("brProblemOther");
+    other.style.display = sel.value === "__other" ? "" : "none";
+    if (sel.value === "__other") other.focus();
+  });
+})();
+
+/* Hospital names seen before: every donation location, donor hospital and earlier request, most used first. */
+function collectHospitalNames() {
+  const count = {};
+  const add = n => { n = (n || "").trim(); if (n) count[n] = (count[n] || 0) + 1; };
+  getMergedDonors().forEach(d => {
+    (Array.isArray(d.donationHistory) ? d.donationHistory : []).forEach(e => add(historyLocation(e)));
+    add(d.hospitalName);
+  });
+  getAllBloodRequests().forEach(r => add(r.hospital));
+  return Object.keys(count).sort((a, b) => count[b] - count[a] || a.localeCompare(b));
+}
+function refreshHospitalSuggestions() {
+  const names = collectHospitalNames();
+  brEl("brHospitalList").innerHTML = names.map(n => `<option value="${escapeHtml(n)}"></option>`).join("");
+  brEl("brHospitalSelect").innerHTML = `<option value="">Select</option>` +
+    names.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join("");
+}
+function donorLabel(d) { return (d.name || "") + (d.donorNo ? " (" + d.donorNo + ")" : ""); }
+/* Donor choices: donors with the same blood group as the request come first. */
+function refreshDonorChoices() {
+  const grp = (brEl("brGroup").value || "").trim().toUpperCase();
+  const list = getMergedDonors().filter(d => d && d.name).slice().sort((a, b) => {
+    const am = String(a.bloodGroup || "").trim().toUpperCase() === grp ? 0 : 1;
+    const bm = String(b.bloodGroup || "").trim().toUpperCase() === grp ? 0 : 1;
+    return am - bm || String(a.name).localeCompare(String(b.name));
+  });
+  brEl("brDonorList").innerHTML = list.map(d =>
+    `<option value="${escapeHtml(donorLabel(d))}">${escapeHtml(d.bloodGroup || "")}</option>`).join("");
+  brEl("brDonorSelect").innerHTML = `<option value="">Select</option>` + list.map(d =>
+    `<option value="${escapeHtml(donorLabel(d))}">${escapeHtml(donorLabel(d) + (d.bloodGroup ? " · " + d.bloodGroup : ""))}</option>`).join("");
+}
+function setProblemField(val) {
+  const sel = brEl("brProblem"), other = brEl("brProblemOther");
+  other.value = "";
+  if (!val) { sel.value = ""; other.style.display = "none"; return; }
+  if (BR_PROBLEMS.includes(val)) { sel.value = val; other.style.display = "none"; }
+  else { sel.value = "__other"; other.value = val; other.style.display = ""; }
+}
+function getProblemField() {
+  const sel = brEl("brProblem");
+  if (sel.value === "__other") return optStr(brEl("brProblemOther").value) || "Other";
+  return optStr(sel.value);
 }
 
 function openBloodRequestForm(id) {
@@ -3033,14 +3222,18 @@ function openBloodRequestForm(id) {
   if (id && !req) return;
   editingReqId = req ? req.id : null;
   const set = (k, val) => { brEl(k).value = (val === undefined || val === null) ? "" : String(val); };
-  set("brName", req && req.patientName && req.patientName !== "N/A" ? req.patientName : ""); set("brGroup", req && req.bloodGroup); set("brUnits", req && req.units);
-  set("brPhone", req && req.phone); set("brHospital", req && req.hospital); set("brNeedDate", req && req.needDate);
-  set("brHemoglobin", req && req.hemoglobin); set("brProblem", req && req.problem); set("brNote", req && req.note);
+  set("brName", req && req.patientName && req.patientName !== "N/A" ? req.patientName : ""); set("brGroup", req && req.bloodGroup); set("brUnits", req ? req.units : 1);
+  set("brPhone", req && req.phone); set("brHospital", req && req.hospital);
+  set("brNeedDate", req ? req.needDate : localDateStr(Date.now()));
+  set("brHemoglobin", req && req.hemoglobin); set("brNote", req && req.note);
+  setProblemField(req && req.problem);
+  refreshHospitalSuggestions();
 
   const isEdit = !!req;
   brEl("bloodRequestTitle").textContent = isEdit ? "Edit Blood Request" : "New Blood Request";
   brEl("bloodRequestSaveBtn").textContent = isEdit ? "Save Changes" : "Save Request";
   brEl("brStatusSection").style.display = isEdit ? "" : "none";
+  brEl("bloodRequestDeleteBtn").style.display = isEdit ? "" : "none";
 
   const callBtn = brEl("brCallBtn");
   if (isEdit && req.phone) { callBtn.href = "tel:" + req.phone; callBtn.style.display = "inline-flex"; }
@@ -3050,7 +3243,11 @@ function openBloodRequestForm(id) {
     const source = req.source === "website" ? "Website visitor" : "Admin: " + (req.createdBy || "-");
     brEl("brMetaInfo").textContent = "Patient ID: " + patientIdOf(req) + " · Added " + (fmtDateTime(req.requestedAt) || "-") + " · " + source;
     brEl("brStatus").value = req.status || "active";
+    refreshDonorChoices();
+    set("brDonor", req.donorName ? (req.donorName + (req.donorNo ? " (" + req.donorNo + ")" : "")) : "");
     set("brDonDate", req.donationDate || localDateStr(Date.now()));
+    set("brCancelDate", req.cancelDate || req.needDate || localDateStr(Date.now()));
+    set("brReturnDate", req.returnDate || req.needDate || localDateStr(Date.now()));
     set("brReason", req.cancelReason); set("brCloseNote", req.closeNote);
     updateBrStatusBlocks();
   }
@@ -3074,7 +3271,7 @@ function saveBloodRequest() {
   const fields = {
     bloodGroup, hospital, units,
     patientName: v("brName") || "N/A", phone: optStr(v("brPhone")), needDate: optStr(v("brNeedDate")),
-    hemoglobin: optStr(v("brHemoglobin")), problem: optStr(v("brProblem")), note: optStr(v("brNote"))
+    hemoglobin: optStr(v("brHemoglobin")), problem: getProblemField(), note: optStr(v("brNote"))
   };
   const btn = brEl("bloodRequestSaveBtn");
 
@@ -3093,12 +3290,32 @@ function saveBloodRequest() {
       }
       updated.closeNote = optStr(v("brCloseNote"));
       if (status === "completed") {
-        ["donorName", "donorNo", "donorId"].forEach(k => { delete updated[k]; });
+        const typed = v("brDonor");
+        const match = typed ? getMergedDonors().find(d => d && donorLabel(d) === typed) : null;
+        if (typed) {
+          updated.donorName = match ? (match.name || typed) : typed;
+          updated.donorNo = match && match.donorNo ? match.donorNo : undefined;
+          updated.donorId = match && match.id ? match.id : undefined;
+        } else {
+          ["donorName", "donorNo", "donorId"].forEach(k => { delete updated[k]; });
+        }
         updated.donationDate = v("brDonDate") || localDateStr(Date.now());
-        delete updated.cancelReason;
+        delete updated.cancelReason; delete updated.cancelDate; delete updated.returnDate;
+      } else if (status === "returned") {
+        // Donor Return: the donor came back / returned without donating.
+        const returnDate = v("brReturnDate");
+        if (!returnDate) { showToast("Return Date দিন"); return; }
+        ["donorName", "donorNo", "donorId", "donationDate", "cancelReason", "cancelDate"].forEach(k => { delete updated[k]; });
+        updated.returnDate = returnDate;
       } else {
+        delete updated.returnDate;
+        const cancelDate = v("brCancelDate");
+        if (!cancelDate) { showToast("Cancel Date দিন"); return; }
         updated.cancelReason = optStr(brEl("brReason").value);
-        ["donorName", "donorNo", "donorId", "donationDate"].forEach(k => { delete updated[k]; });
+        ["donorName", "donorNo", "donorId"].forEach(k => { delete updated[k]; });
+        // Cancel Date is saved with the request (and also as donationDate, the cancel / donate date).
+        updated.cancelDate = cancelDate;
+        updated.donationDate = cancelDate;
       }
     }
     btn.disabled = true;
@@ -3148,10 +3365,44 @@ document.getElementById("reqTabs").addEventListener("click", e => {
   reqFilter = tab.getAttribute("data-filter") || "active";
   renderEmergencyRequests();
 });
+["reqFromDate", "reqToDate"].forEach(id => document.getElementById(id).addEventListener("change", renderEmergencyRequests));
+wireMonthSelect(document.getElementById("reqMonthSelect"), document.getElementById("reqFromDate"), document.getElementById("reqToDate"), renderEmergencyRequests);
+document.getElementById("reqDateClearBtn").addEventListener("click", () => {
+  document.getElementById("reqFromDate").value = "";
+  document.getElementById("reqToDate").value = "";
+  document.getElementById("reqMonthSelect").value = "";
+  renderEmergencyRequests();
+});
 document.getElementById("newBloodRequestBtn").addEventListener("click", () => openBloodRequestForm());
 document.getElementById("brStatus").addEventListener("change", updateBrStatusBlocks);
 document.getElementById("bloodRequestCloseBtn").addEventListener("click", closeBloodRequestForm);
 document.getElementById("bloodRequestCancelBtn").addEventListener("click", closeBloodRequestForm);
+function deleteBloodRequest() {
+  if (!editingReqId) return;
+  const req = getAllBloodRequests().find(r => r.id === editingReqId);
+  if (!req) { closeBloodRequestForm(); return; }
+  if (!firebaseAvailable || !db) { showToast("ইন্টারনেট সংযোগ প্রয়োজন"); return; }
+  if (!confirm("এই রক্তের অনুরোধটি মুছে ফেলবেন? এটি আর ফেরত পাওয়া যাবে না।")) return;
+  const btn = brEl("bloodRequestDeleteBtn");
+  btn.disabled = true;
+  const updates = {};
+  updates["bloodRequests/" + req.id] = null;
+  updates["emergencyRequests/" + req.id] = null;
+  db.ref().update(updates).then(() => {
+    logActivity("req_delete", req.patientName && req.patientName !== "N/A" ? req.patientName : (req.hospital || "request"), req.bloodGroup || "");
+    closeBloodRequestForm();
+    showToast("অনুরোধটি মুছে ফেলা হয়েছে");
+  }).catch(err => reqWriteError(err, "মুছে ফেলা যায়নি, আবার চেষ্টা করুন"))
+    .then(() => { btn.disabled = false; });
+}
+brEl("bloodRequestDeleteBtn").addEventListener("click", deleteBloodRequest);
+brEl("brDonorSelect").addEventListener("change", e => {
+  if (e.target.value) { brEl("brDonor").value = e.target.value; e.target.value = ""; }
+});
+brEl("brGroup").addEventListener("change", refreshDonorChoices);
+brEl("brHospitalSelect").addEventListener("change", e => {
+  if (e.target.value) { brEl("brHospital").value = e.target.value; e.target.value = ""; }
+});
 document.getElementById("bloodRequestSaveBtn").addEventListener("click", saveBloodRequest);
 bloodRequestOverlay.addEventListener("click", e => { if (e.target === bloodRequestOverlay) closeBloodRequestForm(); });
 
@@ -3512,6 +3763,43 @@ function toDateInputValue(d) {
   return d.toISOString().slice(0, 10);
 }
 
+/* ---------- Month picker (e.g. "November 2026") shared by the statement and Blood Requests ---------- */
+function fillMonthSelect(sel) {
+  if (!sel) return;
+  const now = new Date();
+  let html = '<option value="">Select month</option>';
+  for (let i = 0; i < 36; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const val = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+    html += `<option value="${val}">${d.toLocaleString("en-US", { month: "long" })} ${d.getFullYear()}</option>`;
+  }
+  sel.innerHTML = html;
+}
+// "2026-11" -> ["2026-11-01", "2026-11-30"]
+function monthRangeOf(val) {
+  const m = /^(\d{4})-(\d{2})$/.exec(val || "");
+  if (!m) return null;
+  const last = new Date(parseInt(m[1], 10), parseInt(m[2], 10), 0).getDate();
+  return [val + "-01", val + "-" + String(last).padStart(2, "0")];
+}
+/* Wires a month <select> to a pair of date inputs: picking a month fills both dates,
+   and typing a date by hand clears the month again. onChange runs after either. */
+function wireMonthSelect(monthSel, fromInput, toInput, onChange) {
+  fillMonthSelect(monthSel);
+  monthSel.addEventListener("change", () => {
+    const r = monthRangeOf(monthSel.value);
+    if (!r) return;
+    fromInput.value = r[0];
+    toInput.value = r[1];
+    if (onChange) onChange();
+  });
+  [fromInput, toInput].forEach(inp => inp.addEventListener("change", () => { monthSel.value = ""; }));
+}
+
+const statementMonthSelect = document.getElementById("statementMonthSelect");
+const statementTypeSelect = document.getElementById("statementTypeSelect");
+wireMonthSelect(statementMonthSelect, statementFromDate, statementToDate);
+
 document.querySelectorAll(".statementPresetBtn").forEach(btn => {
   btn.addEventListener("click", () => {
     const days = parseInt(btn.dataset.days, 10);
@@ -3520,6 +3808,7 @@ document.querySelectorAll(".statementPresetBtn").forEach(btn => {
     from.setDate(today.getDate() - (days - 1));
     statementToDate.value = toDateInputValue(today);
     statementFromDate.value = toDateInputValue(from);
+    statementMonthSelect.value = "";
   });
 });
 
@@ -3667,7 +3956,7 @@ function drawPdfText(doc, text, x, baselineY, opts) {
     doc.addImage(img.url, "PNG", ix, baselineY - fs * 0.35 - img.h / 2, img.w, img.h);
     return img.w;
   }
-  doc.setFont("helvetica", opts.bold ? "bold" : "normal");
+  doc.setFont(opts.font || "helvetica", opts.bold ? (opts.italic ? "bolditalic" : "bold") : (opts.italic ? "italic" : "normal"));
   doc.setFontSize(fs);
   doc.setTextColor(color[0], color[1], color[2]);
   if (opts.maxWidth && opts.ellipsis && doc.getTextWidth(t) > opts.maxWidth) {
@@ -3707,6 +3996,42 @@ function drawWatermark(doc, text, logoBase64, bnTextImg) {
   doc.restoreGraphicsState();
 }
 
+/* ---------- Statement preview (shown before the PDF is downloaded) ---------- */
+const statementPreviewOverlay = document.getElementById("statementPreviewOverlay");
+const statementPreviewFrame = document.getElementById("statementPreviewFrame");
+const statementPreviewDownloadBtn = document.getElementById("statementPreviewDownloadBtn");
+const statementPreviewOpenLink = document.getElementById("statementPreviewOpenLink");
+let statementPreviewUrl = "";
+let statementPreviewName = "";
+
+function openStatementPreview(blob, fileName) {
+  if (statementPreviewUrl) URL.revokeObjectURL(statementPreviewUrl);
+  statementPreviewUrl = URL.createObjectURL(blob);
+  statementPreviewName = fileName;
+  statementPreviewFrame.src = statementPreviewUrl;
+  statementPreviewOpenLink.href = statementPreviewUrl;
+  openModal(statementPreviewOverlay);
+}
+function closeStatementPreview() {
+  closeModal(statementPreviewOverlay);
+  statementPreviewFrame.removeAttribute("src");
+  if (statementPreviewUrl) { URL.revokeObjectURL(statementPreviewUrl); statementPreviewUrl = ""; }
+  // closeModal() unlocks page scroll; the Settings panel underneath is still open, so keep it locked.
+  if (document.querySelector(".modalOverlay.open")) document.body.style.overflow = "hidden";
+}
+document.getElementById("statementPreviewCloseBtn").addEventListener("click", closeStatementPreview);
+statementPreviewOverlay.addEventListener("click", e => { if (e.target === statementPreviewOverlay) closeStatementPreview(); });
+statementPreviewDownloadBtn.addEventListener("click", () => {
+  if (!statementPreviewUrl) return;
+  const a = document.createElement("a");
+  a.href = statementPreviewUrl;
+  a.download = statementPreviewName;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  showToast("Statement downloaded");
+});
+
 downloadStatementBtn.addEventListener("click", async () => {
   try {
     const from = statementFromDate.value;
@@ -3732,7 +4057,23 @@ downloadStatementBtn.addEventListener("click", async () => {
       const d = r.requestedAt ? localDateStr(r.requestedAt) : "";
       return d && d >= from && d <= to;
     }).sort((a, b) => (a.requestedAt || 0) - (b.requestedAt || 0));
-    if (!donors.length && !reqList.length) {
+    // The three header totals come from the Blood Requests data, each counted by its own
+    // date inside the selected range:
+    //   Total Donation -> Donated requests whose Donation Date is in the range
+    //   Total Cancel   -> Cancelled requests whose Cancel Date is in the range
+    //   Total Request  -> Total Donation + Total Cancel
+    const fullMode = statementTypeSelect.value === "full";
+    const allReqs = getAllBloodRequests();
+    const inRange = ds => !!ds && ds >= from && ds <= to;
+    //   Total Return   -> Donor Return requests whose Return Date is in the range
+    //   Total Request  -> Total Donation + Total Cancel + Total Return
+    const rc = {
+      completed: allReqs.filter(r => r.status === "completed" && inRange(reqDonatedDay(r))).length,
+      cancelled: allReqs.filter(r => r.status === "cancelled" && inRange(reqCancelDay(r))).length,
+      returned: allReqs.filter(r => r.status === "returned" && inRange(reqReturnDay(r))).length
+    };
+    rc.total = rc.completed + rc.cancelled + rc.returned;
+    if (!donors.length && !reqList.length && !rc.completed && !rc.cancelled && !rc.returned) {
       showToast("Nothing found in that range");
       return;
     }
@@ -3748,6 +4089,9 @@ downloadStatementBtn.addEventListener("click", async () => {
     const MARGIN = 40;
     const siteName = (appConfigData.siteName && appConfigData.siteName.trim()) ? appConfigData.siteName.trim() : DEFAULT_SITE_NAME;
     const textX = logoBase64 ? 92 : 40;
+    // Original classic black-and-grey statement look.
+    const INK = [0, 0, 0], BODY_INK = [20, 20, 20], SUB = [70, 70, 70], MUTED = [124, 111, 104];
+    const RULE = [150, 150, 150], HEAD_RULE = [90, 90, 90], HEAD_FILL = [230, 230, 230];
 
     // One record per donor in the range (same as the table rows below).
     const records = donors.map(d => {
@@ -3769,12 +4113,11 @@ downloadStatementBtn.addEventListener("click", async () => {
     await ensureBengaliCanvasFont(allText);
 
     /* ---------- Header (classic) ---------- */
-    const rc = countRequests(reqList);
     if (logoBase64) {
       try { doc.addImage(logoBase64, "PNG", 40, 24, 40, 40); } catch (err) { console.log("Skipping logo in PDF:", err); }
     }
-    drawPdfText(doc, siteName, textX - (logoBase64 ? 4 : 0), 42, { fontSize: 16, bold: true, color: [0, 0, 0], maxWidth: 300, ellipsis: true });
-    drawPdfText(doc, "Donation Statement", textX - (logoBase64 ? 4 : 0), 59, { fontSize: 11, color: [70, 70, 70] });
+    drawPdfText(doc, siteName, textX - (logoBase64 ? 4 : 0), 42, { fontSize: 16, bold: true, color: INK, maxWidth: 300, ellipsis: true });
+    drawPdfText(doc, fullMode ? "Donation Statement (Full Details)" : "Donation Statement", textX - (logoBase64 ? 4 : 0), 59, { fontSize: 11, color: SUB });
     doc.setFont("helvetica", "bold");
     doc.setFontSize(9);
     doc.setTextColor(0, 0, 0);
@@ -3788,23 +4131,22 @@ downloadStatementBtn.addEventListener("click", async () => {
     doc.setLineWidth(0.4);
     doc.line(MARGIN, 79.5, pageW - MARGIN, 79.5);
 
-    /* ---------- Summary box: Total request / donation / cancel ---------- */
+    /* ---------- Summary box: Total Request (= Donation + Cancel + Return) / Donation / Cancel / Return ---------- */
     {
-      const bx = MARGIN, by = 96, bw = pageW - MARGIN * 2, bh = 46, cw = bw / 3;
+      const bx = MARGIN, by = 96, bw = pageW - MARGIN * 2, bh = 46, cw = bw / 4;
       doc.setDrawColor(0, 0, 0);
       doc.setLineWidth(0.7);
       doc.rect(bx, by, bw, bh);
       doc.setLineWidth(0.4);
-      doc.line(bx + cw, by, bx + cw, by + bh);
-      doc.line(bx + cw * 2, by, bx + cw * 2, by + bh);
-      [["Total Request", rc.total], ["Total Donation", rc.completed], ["Total Cancel", rc.cancelled]].forEach((c, i) => {
+      for (let i = 1; i < 4; i++) doc.line(bx + cw * i, by, bx + cw * i, by + bh);
+      [["Total Request", rc.total], ["Total Donation", rc.completed], ["Total Cancel", rc.cancelled], ["Total Return", rc.returned]].forEach((c, i) => {
         const cx = bx + cw * i + cw / 2;
-        drawPdfText(doc, c[0], cx, by + 16, { fontSize: 9, color: [70, 70, 70], align: "center" });
-        drawPdfText(doc, String(c[1]), cx, by + 37, { fontSize: 18, bold: true, color: [0, 0, 0], align: "center" });
+        drawPdfText(doc, c[0], cx, by + 16, { fontSize: 9, color: SUB, align: "center" });
+        drawPdfText(doc, String(c[1]), cx, by + 37, { fontSize: 18, bold: true, color: INK, align: "center" });
       });
     }
     const tableTop = 176;
-    drawPdfText(doc, "Donation Records", MARGIN, 164, { fontSize: 11, bold: true, color: [0, 0, 0] });
+    drawPdfText(doc, "Donation Records", MARGIN, 164, { fontSize: 11, bold: true, color: INK });
 
     /* ---------- Table: No. | Name | Address | Group | Hospital | Donate Date ----------
        Column widths are auto-fitted to the longest text in each column, so
@@ -3868,10 +4210,10 @@ downloadStatementBtn.addEventListener("click", async () => {
       tableWidth: AVAIL,
       head: [headers],
       body: tableRows,
-      styles: { fontSize: tableFont, cellPadding: CELL_PAD, valign: "middle", overflow: "linebreak", lineColor: [150, 150, 150], lineWidth: 0.3 },
+      styles: { fontSize: tableFont, cellPadding: CELL_PAD, valign: "middle", overflow: "linebreak", lineColor: RULE, lineWidth: 0.3 },
       theme: "grid",
-      headStyles: { fillColor: [230, 230, 230], textColor: [0, 0, 0], fontStyle: "bold", lineColor: [90, 90, 90], lineWidth: 0.4 },
-      bodyStyles: { textColor: [20, 20, 20], lineColor: [150, 150, 150], lineWidth: 0.3 },
+      headStyles: { fillColor: HEAD_FILL, textColor: INK, fontStyle: "bold", lineColor: HEAD_RULE, lineWidth: 0.4 },
+      bodyStyles: { textColor: BODY_INK, lineColor: RULE, lineWidth: 0.3 },
       columnStyles,
       // Cells that contain Bengali are blanked here and painted as canvas
       // images in didDrawCell, so the shaping is correct.
@@ -3894,6 +4236,92 @@ downloadStatementBtn.addEventListener("click", async () => {
         doc.addImage(img.url, "PNG", data.cell.x + CELL_PAD, data.cell.y + (data.cell.height - img.h) / 2, img.w, img.h);
       }
     });
+
+    /* ---------- Full Details only: Donated + Cancelled request tables ---------- */
+    if (fullMode) {
+      const dash = v => (v === undefined || v === null || String(v).trim() === "") ? "-" : String(v).trim();
+      const donatedReqs = allReqs.filter(r => r.status === "completed" && inRange(reqDonatedDay(r)))
+        .sort((a, b) => reqDonatedDay(a) < reqDonatedDay(b) ? -1 : reqDonatedDay(a) > reqDonatedDay(b) ? 1 : 0);
+      const cancelledReqs = allReqs.filter(r => r.status === "cancelled" && inRange(reqCancelDay(r)))
+        .sort((a, b) => reqCancelDay(a) < reqCancelDay(b) ? -1 : reqCancelDay(a) > reqCancelDay(b) ? 1 : 0);
+      const returnedReqs = allReqs.filter(r => r.status === "returned" && inRange(reqReturnDay(r)))
+        .sort((a, b) => reqReturnDay(a) < reqReturnDay(b) ? -1 : reqReturnDay(a) > reqReturnDay(b) ? 1 : 0);
+      const addedDay = r => r.requestedAt ? localDateStr(r.requestedAt) : "-";
+      const common = r => [dash(patientIdOf(r)), dash(r.patientName), dash(r.phone), dash(r.bloodGroup), dash(r.units), dash(r.hospital), dash(r.problem), dash(r.needDate), addedDay(r)];
+      const commonHead = ["ID", "Patient", "Phone", "Group", "Bags", "Hospital", "Problem", "Needed By", "Added"];
+      const commonW = [30, 56, 52, 26, 22, 64, 52, 44, 44];
+
+      function requestDetailTable(title, head, weights, rows, emptyText) {
+        if (doc.lastAutoTable.finalY + 70 > pageH - 50) { doc.addPage(); doc.lastAutoTable = { finalY: 28 }; }
+        const ty = doc.lastAutoTable.finalY + 26;
+        drawPdfText(doc, title, MARGIN, ty, { fontSize: 11, bold: true, color: INK });
+        if (!rows.length) {
+          drawPdfText(doc, emptyText, MARGIN, ty + 16, { fontSize: 9, color: [124, 111, 104] });
+          doc.lastAutoTable = { finalY: ty + 22 };
+          return;
+        }
+        const fs = 7, pad = 3;
+        const sum = weights.reduce((a, b) => a + b, 0);
+        const widths = weights.map(w => w / sum * AVAIL);
+        const cols = {};
+        widths.forEach((w, c) => { cols[c] = { cellWidth: w }; });
+        const bn = new Map();
+        doc.autoTable({
+          startY: ty + 8,
+          margin: { left: MARGIN, right: MARGIN, top: 56 },
+          tableWidth: AVAIL,
+          head: [head],
+          body: rows,
+          styles: { fontSize: fs, cellPadding: pad, valign: "middle", overflow: "linebreak", lineColor: RULE, lineWidth: 0.3 },
+          theme: "grid",
+          headStyles: { fillColor: HEAD_FILL, textColor: INK, fontStyle: "bold", lineColor: HEAD_RULE, lineWidth: 0.4 },
+          bodyStyles: { textColor: BODY_INK, lineColor: RULE, lineWidth: 0.3 },
+          columnStyles: cols,
+          didParseCell: (data) => {
+            if (data.section !== "body") return;
+            data.cell.styles.minCellHeight = fs * 1.55 + pad * 2;
+            const text = Array.isArray(data.cell.text) ? data.cell.text.join(" ") : String(data.cell.text || "");
+            if (!BENGALI_RANGE.test(text)) return;
+            const img = renderTextImage(text, { fontSize: fs, color: [33, 22, 19], maxWidth: widths[data.column.index] - pad * 2 });
+            bn.set(data.row.index + "-" + data.column.index, img);
+            data.cell.text = [""];
+            data.cell.styles.minCellHeight = Math.max(data.cell.styles.minCellHeight, img.h + pad * 2);
+          },
+          didDrawCell: (data) => {
+            if (data.section !== "body") return;
+            const img = bn.get(data.row.index + "-" + data.column.index);
+            if (!img) return;
+            doc.addImage(img.url, "PNG", data.cell.x + pad, data.cell.y + (data.cell.height - img.h) / 2, img.w, img.h);
+          }
+        });
+      }
+
+      // Bengali text in the new tables needs its font loaded before drawing.
+      await ensureBengaliCanvasFont(allReqs.map(r => [r.patientName, r.hospital, r.problem, r.donorName, r.cancelReason, r.closeNote].join(" ")).join(" "));
+      // (Donor Return rows only add Return Date + Note, covered by the text above.)
+
+      requestDetailTable(
+        "Donated Requests (Full Details)",
+        commonHead.concat(["Donor", "Donation Date", "Note"]),
+        commonW.concat([56, 44, 54]),
+        donatedReqs.map(r => common(r).concat([dash(r.donorName), reqDonatedDay(r), dash(r.closeNote)])),
+        "No donated requests in this range."
+      );
+      requestDetailTable(
+        "Cancelled Requests (Full Details)",
+        commonHead.concat(["Cancel Date", "Reason", "Note"]),
+        commonW.concat([44, 62, 48]),
+        cancelledReqs.map(r => common(r).concat([reqCancelDay(r), dash(r.cancelReason), dash(r.closeNote)])),
+        "No cancelled requests in this range."
+      );
+      requestDetailTable(
+        "Donor Return Requests (Full Details)",
+        commonHead.concat(["Return Date", "Note"]),
+        commonW.concat([44, 110]),
+        returnedReqs.map(r => common(r).concat([reqReturnDay(r), dash(r.closeNote)])),
+        "No donor return requests in this range."
+      );
+    }
 
     /* ---------- Analytics: one combined chart ---------- */
     let y = doc.lastAutoTable.finalY + 28;
@@ -3928,7 +4356,7 @@ downloadStatementBtn.addEventListener("click", async () => {
       }
       const usedGroups = GROUP_ORDER.concat(["Unknown"]).filter(g => records.some(r => (PALETTE[r.group] ? r.group : "Unknown") === g));
 
-      drawPdfText(doc, "Analytics", MARGIN, y, { fontSize: 11, bold: true, color: [0, 0, 0] });
+      drawPdfText(doc, "Analytics", MARGIN, y, { fontSize: 11, bold: true, color: INK });
       y += 7;
       doc.setDrawColor(0, 0, 0);
       doc.setLineWidth(0.7);
@@ -4125,12 +4553,12 @@ downloadStatementBtn.addEventListener("click", async () => {
       drawWatermark(doc, siteName, logoBase64, bnWatermark);
       doc.setFont("helvetica", "normal");
       doc.setFontSize(8.5);
-      doc.setTextColor(124, 111, 104);
+      doc.setTextColor(MUTED[0], MUTED[1], MUTED[2]);
       doc.text(`Page ${p} of ${totalPages}`, pageW / 2, pageH - 22, { align: "center" });
     }
 
-    doc.save(`donation-statement-${from}_to_${to}.pdf`);
-    showToast("Statement downloaded");
+    // Show a preview first; the Download button inside the preview saves the PDF.
+    openStatementPreview(doc.output("blob"), `donation-statement${fullMode ? "-full" : ""}-${from}_to_${to}.pdf`);
   } catch (err) {
     console.log("Statement export failed:", err);
     showToast("Could not download statement");
@@ -4215,6 +4643,123 @@ importCsvInput.addEventListener("change", () => {
   };
   reader.readAsText(file);
 });
+
+/* ============================================================
+   BULK IMPORT — Blood Requests (.csv)
+   Required columns: bloodGroup, hospital
+   Optional: units, patientName, phone, needDate, hemoglobin, problem,
+             note, status (active/donated/cancelled), requestedAt,
+             donorName, donationDate, closeNote, cancelReason
+   ============================================================ */
+(function () {
+  const BG_OK = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+  const normGroup = v => {
+    v = String(v || "").trim().toUpperCase().replace(/\s+/g, "").replace(/\u2212|\u2013/g, "-");
+    v = v.replace(/POSITIVE$/, "+").replace(/NEGATIVE$/, "-").replace(/\(\+VE\)|\+VE/, "+").replace(/\(-VE\)|-VE/, "-");
+    return BG_OK.indexOf(v) >= 0 ? v : "";
+  };
+  const normStatus = v => {
+    v = String(v || "").trim().toLowerCase();
+    if (/^(completed|donated|done|complete)$/.test(v)) return "completed";
+    if (/^(cancelled|canceled|cancel)$/.test(v)) return "cancelled";
+    if (/^(returned|return|donor ?return|donorreturn)$/.test(v)) return "returned";
+    return "active";
+  };
+  const toTs = v => {
+    v = String(v || "").trim(); if (!v) return 0;
+    let m = /^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(v);
+    if (m) return new Date(+m[1], +m[2] - 1, +m[3], 12).getTime();
+    m = /^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})/.exec(v);
+    if (m) {
+      let a = +m[1], b = +m[2];            // default D/M/Y; if 2nd part > 12 it must be M/D/Y (Excel US format)
+      if (b > 12 && a <= 12) { const t = a; a = b; b = t; }
+      if (b > 12 || a > 31) return 0;
+      return new Date(+m[3], b - 1, a, 12).getTime();
+    }
+    const t = Date.parse(v); return isNaN(t) ? 0 : t;
+  };
+  const toIso = v => { const t = toTs(v); return t ? localDateStr(t) : undefined; };
+
+  document.getElementById("brTemplateBtn").addEventListener("click", () => {
+    const csv = "bloodGroup,hospital,units,patientName,phone,needDate,hemoglobin,problem,note,status,requestedAt,donorName,donationDate,closeNote,cancelReason\n" +
+      "O+,Dhaka Medical College Hospital,2,Rahim Uddin,01711111111,2026-11-20,7.2,Anemia,Urgent,active,2026-11-13,,,,\n" +
+      "B+,Square Hospital,1,Karima Begum,01822222222,,,Surgery,,donated,2026-11-01,Sabbir Hossain,2026-11-02,,\n";
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = "blood-requests-template.csv";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  });
+
+  const inp = document.getElementById("brImportInput");
+  document.getElementById("brImportBtn").addEventListener("click", () => inp.click());
+  inp.addEventListener("change", () => {
+    const file = inp.files[0]; if (!file) return;
+    const me = getAdminIdentity();
+    if (!firebaseAvailable || !db || !bloodRequestsRef || !me) { showToast("ইন্টারনেট সংযোগ প্রয়োজন"); inp.value = ""; return; }
+    const reader = new FileReader();
+    reader.onload = () => {
+      let rows;
+      try {
+        rows = parseCsv(String(reader.result).replace(/^\uFEFF/, "")).map(r => {
+          const o = {}; Object.keys(r).forEach(k => { o[k.trim().toLowerCase()] = r[k]; }); return o;
+        });
+      } catch (err) { console.log(err); showToast("CSV ফাইল পড়া যায়নি"); inp.value = ""; return; }
+
+      let pnum = parseInt(String(nextPatientId()).replace(/\D/g, ""), 10) || 1;
+      const updates = {}; let ok = 0, bad = 0;
+      rows.forEach((r, i) => {
+        const bloodGroup = normGroup(r.bloodgroup), hospital = (r.hospital || "").trim();
+        if (!bloodGroup || !hospital) { bad++; return; }
+        let units = parseInt(r.units, 10); if (!units || units < 1 || units > 20) units = undefined;
+        const status = normStatus(r.status);
+        const now = Date.now();
+        const requestedAt = toTs(r.requestedat) || (now - (rows.length - i));
+        const key = bloodRequestsRef.push().key;
+        const rec = {
+          id: key, patientId: "P-" + String(pnum++).padStart(4, "0"), source: "admin", status,
+          requestedAt, createdBy: me.name, createdByUid: me.uid, createdByEmail: me.email,
+          bloodGroup, hospital, units,
+          patientName: (r.patientname || "").trim() || "N/A",
+          phone: optStr(r.phone), needDate: toIso(r.needdate) || optStr(r.needdate),
+          hemoglobin: optStr(r.hemoglobin), problem: optStr(r.problem), note: optStr(r.note)
+        };
+        if (status !== "active") {
+          rec.closedAt = toTs(r.donationdate) || requestedAt;
+          rec.closedBy = me.name; rec.closedByUid = me.uid; rec.closedByEmail = me.email;
+          rec.closeNote = optStr(r.closenote);
+          if (status === "completed") {
+            rec.donorName = optStr(r.donorname);
+            rec.donationDate = toIso(r.donationdate) || localDateStr(rec.closedAt);
+          } else if (status === "returned") {
+            rec.returnDate = toIso(r.donationdate) || rec.needDate || localDateStr(rec.closedAt);
+          } else {
+            rec.cancelReason = optStr(r.cancelreason);
+            // same as the Edit form: Cancel Date (CSV donationdate, else Needed By, else request day)
+            rec.cancelDate = toIso(r.donationdate) || rec.needDate || localDateStr(rec.closedAt);
+            rec.donationDate = rec.cancelDate;
+          }
+        }
+        updates["bloodRequests/" + key] = cleanObj(rec); ok++;
+      });
+      if (!ok) { showToast("কোনো valid row পাওয়া যায়নি (bloodGroup ও hospital লাগবে)"); inp.value = ""; return; }
+
+      showToast(ok + "টি রিকোয়েস্ট ইমপোর্ট হচ্ছে…");
+      const keys = Object.keys(updates), CH = 200; let chain = Promise.resolve();
+      for (let i = 0; i < keys.length; i += CH) {
+        const part = {}; keys.slice(i, i + CH).forEach(k => { part[k] = updates[k]; });
+        chain = chain.then(() => db.ref().update(part));
+      }
+      chain.then(() => {
+        logActivity("req_new", "Bulk import", ok + " requests");
+        reqFilter = "all"; renderEmergencyRequests();
+        showToast(ok + "টি ইমপোর্ট হয়েছে" + (bad ? ", " + bad + "টি skip" : ""));
+      }).catch(err => reqWriteError(err, "ইমপোর্ট করা যায়নি, আবার চেষ্টা করুন"))
+        .then(() => { inp.value = ""; });
+    };
+    reader.readAsText(file);
+  });
+})();
 
 
 
